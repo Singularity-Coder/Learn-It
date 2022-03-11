@@ -1,4 +1,4 @@
-# CoolScripts
+# InstaScripts
 List of useful scripts (python, ruby, shell, etc) for Mobile Developers!
 
 You don’t understand the need of something until you are forced into the painful situation. I finally understand the importance of learning multiple languages and the power and usefulness of regular expressions in python and ruby scripts to quickly do tedious stuff like filtering through logs to debug an issue.
