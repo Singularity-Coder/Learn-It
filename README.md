@@ -1,2 +1,2 @@
 # Learn It
-Remember anything forever using spaced repetition!
+Master your memory using spaced repetition!
