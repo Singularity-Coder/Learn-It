@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.card.MaterialCardView
 import com.singularitycoder.learnit.databinding.FragmentMainBinding
+import com.singularitycoder.learnit.helpers.BottomSheetTag
+import com.singularitycoder.learnit.helpers.EditEvent
 import com.singularitycoder.learnit.helpers.collectLatestLifecycleFlow
 import com.singularitycoder.learnit.helpers.globalLayoutAnimation
 import com.singularitycoder.learnit.helpers.hideKeyboard
@@ -39,7 +41,7 @@ class MainFragment : Fragment() {
 
     private val booksAdapter = DownloadsAdapter()
 
-    private var booksList = listOf<Book?>()
+    private var booksList = listOf<Subject?>()
 
     private lateinit var binding: FragmentMainBinding
 
@@ -94,6 +96,13 @@ class MainFragment : Fragment() {
     private fun FragmentMainBinding.setupUserActionListeners() {
         root.setOnClickListener {}
 
+        fabAddSubject.onSafeClick {
+//            AddSubjectBottomSheetFragment.newInstance().show(parentFragmentManager, BottomSheetTag.TAG_BOOK_READER_FILTERS)
+            EditBottomSheetFragment.newInstance(
+                eventType = EditEvent.RENAME_DOWNLOAD_FILE
+            ).show(parentFragmentManager, BottomSheetTag.TAG_EDIT)
+        }
+
         booksAdapter.setOnItemClickListener { book, position ->
 
         }
@@ -117,23 +126,23 @@ class MainFragment : Fragment() {
         layoutSearch.etSearch.doAfterTextChanged { query: Editable? ->
             layoutSearch.ibClearSearch.isVisible = query.isNullOrBlank().not()
             if (query.isNullOrBlank()) {
-                booksAdapter.bookList = booksList
+                booksAdapter.subjectList = booksList
                 booksAdapter.notifyDataSetChanged()
                 return@doAfterTextChanged
             }
-            booksAdapter.bookList = booksList.filter { it?.title?.contains(other = query, ignoreCase = true) == true }
+            booksAdapter.subjectList = booksList.filter { it?.title?.contains(other = query, ignoreCase = true) == true }
             booksAdapter.notifyDataSetChanged()
         }
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun observeForData() {
-        (activity as? MainActivity)?.collectLatestLifecycleFlow(flow = bookViewModel.getAllBookItemsFlow()) { booksList: List<Book?> ->
+        (activity as? MainActivity)?.collectLatestLifecycleFlow(flow = bookViewModel.getAllBookItemsFlow()) { booksList: List<Subject?> ->
             if (this.booksList.isNotEmpty() && this.booksList == booksList) {
                 return@collectLatestLifecycleFlow
             }
             this.booksList = booksList
-            booksAdapter.bookList = booksList
+            booksAdapter.subjectList = booksList
             booksAdapter.notifyDataSetChanged()
 //            booksAdapter.notifyItemInserted(currentBookPosition)
 //            currentBookPosition++

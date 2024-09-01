@@ -6,17 +6,11 @@ import androidx.room.PrimaryKey
 import com.singularitycoder.learnit.helpers.DbTable
 import kotlinx.parcelize.Parcelize
 
-@Entity(tableName = DbTable.BOOK)
+@Entity(tableName = DbTable.TOPIC)
 @Parcelize
-data class Book(
+data class Topic(
     @PrimaryKey var id: String,
     var path: String? = "",
-    var title: String = "",
-    var time: Long? = 0L,
-    var size: String? = "",
-    var link: String? = "",
-    var extension: String? = "",
-    var isDirectory: Boolean = false,
-    var pageCount: Int = 0,
-    var completedPageNum: Int = 0
+    var text: String? = "",
+    var pageCount: Int = 0
 ) : Parcelable

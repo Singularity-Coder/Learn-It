@@ -3,15 +3,15 @@ package com.singularitycoder.learnit.helpers.db
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.singularitycoder.learnit.Book
+import com.singularitycoder.learnit.Subject
 import com.singularitycoder.learnit.BookDao
-import com.singularitycoder.learnit.BookData
+import com.singularitycoder.learnit.Topic
 import com.singularitycoder.learnit.BookDataDao
 
 @Database(
     entities = [
-        Book::class,
-        BookData::class,
+        Subject::class,
+        Topic::class,
     ],
     version = 1,
     exportSchema = false

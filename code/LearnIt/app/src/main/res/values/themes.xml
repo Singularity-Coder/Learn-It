@@ -66,4 +66,22 @@
         <item name="cornerSizeTopLeft">4dp</item>
     </style>
 
+    <style name="Fab_Rounded" parent="Widget.MaterialComponents.Button">
+        <item name="materialThemeOverlay">@style/ShapeAppearanceOverlay_Fab_Overlay</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay_Fab_Overlay">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">0dp</item>
+        <item name="cornerSizeTopRight">32dp</item>
+        <item name="cornerSizeBottomRight">32dp</item>
+        <item name="cornerSizeBottomLeft">32dp</item>
+        <item name="cornerSizeTopLeft">32dp</item>
+    </style>
+
+    <style name="RoundSmall" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">24dp</item>
+    </style>
+
 </resources>

@@ -17,32 +17,32 @@ interface BookDao {
     /** room database will replace data based on primary key */
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(book: Book)
+    suspend fun insert(subject: Subject)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(list: List<Book>)
+    suspend fun insertAll(list: List<Subject>)
 
-    @Query("SELECT EXISTS(SELECT * FROM ${DbTable.BOOK} WHERE id = :id)")
+    @Query("SELECT EXISTS(SELECT * FROM ${DbTable.SUBJECT} WHERE id = :id)")
     suspend fun isItemPresent(id: String): Boolean
 
-    @Query("SELECT EXISTS(SELECT 1 FROM ${DbTable.BOOK})")
+    @Query("SELECT EXISTS(SELECT 1 FROM ${DbTable.SUBJECT})")
     suspend fun hasItems(): Boolean
 
     @Transaction
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun update(book: Book)
+    suspend fun update(subject: Subject)
 
-    @Query("UPDATE ${DbTable.BOOK} SET completedPageNum = :completedPageNum WHERE id LIKE :id")
-    suspend fun updateCompletedPageWithId(completedPageNum: Int, id: String)
+//    @Query("UPDATE ${DbTable.SUBJECT} SET completedPageNum = :completedPageNum WHERE id LIKE :id")
+//    suspend fun updateCompletedPageWithId(completedPageNum: Int, id: String)
 
-    @Query("SELECT * FROM ${DbTable.BOOK} WHERE id LIKE :id LIMIT 1")
-    suspend fun getItemById(id: String): Book
+    @Query("SELECT * FROM ${DbTable.SUBJECT} WHERE id LIKE :id LIMIT 1")
+    suspend fun getItemById(id: String): Subject
 
-    @Query("SELECT * FROM ${DbTable.BOOK}")
-    fun getAllItemsLiveData(): LiveData<List<Book>>
+    @Query("SELECT * FROM ${DbTable.SUBJECT}")
+    fun getAllItemsLiveData(): LiveData<List<Subject>>
 
-    @Query("SELECT * FROM ${DbTable.BOOK}")
-    fun getAllItemsStateFlow(): Flow<List<Book>>
+    @Query("SELECT * FROM ${DbTable.SUBJECT}")
+    fun getAllItemsStateFlow(): Flow<List<Subject>>
 
 //    @Query("SELECT * FROM ${Table.BOOK} WHERE website = :website")
 //    fun getAllItemsByWebsiteStateFlow(website: String?): Flow<List<Book>>
@@ -53,23 +53,23 @@ interface BookDao {
 //    @Query("SELECT * FROM ${Table.BOOK} WHERE website = :website")
 //    fun getItemByWebsiteStateFlow(website: String?): Flow<Book>
 
-    @Query("SELECT * FROM ${DbTable.BOOK}")
-    suspend fun getAll(): List<Book>
+    @Query("SELECT * FROM ${DbTable.SUBJECT}")
+    suspend fun getAll(): List<Subject>
 
 
     @Transaction
     @Delete
-    suspend fun delete(book: Book)
+    suspend fun delete(subject: Subject)
 
 //    @Transaction
 //    @Query("DELETE FROM ${Table.BOOK} WHERE website = :website")
 //    suspend fun deleteByWebsite(website: String?)
 
-    @Transaction
-    @Query("DELETE FROM ${DbTable.BOOK} WHERE time >= :time")
-    suspend fun deleteAllByTime(time: Long?)
+//    @Transaction
+//    @Query("DELETE FROM ${DbTable.SUBJECT} WHERE time >= :time")
+//    suspend fun deleteAllByTime(time: Long?)
 
     @Transaction
-    @Query("DELETE FROM ${DbTable.BOOK}")
+    @Query("DELETE FROM ${DbTable.SUBJECT}")
     suspend fun deleteAll()
 }

@@ -1,8 +1,10 @@
 package com.singularitycoder.learnit.helpers
 
+import android.os.Parcelable
 import com.singularitycoder.learnit.BuildConfig
 import com.singularitycoder.learnit.MainFragment
 import com.singularitycoder.learnit.R
+import kotlinx.parcelize.Parcelize
 
 const val FILE_PROVIDER = "${BuildConfig.APPLICATION_ID}.fileprovider"
 
@@ -11,9 +13,13 @@ val globalSlideToBottomAnimation = R.anim.layout_animation_fall_down
 val globalSlideToTopAnimation = R.anim.layout_animation_slide_from_bottom
 
 object FragmentResultKey {
+    const val RENAME_DOWNLOAD_FILE = "RENAME_DOWNLOAD_FILE"
+    const val CREATE_NEW_DOWNLOAD_FOLDER = "CREATE_NEW_DOWNLOAD_FOLDER"
 }
 
 object FragmentResultBundleKey {
+    const val RENAME_DOWNLOAD_FILE = "RENAME_DOWNLOAD_FILE"
+    const val CREATE_NEW_DOWNLOAD_FOLDER = "CREATE_NEW_DOWNLOAD_FOLDER"
 }
 
 object WakeLockKey {
@@ -50,8 +56,8 @@ object Db {
 }
 
 object DbTable {
-    const val BOOK = "table_book"
-    const val BOOK_DATA = "table_book_data"
+    const val SUBJECT = "table_subject"
+    const val TOPIC = "table_topic"
 }
 
 object BroadcastKey {
@@ -66,6 +72,8 @@ object TtsTag {
 }
 
 object BottomSheetTag {
+    const val TAG_BOOK_READER_FILTERS = "TAG_BOOK_READER_FILTERS"
+    const val TAG_EDIT = "TAG_EDIT_BOTTOM_SHEET"
 }
 
 object WorkerData {
@@ -74,4 +82,10 @@ object WorkerData {
 
 object WorkerTag {
     const val PDF_TO_TEXT_CONVERTER = "PDF_TO_TEXT_CONVERTER"
+}
+
+@Parcelize
+enum class EditEvent : Parcelable {
+    CREATE_NEW_DOWNLOAD_FOLDER,
+    RENAME_DOWNLOAD_FILE,
 }

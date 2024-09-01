@@ -86,3 +86,12 @@ fun Context.isDarkModeOn(): Boolean {
     val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
     return currentNightMode == Configuration.UI_MODE_NIGHT_YES
 }
+
+/** Request focus before showing keyboard - editText.requestFocus() */
+fun EditText?.showKeyboard() {
+    this?.requestFocus()
+    if (this?.hasFocus() == true) {
+        val imm = this.context?.getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+    }
+}

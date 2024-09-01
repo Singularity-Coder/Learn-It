@@ -15,6 +15,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
 import android.view.inputmethod.EditorInfo
@@ -26,6 +27,7 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.singularitycoder.learnit.MainActivity
 import com.singularitycoder.learnit.R
@@ -353,6 +355,25 @@ fun View.setMargins(
 // https://stackoverflow.com/questions/27839105/android-lollipop-change-navigation-bar-color
 fun Activity.setNavigationBarColor(@ColorRes color: Int) {
     window.navigationBarColor = ContextCompat.getColor(this, color)
+}
+
+/** https://stackoverflow.com/questions/48002290/show-entire-bottom-sheet-with-edittext-above-keyboard
+ * This is for adjusting the input field properly when keyboard visible */
+fun BottomSheetDialogFragment.enableSoftInput() {
+    dialog?.window?.setSoftInputMode(
+        WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
+    )
+}
+
+// https://stackoverflow.com/questions/37104960/bottomsheetdialog-with-transparent-background
+fun BottomSheetDialogFragment.setTransparentBackground() {
+    dialog?.apply {
+        // window?.setDimAmount(0.2f) // Set dim amount here
+        setOnShowListener {
+            val bottomSheet = findViewById<View?>(com.google.android.material.R.id.design_bottom_sheet)
+            bottomSheet?.setBackgroundResource(android.R.color.transparent)
+        }
+    }
 }
 
 // https://stackoverflow.com/questions/2228151/how-to-enable-haptic-feedback-on-button-view

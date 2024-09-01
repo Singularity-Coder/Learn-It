@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.singularitycoder.learnit.databinding.ListItemBookBinding
+import com.singularitycoder.learnit.databinding.ListItemSubjectBinding
 import com.singularitycoder.learnit.helpers.deviceHeight
 import com.singularitycoder.learnit.helpers.deviceWidth
 import com.singularitycoder.learnit.helpers.onCustomLongClick
@@ -13,30 +13,30 @@ import com.singularitycoder.learnit.helpers.onSafeClick
 
 class DownloadsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    var bookList = emptyList<Book?>()
-    private var itemClickListener: (book: Book?, position: Int) -> Unit = { _, _ -> }
-    private var itemLongClickListener: (book: Book?, view: View?, position: Int?) -> Unit = { _, _, _ -> }
+    var subjectList = emptyList<Subject?>()
+    private var itemClickListener: (subject: Subject?, position: Int) -> Unit = { _, _ -> }
+    private var itemLongClickListener: (subject: Subject?, view: View?, position: Int?) -> Unit = { _, _, _ -> }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val itemBinding = ListItemBookBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val itemBinding = ListItemSubjectBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ThisViewHolder(itemBinding)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as ThisViewHolder).setData(bookList[position])
+        (holder as ThisViewHolder).setData(subjectList[position])
     }
 
-    override fun getItemCount(): Int = bookList.size
+    override fun getItemCount(): Int = subjectList.size
 
     override fun getItemViewType(position: Int): Int = position
 
-    fun setOnItemClickListener(listener: (book: Book?, position: Int) -> Unit) {
+    fun setOnItemClickListener(listener: (subject: Subject?, position: Int) -> Unit) {
         itemClickListener = listener
     }
 
     fun setOnItemLongClickListener(
         listener: (
-            book: Book?,
+            subject: Subject?,
             view: View?,
             position: Int?
         ) -> Unit
@@ -45,10 +45,10 @@ class DownloadsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     inner class ThisViewHolder(
-        private val itemBinding: ListItemBookBinding,
+        private val itemBinding: ListItemSubjectBinding,
     ) : RecyclerView.ViewHolder(itemBinding.root) {
         @SuppressLint("SetJavaScriptEnabled")
-        fun setData(book: Book?) {
+        fun setData(subject: Subject?) {
             itemBinding.apply {
                 itemBinding.root.animate().run {
                     withStartAction {
@@ -58,15 +58,15 @@ class DownloadsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     alpha(1.0F) // set default layout alpha to 0. So transition from alpha 0 to 1
                     withEndAction {}
                 }
-                ivItemImage.layoutParams.height = deviceHeight() / 6
-                ivItemImage.layoutParams.width = deviceWidth() / 4
-                tvSource.text = "${book?.extension}  •  ${book?.pageCount} pages  •  ${book?.size}"
-                tvTitle.text = book?.title
+//                ivItemImage.layoutParams.height = deviceHeight() / 6
+//                ivItemImage.layoutParams.width = deviceWidth() / 4
+//                tvSource.text = "${subject?.extension}  •  ${subject?.pageCount} pages  •  ${subject?.size}"
+                tvTitle.text = subject?.title
                 root.onSafeClick {
-                    itemClickListener.invoke(book, bindingAdapterPosition)
+                    itemClickListener.invoke(subject, bindingAdapterPosition)
                 }
                 root.onCustomLongClick {
-                    itemLongClickListener.invoke(book, it, bindingAdapterPosition)
+                    itemLongClickListener.invoke(subject, it, bindingAdapterPosition)
                 }
             }
         }
