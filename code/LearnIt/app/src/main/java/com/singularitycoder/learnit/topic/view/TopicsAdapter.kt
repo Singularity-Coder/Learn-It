@@ -11,6 +11,9 @@ import com.singularitycoder.learnit.databinding.ListItemTopicBinding
 import com.singularitycoder.learnit.helpers.color
 import com.singularitycoder.learnit.helpers.onCustomLongClick
 import com.singularitycoder.learnit.helpers.onSafeClick
+import com.singularitycoder.learnit.helpers.showKeyboard
+import com.singularitycoder.learnit.helpers.toDateTime
+import com.singularitycoder.learnit.subject.view.SubjectsAdapter.ThisViewHolder
 import com.singularitycoder.learnit.topic.model.Topic
 
 class TopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -51,6 +54,15 @@ class TopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         itemLongClickListener = listener
     }
 
+    fun reset(
+        recyclerView: RecyclerView,
+        adapterPosition: Int,
+    ) {
+        val viewHolder = (recyclerView.findViewHolderForAdapterPosition(adapterPosition) as? ThisViewHolder) ?: return
+        viewHolder.resetRepetitionDayViews()
+    }
+
+
     inner class ThisViewHolder(
         private val itemBinding: ListItemTopicBinding,
     ) : RecyclerView.ViewHolder(itemBinding.root) {
@@ -59,6 +71,10 @@ class TopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             itemBinding.apply {
                 tvTitle.text = topic?.title
                 tvStudyMaterial.text = "Study Material: ${topic?.studyMaterial}"
+                tvNextSession.text = "Next Session: ${topic?.nextSessionDate?.toDateTime() ?: "NA"}"
+                if (topic?.dateStarted != 0L) {
+                    setStartedState(topic)
+                }
                 root.onSafeClick {
                     itemClickListener.invoke(topic, bindingAdapterPosition)
                 }
@@ -66,11 +82,31 @@ class TopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     itemLongClickListener.invoke(topic, it, bindingAdapterPosition)
                 }
                 btnStart.onSafeClick {
-                    btnStart.isVisible = false
-                    clRepetitionDays.isVisible = true
-                    tvDay1.backgroundTintList = ColorStateList.valueOf(root.context.color(R.color.purple_500))
-                    tvDay1.setTextColor(root.context.color(R.color.white))
+                    setStartedState(topic)
                     startClickListener.invoke(topic, bindingAdapterPosition)
+                }
+            }
+        }
+
+        private fun setStartedState(topic: Topic?) {
+            itemBinding.apply {
+                btnStart.isVisible = false
+                clRepetitionDays.isVisible = true
+                val dayViewList = listOf(tvDay1, tvDay2, tvDay3, tvDay4, tvDay5)
+                (1..(topic?.finishedSessions ?: 0)).forEachIndexed { index, value ->
+                    dayViewList[index].backgroundTintList = ColorStateList.valueOf(root.context.color(R.color.purple_500))
+                    dayViewList[index].setTextColor(root.context.color(R.color.white))
+                }
+            }
+        }
+
+        fun resetRepetitionDayViews() {
+            itemBinding.apply {
+                btnStart.isVisible = true
+                clRepetitionDays.isVisible = false
+                listOf(tvDay1, tvDay2, tvDay3, tvDay4, tvDay5).forEachIndexed { index, textView ->
+                    textView.backgroundTintList = ColorStateList.valueOf(root.context.color(R.color.purple_50))
+                    textView.setTextColor(root.context.color(R.color.purple_500))
                 }
             }
         }

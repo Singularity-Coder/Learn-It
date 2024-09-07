@@ -16,7 +16,7 @@ ________________________________________________________________________________
 Common spaced repetition system
 This system suggests reviewing material one day after the initial learning, then seven days later, 16 days later, and 35 days later.
 0 +1 +7 +16 +35
-
+1, 6, 9, 19
 ________________________________________________________________________________________
 
 

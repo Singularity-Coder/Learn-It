@@ -18,9 +18,11 @@ import com.singularitycoder.learnit.helpers.FragmentResultBundleKey
 import com.singularitycoder.learnit.helpers.FragmentResultKey
 import com.singularitycoder.learnit.helpers.FragmentsTag
 import com.singularitycoder.learnit.helpers.collectLatestLifecycleFlow
+import com.singularitycoder.learnit.helpers.currentTimeMillis
 import com.singularitycoder.learnit.helpers.globalLayoutAnimation
 import com.singularitycoder.learnit.helpers.layoutAnimationController
 import com.singularitycoder.learnit.helpers.onSafeClick
+import com.singularitycoder.learnit.helpers.oneDayTimeMillis
 import com.singularitycoder.learnit.helpers.showAlertDialog
 import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
 import com.singularitycoder.learnit.helpers.showScreen
@@ -94,6 +96,13 @@ class TopicFragment : Fragment() {
         root.setOnClickListener { }
 
         topicsAdapter.setOnStartClickListener { topic, position ->
+            viewModel.updateTopic2(
+                topic = topic?.copy(
+                    dateStarted = currentTimeMillis,
+                    nextSessionDate = currentTimeMillis + oneDayTimeMillis,
+                    finishedSessions = 1
+                )
+            )
             // start alarm
         }
 
@@ -136,7 +145,14 @@ class TopicFragment : Fragment() {
             ) { it: MenuItem? ->
                 when (it?.title?.toString()?.trim()) {
                     optionsList[0].first -> {
-                        // reset alarms
+                        topicsAdapter.reset(rvTopics, position)
+                        viewModel.updateTopic2(
+                            topic = topic?.copy(
+                                dateStarted = 0L,
+                                nextSessionDate = 0L,
+                                finishedSessions = 0
+                            )
+                        )
                     }
 
                     optionsList[1].first -> {
@@ -155,7 +171,7 @@ class TopicFragment : Fragment() {
                             negativeBtnText = "Cancel",
                             positiveBtnColor = R.color.md_red_700,
                             positiveAction = {
-                                viewModel.deleteTopicItem(topic)
+                                viewModel.deleteTopic(topic)
                             }
                         )
                     }

@@ -17,10 +17,14 @@ class TopicViewModel @Inject constructor(
     private val subTopicDao: SubTopicDao,
 ) : ViewModel() {
 
-    suspend fun addTopicItem(topic: Topic): Long = topicDao.insert(topic)
+    suspend fun addTopic(topic: Topic): Long = topicDao.insert(topic)
 
-    suspend fun updateTopicItem(topic: Topic?) {
+    suspend fun updateTopic(topic: Topic?) {
         topicDao.update(topic ?: return)
+    }
+
+    fun updateTopic2(topic: Topic?) = viewModelScope.launch {
+        topicDao.update(topic ?: return@launch)
     }
 
     fun getAllTopicBySubjectIdItemsFlow(subjectId: Long?): Flow<List<Topic>> {
@@ -28,7 +32,7 @@ class TopicViewModel @Inject constructor(
         return topicDao.getAllItemsBySubjectIdStateFlow(subjectId)
     }
 
-    fun deleteTopicItem(topic: Topic?) = viewModelScope.launch {
+    fun deleteTopic(topic: Topic?) = viewModelScope.launch {
         subTopicDao.deleteAll()
         topicDao.delete(topic ?: return@launch)
     }

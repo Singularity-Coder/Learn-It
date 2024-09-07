@@ -179,7 +179,7 @@ class EditBottomSheetFragment : BottomSheetDialogFragment() {
                             nextSessionDate = 0L,
                             finishedSessions = 0,
                         )
-                        val topicId = topicViewModel.addTopicItem(topic)
+                        val topicId = topicViewModel.addTopic(topic)
                         val topicWithId = topicViewModel.getTopicById(topicId)
 
                         withContext(Dispatchers.Main) {
@@ -191,7 +191,7 @@ class EditBottomSheetFragment : BottomSheetDialogFragment() {
                     }
 
                     EditEvent.UPDATE_TOPIC -> {
-                        topicViewModel.updateTopicItem(
+                        topicViewModel.updateTopic(
                             topic = topic?.copy(
                                 title = etEdit.editText?.text?.toString() ?: "",
                                 studyMaterial = etEdit2.editText?.text?.toString() ?: ""
