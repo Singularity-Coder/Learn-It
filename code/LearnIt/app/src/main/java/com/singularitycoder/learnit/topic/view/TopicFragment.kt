@@ -27,6 +27,7 @@ import com.singularitycoder.learnit.helpers.showScreen
 import com.singularitycoder.learnit.subject.model.Subject
 import com.singularitycoder.learnit.subject.view.MainActivity
 import com.singularitycoder.learnit.subtopic.view.AddSubTopicFragment
+import com.singularitycoder.learnit.subtopic.view.SubTopicBottomSheetFragment
 import com.singularitycoder.learnit.topic.model.Topic
 import com.singularitycoder.learnit.topic.viewmodel.TopicViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,7 +52,7 @@ class TopicFragment : Fragment() {
 
     private lateinit var binding: FragmentTopicBinding
 
-    private val topicsAdapter = TopicsAdapter()
+    private val topicsAdapter: TopicsAdapter by lazy { TopicsAdapter() }
 
     private var topicList = listOf<Topic?>()
 
@@ -99,10 +100,12 @@ class TopicFragment : Fragment() {
 
                 withContext(Dispatchers.Main) {
                     if (hasSubTopics) {
-                        // Botsheet
+                        SubTopicBottomSheetFragment.newInstance(
+                            topic = topic
+                        ).show(parentFragmentManager, BottomSheetTag.TAG_SUB_TOPICS)
                     } else {
                         (requireActivity() as MainActivity).showScreen(
-                            fragment = AddSubTopicFragment.newInstance(topic.id),
+                            fragment = AddSubTopicFragment.newInstance(topic),
                             tag = FragmentsTag.ADD_SUB_TOPIC,
                             isAdd = true,
                             enterAnim = R.anim.slide_to_top,
@@ -167,9 +170,13 @@ class TopicFragment : Fragment() {
             /* requestKey = */ FragmentResultKey.ADD_TOPIC,
             /* lifecycleOwner = */ viewLifecycleOwner
         ) { _, bundle: Bundle ->
-            val topicId = bundle.getLong(FragmentResultBundleKey.TOPIC_ID)
+            val topic = if (AndroidVersions.isTiramisu()) {
+                bundle.getParcelable(FragmentResultBundleKey.TOPIC, Topic::class.java)
+            } else {
+                bundle.getParcelable(FragmentResultBundleKey.TOPIC)
+            } ?: return@setFragmentResultListener
             (requireActivity() as MainActivity).showScreen(
-                fragment = AddSubTopicFragment.newInstance(topicId),
+                fragment = AddSubTopicFragment.newInstance(topic),
                 tag = FragmentsTag.ADD_SUB_TOPIC,
                 isAdd = true,
                 enterAnim = R.anim.slide_to_top,

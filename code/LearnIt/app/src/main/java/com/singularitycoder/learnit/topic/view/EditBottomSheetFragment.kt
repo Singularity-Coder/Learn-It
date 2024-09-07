@@ -180,11 +180,12 @@ class EditBottomSheetFragment : BottomSheetDialogFragment() {
                             finishedSessions = 0,
                         )
                         val topicId = topicViewModel.addTopicItem(topic)
+                        val topicWithId = topicViewModel.getTopicById(topicId)
 
                         withContext(Dispatchers.Main) {
                             parentFragmentManager.setFragmentResult(
                                 /* requestKey = */ FragmentResultKey.ADD_TOPIC,
-                                /* result = */ bundleOf(FragmentResultBundleKey.TOPIC_ID to topicId)
+                                /* result = */ bundleOf(FragmentResultBundleKey.TOPIC to topicWithId)
                             )
                         }
                     }

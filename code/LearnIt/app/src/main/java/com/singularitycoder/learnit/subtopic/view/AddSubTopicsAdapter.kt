@@ -12,7 +12,7 @@ import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.showKeyboard
 import com.singularitycoder.learnit.subtopic.model.SubTopic
 
-class SubTopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class AddSubTopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var subTopicList = emptyList<SubTopic?>()
     private var itemClickListener: (subTopic: SubTopic?, position: Int) -> Unit = { _, _ -> }

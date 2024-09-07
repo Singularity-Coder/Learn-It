@@ -38,11 +38,9 @@ class TopicViewModel @Inject constructor(
         return subTopicDao.hasItemsWith(topicId)
     }
 
+    suspend fun getTopicById(id: Long): Topic = topicDao.getItemById(id)
+
     suspend fun getAllBookItems() = topicDao.getAll()
-
-    suspend fun getBookItemById(id: String) = topicDao.getItemById(id)
-
-    suspend fun getBookDataItemById(id: String) = topicDao.getItemById(id)
 
 //    suspend fun updateCompletedPageWithId(completedPage: Int, id: String) = bookDao.updateCompletedPageWithId(completedPage, id)
 

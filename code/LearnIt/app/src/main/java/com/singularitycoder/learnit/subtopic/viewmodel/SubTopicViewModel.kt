@@ -4,7 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.singularitycoder.learnit.subtopic.dao.SubTopicDao
 import com.singularitycoder.learnit.subtopic.model.SubTopic
+import com.singularitycoder.learnit.topic.model.Topic
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,6 +22,11 @@ class SubTopicViewModel @Inject constructor(
 
     fun addAllSubTopicItem(list: List<SubTopic>) = viewModelScope.launch {
         subTopicDao.insertAll(list)
+    }
+
+    fun getAllTopicByTopicIdItemsFlow(topicId: Long?): Flow<List<SubTopic>> {
+        topicId ?: return emptyFlow()
+        return subTopicDao.getAllItemsByTopicIdStateFlow(topicId)
     }
 
     fun getAllSubTopicItemsFlow() = subTopicDao.getAllItemsStateFlow()
@@ -49,5 +57,10 @@ class SubTopicViewModel @Inject constructor(
 
     fun deleteAllBookDataItems() = viewModelScope.launch {
         subTopicDao.deleteAll()
+    }
+
+    fun deleteAllSubTopicsBy(topicId: Long?) = viewModelScope.launch {
+        topicId ?: return@launch
+        subTopicDao.deleteAllByTopicId(topicId)
     }
 }

@@ -13,42 +13,43 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.FragmentAddSubTopicBinding
+import com.singularitycoder.learnit.helpers.AndroidVersions
 import com.singularitycoder.learnit.helpers.collectLatestLifecycleFlow
 import com.singularitycoder.learnit.helpers.drawable
-import com.singularitycoder.learnit.helpers.showSnackBar
 import com.singularitycoder.learnit.subject.view.MainActivity
 import com.singularitycoder.learnit.subtopic.model.SubTopic
 import com.singularitycoder.learnit.subtopic.viewmodel.SubTopicViewModel
-import com.singularitycoder.learnit.topic.viewmodel.TopicViewModel
+import com.singularitycoder.learnit.topic.model.Topic
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AddSubTopicFragment : Fragment() {
 
     companion object {
-        private const val KEY_TOPIC_ID = "KEY_TOPIC_ID"
+        private const val KEY_TOPIC = "KEY_TOPIC"
 
         @JvmStatic
-        fun newInstance(topicId: Long) = AddSubTopicFragment().apply {
+        fun newInstance(topic: Topic) = AddSubTopicFragment().apply {
             arguments = Bundle().apply {
-                putLong(KEY_TOPIC_ID, topicId)
+                putParcelable(KEY_TOPIC, topic)
             }
         }
     }
 
     private lateinit var binding: FragmentAddSubTopicBinding
 
-    private val subTopicsAdapter = SubTopicsAdapter()
+    private val addSubTopicsAdapter: AddSubTopicsAdapter by lazy { AddSubTopicsAdapter() }
 
-    private val topicViewModel by viewModels<TopicViewModel>()
     private val subTopicViewModel by viewModels<SubTopicViewModel>()
 
-    private var topicId: Long = 0L
+    private var topic: Topic? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            topicId = it.getLong(KEY_TOPIC_ID, 0L)
+        if (AndroidVersions.isTiramisu()) {
+            topic = arguments?.getParcelable(KEY_TOPIC, Topic::class.java)
+        } else {
+            topic = arguments?.getParcelable(KEY_TOPIC)
         }
     }
 
@@ -59,22 +60,26 @@ class AddSubTopicFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.observeForData()
         binding.setupUI()
         binding.setupUserActionListeners()
+        binding.observeForData()
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun FragmentAddSubTopicBinding.observeForData() {
-        (activity as? MainActivity)?.collectLatestLifecycleFlow(flow = subTopicViewModel.getAllSubTopicItemsFlow()) { list: List<SubTopic> ->
-            subTopicsAdapter.subTopicList = list
-            subTopicsAdapter.notifyDataSetChanged()
-            layoutAddItem.etItem.setText("")
+    private fun FragmentAddSubTopicBinding.setupUI() {
+        layoutCustomToolbar.apply {
+            ibBack.setImageDrawable(context?.drawable(R.drawable.ic_round_clear_24))
+            btnDone.isVisible = true
+            tvTitle.text = "Add Sub-Topics for ${topic?.title}"
+        }
+        layoutAddItem.etItem.hint = "Add Sub-Topic"
+        rvSubTopics.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = addSubTopicsAdapter
         }
     }
 
-    // https://www.youtube.com/watch?v=H9D_HoOeKWM
-    private fun FragmentAddSubTopicBinding.setupUI() {
+    private fun FragmentAddSubTopicBinding.setupUserActionListeners() {
+        // https://www.youtube.com/watch?v=H9D_HoOeKWM
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
             /* Drag Directions */ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.START or ItemTouchHelper.END,
             /* Swipe Directions */0
@@ -101,30 +106,16 @@ class AddSubTopicFragment : Fragment() {
         }
         ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(rvSubTopics)
 
-        layoutCustomToolbar.apply {
-            ibBack.setImageDrawable(context?.drawable(R.drawable.ic_round_clear_24))
-            btnDone.isVisible = true
-            tvTitle.text = "Add Sub-Topics"
-        }
-        layoutAddItem.etItem.hint = "Add Sub-Topic"
-        rvSubTopics.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = subTopicsAdapter
-        }
-    }
-
-    private fun FragmentAddSubTopicBinding.setupUserActionListeners() {
         layoutAddItem.ibAddItem.setOnClickListener {
             if (layoutAddItem.etItem.text.isNullOrBlank()) return@setOnClickListener
             val subTopic = SubTopic(
-                topicId = "",
+                topicId = topic?.id ?: return@setOnClickListener,
                 title = layoutAddItem.etItem.text.toString(),
-                isCorrectRecall = false,
             )
             subTopicViewModel.addSubTopicItem(subTopic)
         }
 
-        subTopicsAdapter.setOnItemClickListener { subTopic, position ->
+        addSubTopicsAdapter.setOnItemClickListener { subTopic, position ->
         }
 
         layoutCustomToolbar.ibBack.setOnClickListener {
@@ -132,17 +123,18 @@ class AddSubTopicFragment : Fragment() {
         }
 
         layoutCustomToolbar.btnDone.setOnClickListener {
-            if (subTopicsAdapter.subTopicList.isEmpty()) {
-                binding.root.showSnackBar("Steps are required!")
-                return@setOnClickListener
-            }
+            parentFragmentManager.popBackStackImmediate()
         }
+    }
 
-//        rvSubTopics.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-//                super.onScrolled(recyclerView, dx, dy)
-//                print("$dx $dy")
-//            }
-//        })
+    @SuppressLint("NotifyDataSetChanged")
+    private fun FragmentAddSubTopicBinding.observeForData() {
+        (activity as? MainActivity)?.collectLatestLifecycleFlow(
+            flow = subTopicViewModel.getAllTopicByTopicIdItemsFlow(topic?.id)
+        ) { list: List<SubTopic> ->
+            addSubTopicsAdapter.subTopicList = list
+            addSubTopicsAdapter.notifyDataSetChanged()
+            layoutAddItem.etItem.setText("")
+        }
     }
 }

@@ -30,7 +30,7 @@ interface TopicDao {
 //    fun updateLinkWithWebsite(link: String?, website: String)
 
     @Query("SELECT * FROM ${DbTable.TOPIC} WHERE id LIKE :id LIMIT 1")
-    suspend fun getItemById(id: String): Topic
+    suspend fun getItemById(id: Long): Topic
 
     @Query("SELECT * FROM ${DbTable.TOPIC}")
     fun getAllItemsLiveData(): LiveData<List<Topic>>

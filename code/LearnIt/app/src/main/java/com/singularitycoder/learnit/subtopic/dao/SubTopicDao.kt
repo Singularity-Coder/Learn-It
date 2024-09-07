@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.singularitycoder.learnit.helpers.DbTable
 import com.singularitycoder.learnit.subtopic.model.SubTopic
+import com.singularitycoder.learnit.topic.model.Topic
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -38,6 +39,9 @@ interface SubTopicDao {
     @Query("SELECT * FROM ${DbTable.SUB_TOPIC}")
     fun getAllItemsStateFlow(): Flow<List<SubTopic>>
 
+    @Query("SELECT * FROM ${DbTable.SUB_TOPIC} WHERE topicId = :topicId")
+    fun getAllItemsByTopicIdStateFlow(topicId: Long): Flow<List<SubTopic>>
+
 //    @Query("SELECT * FROM ${Table.BOOK_DATA} WHERE website = :website")
 //    fun getAllItemsByWebsiteStateFlow(website: String?): Flow<List<BookData>>
 //
@@ -59,4 +63,7 @@ interface SubTopicDao {
 
     @Query("DELETE FROM ${DbTable.SUB_TOPIC}")
     suspend fun deleteAll()
+
+    @Query("DELETE FROM ${DbTable.SUB_TOPIC} WHERE topicId = :topicId")
+    suspend fun deleteAllByTopicId(topicId: Long)
 }

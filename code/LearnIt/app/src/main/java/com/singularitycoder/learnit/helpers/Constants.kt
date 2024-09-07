@@ -21,7 +21,7 @@ object FragmentResultKey {
 
 object FragmentResultBundleKey {
     const val SUBJECT = "SUBJECT"
-    const val TOPIC_ID = "TOPIC"
+    const val TOPIC = "TOPIC"
     const val SUB_TOPIC = "SUB_TOPIC"
 }
 
@@ -78,8 +78,8 @@ object TtsTag {
 }
 
 object BottomSheetTag {
-    const val TAG_BOOK_READER_FILTERS = "TAG_BOOK_READER_FILTERS"
     const val TAG_EDIT = "TAG_EDIT_BOTTOM_SHEET"
+    const val TAG_SUB_TOPICS = "TAG_SUB_TOPICS_BOTTOM_SHEET"
 }
 
 object WorkerData {

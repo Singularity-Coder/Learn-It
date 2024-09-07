@@ -11,8 +11,8 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = DbTable.SUB_TOPIC)
 @Parcelize
 data class SubTopic(
-    @PrimaryKey var id: String = "",
-    var topicId: String = "",
+    @PrimaryKey(autoGenerate = true) var id: Long = 0L,
+    var topicId: Long = 0L,
     var title: String = "",
     var isCorrectRecall: Boolean = false,
 ) : Parcelable {
