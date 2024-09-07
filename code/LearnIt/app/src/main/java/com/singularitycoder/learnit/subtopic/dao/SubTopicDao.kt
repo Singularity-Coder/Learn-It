@@ -24,6 +24,9 @@ interface SubTopicDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(subTopic: SubTopic)
 
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateAll(list: List<SubTopic>)
+
     @Query("SELECT EXISTS(SELECT 1 FROM ${DbTable.SUB_TOPIC} WHERE topicId = :topicId)")
     suspend fun hasItemsWith(topicId: Long): Boolean
 

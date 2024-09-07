@@ -1,20 +1,23 @@
 
 
-Add default item to db when app opens - Data Science - Numpy - create numpy array
-double back press to exit
-upload routines from csv
+- Search in all screens
+- double back press to exit in add sub topics
+- Add default item to db when app opens - Data Science - Numpy - create numpy array
+- On start schedule next alarm
 
-On alarm accepted navigate directly to subtopics sheet
+- demo page on how to use it
+- custom text for alarm sound
+- upload routines from csv
+- Emoji on completion
+
+________________________________________________________________________________________
 
 
 Common spaced repetition system
 This system suggests reviewing material one day after the initial learning, then seven days later, 16 days later, and 35 days later.
 0 +1 +7 +16 +35
 
-
-Emoji on completion
-
-Search in all screens
+________________________________________________________________________________________
 
 
 https://stackoverflow.com/questions/44364240/android-room-get-the-id-of-new-inserted-row-with-auto-generate

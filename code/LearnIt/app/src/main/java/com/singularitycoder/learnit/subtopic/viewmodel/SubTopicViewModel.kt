@@ -2,6 +2,7 @@ package com.singularitycoder.learnit.subtopic.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.singularitycoder.learnit.subject.model.Subject
 import com.singularitycoder.learnit.subtopic.dao.SubTopicDao
 import com.singularitycoder.learnit.subtopic.model.SubTopic
 import com.singularitycoder.learnit.topic.model.Topic
@@ -20,8 +21,13 @@ class SubTopicViewModel @Inject constructor(
         subTopicDao.insert(subTopic)
     }
 
-    fun addAllSubTopicItem(list: List<SubTopic>) = viewModelScope.launch {
-        subTopicDao.insertAll(list)
+    fun updateAllSubTopics(list: List<SubTopic>) = viewModelScope.launch {
+        subTopicDao.updateAll(list)
+    }
+
+    fun updateSubTopic(subTopic: SubTopic?) = viewModelScope.launch {
+        subTopic ?: return@launch
+        subTopicDao.update(subTopic)
     }
 
     fun getAllTopicByTopicIdItemsFlow(topicId: Long?): Flow<List<SubTopic>> {
@@ -43,9 +49,9 @@ class SubTopicViewModel @Inject constructor(
 
 //    suspend fun getLast3BookItems() = bookDao.getLast3By()
 
-//    fun deleteBookItem(subject: Subject?) = viewModelScope.launch {
-//        subTopicDao.delete(subject ?: return@launch)
-//    }
+    fun deleteSubTopic(subTopic: SubTopic?) = viewModelScope.launch {
+        subTopicDao.delete(subTopic ?: return@launch)
+    }
 
 //    fun deleteBookDataItem(subject: Subject?) = viewModelScope.launch {
 //        subTopicDao.deleteBy(subject?.id ?: return@launch)

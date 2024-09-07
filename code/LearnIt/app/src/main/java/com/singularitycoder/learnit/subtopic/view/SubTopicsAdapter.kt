@@ -1,15 +1,16 @@
 package com.singularitycoder.learnit.subtopic.view
 
+import android.content.res.ColorStateList
+import android.graphics.drawable.Icon
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.singularitycoder.learnit.databinding.ListItemSubjectBinding
-import com.singularitycoder.learnit.helpers.hideKeyboard
+import com.singularitycoder.learnit.R
+import com.singularitycoder.learnit.databinding.ListItemSubTopicBinding
+import com.singularitycoder.learnit.helpers.color
 import com.singularitycoder.learnit.helpers.onCustomLongClick
 import com.singularitycoder.learnit.helpers.onSafeClick
-import com.singularitycoder.learnit.helpers.showKeyboard
 import com.singularitycoder.learnit.subtopic.model.SubTopic
 
 class SubTopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -20,7 +21,7 @@ class SubTopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var itemApproveUpdateClickListener: (subTopic: SubTopic?, position: Int) -> Unit = { _, _ -> }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val itemBinding = ListItemSubjectBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val itemBinding = ListItemSubTopicBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ThisViewHolder(itemBinding)
     }
 
@@ -50,26 +51,9 @@ class SubTopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         itemApproveUpdateClickListener = listener
     }
 
-    fun showEditView(
-        recyclerView: RecyclerView,
-        adapterPosition: Int,
-    ) {
-        val viewHolder = (recyclerView.findViewHolderForAdapterPosition(adapterPosition) as? ThisViewHolder) ?: return
-        viewHolder.getRootView().apply {
-            clTitle.isVisible = false
-            layoutUpdateItem.apply {
-                root.isVisible = true
-                etUpdateItem.setText(subTopicList[adapterPosition]?.title)
-                etUpdateItem.showKeyboard()
-            }
-        }
-    }
-
     inner class ThisViewHolder(
-        private val itemBinding: ListItemSubjectBinding,
+        private val itemBinding: ListItemSubTopicBinding,
     ) : RecyclerView.ViewHolder(itemBinding.root) {
-
-        fun getRootView() = itemBinding
 
         fun setData(subTopic: SubTopic?) {
             itemBinding.apply {
@@ -80,19 +64,25 @@ class SubTopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 root.onCustomLongClick {
                     itemLongClickListener.invoke(subTopic, it, bindingAdapterPosition)
                 }
-                layoutUpdateItem.ibCancelUpdate.onSafeClick {
-                    layoutUpdateItem.root.isVisible = false
-                    clTitle.isVisible = true
-                    layoutUpdateItem.etUpdateItem.hideKeyboard()
-                }
-                layoutUpdateItem.ibApproveUpdate.onSafeClick {
+                ibCheck.backgroundTintList = ColorStateList.valueOf(
+                    if (subTopic?.isCorrectRecall == true) {
+                        root.context.color(R.color.purple_500)
+                    } else {
+                        root.context.color(R.color.purple_50)
+                    }
+                )
+                ibCheck.setImageIcon(
+                    if (subTopic?.isCorrectRecall == true) {
+                        Icon.createWithResource(root.context, R.drawable.round_check_white_24)
+                    } else {
+                        Icon.createWithResource(root.context, R.drawable.round_check_purple_24)
+                    }
+                )
+                ibCheck.onSafeClick {
                     itemApproveUpdateClickListener.invoke(
-                        subTopic?.copy(title = layoutUpdateItem.etUpdateItem.text.toString()),
+                        subTopic?.copy(isCorrectRecall = subTopic.isCorrectRecall.not()),
                         bindingAdapterPosition
                     )
-                    layoutUpdateItem.root.isVisible = false
-                    clTitle.isVisible = true
-                    layoutUpdateItem.etUpdateItem.hideKeyboard()
                 }
             }
         }

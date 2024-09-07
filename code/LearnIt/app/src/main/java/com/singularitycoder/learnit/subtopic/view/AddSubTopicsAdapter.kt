@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.singularitycoder.learnit.databinding.ListItemSubjectBinding
+import com.singularitycoder.learnit.databinding.ListItemAddSubTopicBinding
 import com.singularitycoder.learnit.helpers.hideKeyboard
 import com.singularitycoder.learnit.helpers.onCustomLongClick
 import com.singularitycoder.learnit.helpers.onSafeClick
@@ -14,13 +14,13 @@ import com.singularitycoder.learnit.subtopic.model.SubTopic
 
 class AddSubTopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    var subTopicList = emptyList<SubTopic?>()
+    var subTopicList = mutableListOf<SubTopic?>()
     private var itemClickListener: (subTopic: SubTopic?, position: Int) -> Unit = { _, _ -> }
     private var itemLongClickListener: (subTopic: SubTopic?, view: View?, position: Int) -> Unit = { _, _, _ -> }
     private var itemApproveUpdateClickListener: (subTopic: SubTopic?, position: Int) -> Unit = { _, _ -> }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val itemBinding = ListItemSubjectBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val itemBinding = ListItemAddSubTopicBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ThisViewHolder(itemBinding)
     }
 
@@ -31,6 +31,17 @@ class AddSubTopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun getItemCount(): Int = subTopicList.size
 
     override fun getItemViewType(position: Int): Int = position
+
+    fun moveItem(from: Int, to: Int) {
+        val fromItem = subTopicList[from]
+        subTopicList.removeAt(from)
+        subTopicList[to] = fromItem
+//        if (to < from) {
+//            subTopicList[to] = fromItem
+//        } else {
+//            subTopicList[to-1] = fromItem
+//        }
+    }
 
     fun setOnItemClickListener(listener: (subTopic: SubTopic?, position: Int) -> Unit) {
         itemClickListener = listener
@@ -66,7 +77,7 @@ class AddSubTopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     inner class ThisViewHolder(
-        private val itemBinding: ListItemSubjectBinding,
+        private val itemBinding: ListItemAddSubTopicBinding,
     ) : RecyclerView.ViewHolder(itemBinding.root) {
 
         fun getRootView() = itemBinding
@@ -74,6 +85,7 @@ class AddSubTopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         fun setData(subTopic: SubTopic?) {
             itemBinding.apply {
                 tvTitle.text = subTopic?.title
+                tvStepNumber.text = "${bindingAdapterPosition + 1}"
                 root.onSafeClick {
                     itemClickListener.invoke(subTopic, bindingAdapterPosition)
                 }

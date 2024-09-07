@@ -99,8 +99,13 @@ class SubTopicBottomSheetFragment : BottomSheetDialogFragment() {
         subTopicsAdapter.setOnItemLongClickListener { subTopic, view, position ->
         }
 
+        subTopicsAdapter.setOnApproveUpdateClickListener { subTopic, position ->
+            subTopicViewModel.updateSubTopic(subTopic)
+        }
+
         ivMore.onSafeClick {
             val optionsList = listOf(
+                Pair("Reset", R.drawable.round_settings_backup_restore_24),
                 Pair("Edit", R.drawable.outline_edit_24),
                 Pair("Delete All", R.drawable.outline_delete_24),
             )
@@ -112,6 +117,12 @@ class SubTopicBottomSheetFragment : BottomSheetDialogFragment() {
             ) { it: MenuItem? ->
                 when (it?.title?.toString()?.trim()) {
                     optionsList[0].first -> {
+                        subTopicViewModel.updateAllSubTopics(
+                            subTopicList.map { it?.copy(isCorrectRecall = false) }.filterNotNull()
+                        )
+                    }
+
+                    optionsList[1].first -> {
                         this@SubTopicBottomSheetFragment.dismiss()
                         (requireActivity() as MainActivity).showScreen(
                             fragment = AddSubTopicFragment.newInstance(topic ?: return@showPopupMenuWithIcons),
@@ -124,9 +135,9 @@ class SubTopicBottomSheetFragment : BottomSheetDialogFragment() {
                         )
                     }
 
-                    optionsList[1].first -> {
+                    optionsList[2].first -> {
                         requireContext().showAlertDialog(
-                            message = "Delete all items from ${topic?.title} topic? You cannot undo this action.",
+                            message = "Delete all items from \"${topic?.title}\" topic? You cannot undo this action.",
                             positiveBtnText = "Delete",
                             negativeBtnText = "Cancel",
                             positiveBtnColor = R.color.md_red_700,
