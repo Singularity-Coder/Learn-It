@@ -9,7 +9,7 @@ import kotlinx.parcelize.Parcelize
 @Entity(tableName = DbTable.TOPIC)
 @Parcelize
 data class Topic(
-    @PrimaryKey var id: String = "",
+    @PrimaryKey(autoGenerate = true) var id: Long = 0L,
     var title: String = "",
     var subjectId: Long = 0L,
     var studyMaterial: String = "",

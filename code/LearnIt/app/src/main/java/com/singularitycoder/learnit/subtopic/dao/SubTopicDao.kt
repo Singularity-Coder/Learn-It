@@ -23,6 +23,9 @@ interface SubTopicDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(subTopic: SubTopic)
 
+    @Query("SELECT EXISTS(SELECT 1 FROM ${DbTable.SUB_TOPIC} WHERE topicId = :topicId)")
+    suspend fun hasItemsWith(topicId: Long): Boolean
+
 //    @Query("UPDATE ${Table.BOOK_DATA} SET link = :link WHERE website LIKE :website")
 //    fun updateLinkWithWebsite(link: String?, website: String)
 

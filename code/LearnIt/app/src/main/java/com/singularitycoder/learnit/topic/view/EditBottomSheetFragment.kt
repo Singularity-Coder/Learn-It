@@ -38,15 +38,18 @@ class EditBottomSheetFragment : BottomSheetDialogFragment() {
     companion object {
         private const val ARG_PARAM_EDIT_EVENT_TYPE = "ARG_PARAM_EDIT_EVENT_TYPE"
         private const val KEY_SUBJECT = "KEY_SUBJECT"
+        private const val KEY_TOPIC = "KEY_TOPIC"
 
         @JvmStatic
         fun newInstance(
             eventType: EditEvent,
-            subject: Subject?
+            subject: Subject?,
+            topic: Topic?
         ) = EditBottomSheetFragment().apply {
             arguments = Bundle().apply {
                 putParcelable(ARG_PARAM_EDIT_EVENT_TYPE, eventType)
                 putParcelable(KEY_SUBJECT, subject)
+                putParcelable(KEY_TOPIC, topic)
             }
         }
     }
@@ -60,15 +63,18 @@ class EditBottomSheetFragment : BottomSheetDialogFragment() {
 
     private var eventType: EditEvent? = null
     private var subject: Subject? = null
+    private var topic: Topic? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (AndroidVersions.isTiramisu()) {
             eventType = arguments?.getParcelable(ARG_PARAM_EDIT_EVENT_TYPE, EditEvent::class.java)
             subject = arguments?.getParcelable(KEY_SUBJECT, Subject::class.java)
+            topic = arguments?.getParcelable(KEY_TOPIC, Topic::class.java)
         } else {
             eventType = arguments?.getParcelable(ARG_PARAM_EDIT_EVENT_TYPE)
             subject = arguments?.getParcelable(KEY_SUBJECT)
+            topic = arguments?.getParcelable(KEY_TOPIC)
         }
     }
 
@@ -87,14 +93,18 @@ class EditBottomSheetFragment : BottomSheetDialogFragment() {
         enableSoftInput()
         setTransparentBackground()
 
+        etEdit.hint = "Topic name"
+        etEdit2.hint = "Study material"
+
         when (eventType) {
             EditEvent.ADD_TOPIC -> {
                 tvHeader.text = "Add Topic"
-                etEdit.hint = "Topic name"
-                etEdit2.hint = "Study material"
             }
 
             EditEvent.UPDATE_TOPIC -> {
+                tvHeader.text = "Update Topic"
+                etEdit.editText?.setText(topic?.title)
+                etEdit2.editText?.setText(topic?.studyMaterial)
             }
 
             else -> Unit
@@ -176,16 +186,24 @@ class EditBottomSheetFragment : BottomSheetDialogFragment() {
                                 /* requestKey = */ FragmentResultKey.ADD_TOPIC,
                                 /* result = */ bundleOf(FragmentResultBundleKey.TOPIC_ID to topicId)
                             )
-
-                            progressCircular.isVisible = false
-                            dismiss()
                         }
                     }
 
                     EditEvent.UPDATE_TOPIC -> {
+                        topicViewModel.updateTopicItem(
+                            topic = topic?.copy(
+                                title = etEdit.editText?.text?.toString() ?: "",
+                                studyMaterial = etEdit2.editText?.text?.toString() ?: ""
+                            )
+                        )
                     }
 
                     else -> Unit
+                }
+
+                withContext(Dispatchers.Main) {
+                    progressCircular.isVisible = false
+                    dismiss()
                 }
             }
         }

@@ -2,24 +2,43 @@ package com.singularitycoder.learnit.topic.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.singularitycoder.learnit.subtopic.dao.SubTopicDao
 import com.singularitycoder.learnit.topic.dao.TopicDao
 import com.singularitycoder.learnit.topic.model.Topic
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class TopicViewModel @Inject constructor(
     private val topicDao: TopicDao,
+    private val subTopicDao: SubTopicDao,
 ) : ViewModel() {
 
     suspend fun addTopicItem(topic: Topic): Long = topicDao.insert(topic)
 
-    fun getAllTopicItemsFlow() = topicDao.getAllItemsStateFlow()
+    suspend fun updateTopicItem(topic: Topic?) {
+        topicDao.update(topic ?: return)
+    }
+
+    fun getAllTopicBySubjectIdItemsFlow(subjectId: Long?): Flow<List<Topic>> {
+        subjectId ?: return emptyFlow()
+        return topicDao.getAllItemsBySubjectIdStateFlow(subjectId)
+    }
+
+    fun deleteTopicItem(topic: Topic?) = viewModelScope.launch {
+        subTopicDao.deleteAll()
+        topicDao.delete(topic ?: return@launch)
+    }
+
+    suspend fun hasSubTopicsWith(topicId: Long?): Boolean {
+        topicId ?: return false
+        return subTopicDao.hasItemsWith(topicId)
+    }
 
     suspend fun getAllBookItems() = topicDao.getAll()
-
-//    suspend fun hasBooks() = topicDao.hasItems()
 
     suspend fun getBookItemById(id: String) = topicDao.getItemById(id)
 

@@ -26,12 +26,12 @@ import dagger.hilt.android.AndroidEntryPoint
 class AddSubTopicFragment : Fragment() {
 
     companion object {
-        private const val KEY_SUBJECT_ID = "KEY_SUBJECT_ID"
+        private const val KEY_TOPIC_ID = "KEY_TOPIC_ID"
 
         @JvmStatic
         fun newInstance(topicId: Long) = AddSubTopicFragment().apply {
             arguments = Bundle().apply {
-                putLong(KEY_SUBJECT_ID, topicId)
+                putLong(KEY_TOPIC_ID, topicId)
             }
         }
     }
@@ -43,12 +43,12 @@ class AddSubTopicFragment : Fragment() {
     private val topicViewModel by viewModels<TopicViewModel>()
     private val subTopicViewModel by viewModels<SubTopicViewModel>()
 
-    private var subjectId: Long = 0L
+    private var topicId: Long = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            subjectId = it.getLong(KEY_SUBJECT_ID, 0L)
+            topicId = it.getLong(KEY_TOPIC_ID, 0L)
         }
     }
 

@@ -70,7 +70,7 @@ object BroadcastKey {
 object FragmentsTag {
     val MAIN: String = MainFragment::class.java.simpleName
     val TOPIC: String = TopicFragment::class.java.simpleName
-    val ADD_TOPIC: String = AddSubTopicFragment::class.java.simpleName
+    val ADD_SUB_TOPIC: String = AddSubTopicFragment::class.java.simpleName
 }
 
 object TtsTag {

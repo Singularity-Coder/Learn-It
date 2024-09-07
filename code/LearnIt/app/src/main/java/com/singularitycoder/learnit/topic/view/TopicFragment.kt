@@ -3,6 +3,7 @@ package com.singularitycoder.learnit.topic.view
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -20,14 +21,19 @@ import com.singularitycoder.learnit.helpers.collectLatestLifecycleFlow
 import com.singularitycoder.learnit.helpers.globalLayoutAnimation
 import com.singularitycoder.learnit.helpers.layoutAnimationController
 import com.singularitycoder.learnit.helpers.onSafeClick
+import com.singularitycoder.learnit.helpers.showAlertDialog
+import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
 import com.singularitycoder.learnit.helpers.showScreen
 import com.singularitycoder.learnit.subject.model.Subject
 import com.singularitycoder.learnit.subject.view.MainActivity
-import com.singularitycoder.learnit.subject.view.SubjectsAdapter
 import com.singularitycoder.learnit.subtopic.view.AddSubTopicFragment
 import com.singularitycoder.learnit.topic.model.Topic
 import com.singularitycoder.learnit.topic.viewmodel.TopicViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class TopicFragment : Fragment() {
@@ -86,6 +92,65 @@ class TopicFragment : Fragment() {
     private fun FragmentTopicBinding.setupUserActionListeners() {
         root.setOnClickListener { }
 
+        topicsAdapter.setOnItemClickListener { topic, position ->
+            topic ?: return@setOnItemClickListener
+            CoroutineScope(Dispatchers.IO).launch {
+                val hasSubTopics = viewModel.hasSubTopicsWith(topic.id)
+
+                withContext(Dispatchers.Main) {
+                    if (hasSubTopics) {
+                        // Botsheet
+                    } else {
+                        (requireActivity() as MainActivity).showScreen(
+                            fragment = AddSubTopicFragment.newInstance(topic.id),
+                            tag = FragmentsTag.ADD_SUB_TOPIC,
+                            isAdd = true,
+                            enterAnim = R.anim.slide_to_top,
+                            exitAnim = R.anim.slide_to_bottom,
+                            popEnterAnim = R.anim.slide_to_top,
+                            popExitAnim = R.anim.slide_to_bottom,
+                        )
+                    }
+                }
+            }
+        }
+
+        topicsAdapter.setOnItemLongClickListener { topic, view, position ->
+            val optionsList = listOf(
+                Pair("Edit", R.drawable.outline_edit_24),
+                Pair("Delete", R.drawable.outline_delete_24)
+            )
+            requireContext().showPopupMenuWithIcons(
+                view = view,
+                menuList = optionsList,
+                customColor = R.color.md_red_700,
+                customColorItemText = optionsList.last().first
+            ) { it: MenuItem? ->
+                when (it?.title?.toString()?.trim()) {
+                    optionsList[0].first -> {
+                        EditBottomSheetFragment.newInstance(
+                            eventType = EditEvent.UPDATE_TOPIC,
+                            subject = subject,
+                            topic = topic
+                        ).show(parentFragmentManager, BottomSheetTag.TAG_EDIT)
+                    }
+
+                    optionsList[1].first -> {
+                        requireContext().showAlertDialog(
+                            title = "Delete item",
+                            message = "Topic \"${topic?.title}\" along with its Sub-Topics will be deleted permanently.",
+                            positiveBtnText = "Delete",
+                            negativeBtnText = "Cancel",
+                            positiveBtnColor = R.color.md_red_700,
+                            positiveAction = {
+                                viewModel.deleteTopicItem(topic)
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
         layoutCustomToolbar.ibBack.onSafeClick {
             parentFragmentManager.popBackStackImmediate()
         }
@@ -93,7 +158,8 @@ class TopicFragment : Fragment() {
         fabAdd.onSafeClick {
             EditBottomSheetFragment.newInstance(
                 eventType = EditEvent.ADD_TOPIC,
-                subject = subject
+                subject = subject,
+                topic = null
             ).show(parentFragmentManager, BottomSheetTag.TAG_EDIT)
         }
 
@@ -104,7 +170,7 @@ class TopicFragment : Fragment() {
             val topicId = bundle.getLong(FragmentResultBundleKey.TOPIC_ID)
             (requireActivity() as MainActivity).showScreen(
                 fragment = AddSubTopicFragment.newInstance(topicId),
-                tag = FragmentsTag.ADD_TOPIC,
+                tag = FragmentsTag.ADD_SUB_TOPIC,
                 isAdd = true,
                 enterAnim = R.anim.slide_to_top,
                 exitAnim = R.anim.slide_to_bottom,
@@ -116,7 +182,9 @@ class TopicFragment : Fragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun observeForData() {
-        (activity as? MainActivity)?.collectLatestLifecycleFlow(flow = viewModel.getAllTopicItemsFlow()) { list: List<Topic?> ->
+        (activity as? MainActivity)?.collectLatestLifecycleFlow(
+            flow = viewModel.getAllTopicBySubjectIdItemsFlow(subject?.id)
+        ) { list: List<Topic?> ->
             topicList = list
             topicsAdapter.topicList = topicList
             topicsAdapter.notifyDataSetChanged()

@@ -23,6 +23,9 @@ interface TopicDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(topic: Topic)
 
+    @Query("SELECT EXISTS(SELECT 1 FROM ${DbTable.TOPIC})")
+    suspend fun hasItems(): Boolean
+
 //    @Query("UPDATE ${Table.BOOK_DATA} SET link = :link WHERE website LIKE :website")
 //    fun updateLinkWithWebsite(link: String?, website: String)
 
@@ -35,9 +38,9 @@ interface TopicDao {
     @Query("SELECT * FROM ${DbTable.TOPIC}")
     fun getAllItemsStateFlow(): Flow<List<Topic>>
 
-//    @Query("SELECT * FROM ${Table.BOOK_DATA} WHERE website = :website")
-//    fun getAllItemsByWebsiteStateFlow(website: String?): Flow<List<BookData>>
-//
+    @Query("SELECT * FROM ${DbTable.TOPIC} WHERE subjectId = :subjectId")
+    fun getAllItemsBySubjectIdStateFlow(subjectId: Long): Flow<List<Topic>>
+
 //    @Query("SELECT * FROM ${Table.BOOK_DATA} WHERE isSaved = 1")
 //    fun getAllSavedItemsStateFlow(): Flow<List<BookData>>
 //
