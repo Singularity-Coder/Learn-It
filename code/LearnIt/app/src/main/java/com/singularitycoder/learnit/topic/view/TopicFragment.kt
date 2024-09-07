@@ -1,15 +1,21 @@
 package com.singularitycoder.learnit.topic.view
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.singularitycoder.learnit.R
+import com.singularitycoder.learnit.ThisBroadcastReceiver
 import com.singularitycoder.learnit.databinding.FragmentTopicBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
 import com.singularitycoder.learnit.helpers.BottomSheetTag
@@ -26,6 +32,7 @@ import com.singularitycoder.learnit.helpers.oneDayTimeMillis
 import com.singularitycoder.learnit.helpers.showAlertDialog
 import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
 import com.singularitycoder.learnit.helpers.showScreen
+import com.singularitycoder.learnit.helpers.showToast
 import com.singularitycoder.learnit.subject.model.Subject
 import com.singularitycoder.learnit.subject.view.MainActivity
 import com.singularitycoder.learnit.subtopic.view.AddSubTopicFragment
@@ -37,6 +44,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
 
 @AndroidEntryPoint
 class TopicFragment : Fragment() {
@@ -59,6 +67,9 @@ class TopicFragment : Fragment() {
     private var topicList = listOf<Topic?>()
 
     private val viewModel by viewModels<TopicViewModel>()
+
+    private var pendingIntent: PendingIntent? = null
+    private var alarmManager: AlarmManager? = null
 
     private var subject: Subject? = null
 
@@ -84,6 +95,7 @@ class TopicFragment : Fragment() {
     }
 
     private fun FragmentTopicBinding.setupUI() {
+        alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         layoutCustomToolbar.tvTitle.text = "${subject?.title} Topics"
         rvTopics.apply {
             layoutAnimation = rvTopics.context.layoutAnimationController(globalLayoutAnimation)
@@ -103,7 +115,7 @@ class TopicFragment : Fragment() {
                     finishedSessions = 1
                 )
             )
-            // start alarm
+            startAlarm(topic)
         }
 
         topicsAdapter.setOnItemClickListener { topic, position ->
@@ -134,6 +146,7 @@ class TopicFragment : Fragment() {
         topicsAdapter.setOnItemLongClickListener { topic, view, position ->
             val optionsList = listOf(
                 Pair("Reset", R.drawable.round_settings_backup_restore_24),
+                Pair("Stop Alarm", R.drawable.outline_alarm_off_24),
                 Pair("Edit", R.drawable.outline_edit_24),
                 Pair("Delete", R.drawable.outline_delete_24)
             )
@@ -153,9 +166,14 @@ class TopicFragment : Fragment() {
                                 finishedSessions = 0
                             )
                         )
+                        stopAlarm()
                     }
 
                     optionsList[1].first -> {
+                        stopAlarm()
+                    }
+
+                    optionsList[2].first -> {
                         EditBottomSheetFragment.newInstance(
                             eventType = EditEvent.UPDATE_TOPIC,
                             subject = subject,
@@ -163,7 +181,7 @@ class TopicFragment : Fragment() {
                         ).show(parentFragmentManager, BottomSheetTag.TAG_EDIT)
                     }
 
-                    optionsList[2].first -> {
+                    optionsList[3].first -> {
                         requireContext().showAlertDialog(
                             title = "Delete item",
                             message = "Topic \"${topic?.title}\" along with its Sub-Topics will be deleted permanently.",
@@ -210,6 +228,27 @@ class TopicFragment : Fragment() {
                 popExitAnim = R.anim.slide_to_bottom,
             )
         }
+    }
+
+    private fun startAlarm(topic: Topic?) {
+        context?.showToast("ALARM ON")
+        val intent = Intent(context, ThisBroadcastReceiver::class.java)
+
+        // we call broadcast using pendingIntent
+        pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+        // Alarm rings continuously until stopped
+        alarmManager?.setRepeating(
+            /* type = */ AlarmManager.RTC_WAKEUP,
+            /* triggerAtMillis = */ topic?.nextSessionDate ?: 0,
+            /* intervalMillis = */ 5000,
+            /* operation = */ pendingIntent ?: return
+        )
+    }
+
+    private fun stopAlarm() {
+        alarmManager?.cancel(pendingIntent ?: return)
+        context?.showToast("ALARM OFF")
     }
 
     @SuppressLint("NotifyDataSetChanged")

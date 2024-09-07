@@ -12,6 +12,12 @@
 
 ________________________________________________________________________________________
 
+Alarms:
+https://www.geeksforgeeks.org/how-to-build-a-simple-alarm-setter-app-in-android/
+https://stackoverflow.com/questions/60732308/android-displaying-view-over-the-lockscreen-like-google-maps
+https://developer.android.com/develop/background-work/services/alarms/schedule
+
+________________________________________________________________________________________
 
 Common spaced repetition system
 This system suggests reviewing material one day after the initial learning, then seven days later, 16 days later, and 35 days later.

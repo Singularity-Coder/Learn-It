@@ -6,13 +6,11 @@
     <uses-permission
         android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
-
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
-
-    <!--In Android, after about two minutes of inactivity from the user anything non-essential which is without a wakelock will be suspended-->
-    <!--https://developer.android.com/develop/background-work/background-tasks/scheduling/wakelock-->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" /> <!-- In Android, after about two minutes of inactivity from the user anything non-essential which is without a wakelock will be suspended -->
+    <!-- https://developer.android.com/develop/background-work/background-tasks/scheduling/wakelock -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".ThisApp"
@@ -26,7 +24,13 @@
         android:theme="@style/Theme.LearnIt"
         tools:targetApi="31">
 
-        <!--windowSoftInputMode: https://stackoverflow.com/a/40506771/6802949-->
+        <activity
+            android:name=".lockscreen.LockScreenActivity"
+            android:exported="false"
+            android:screenOrientation="fullSensor"
+            android:showOnLockScreen="true"/>
+
+        <!-- windowSoftInputMode: https://stackoverflow.com/a/40506771/6802949 -->
         <activity
             android:name=".subject.view.MainActivity"
             android:exported="true"
@@ -37,13 +41,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!--If the affected app component does not need to receive Intents from other apps, you can make that app component private by setting android:exported=”false” in your manifest.
-       https://support.google.com/faqs/answer/9267555?hl=en-AU -->
+        <!--
+If the affected app component does not need to receive Intents from other apps, you can make that app component private by setting android:exported=”false” in your manifest.
+       https://support.google.com/faqs/answer/9267555?hl=en-AU
+        -->
         <receiver
             android:name=".ThisBroadcastReceiver"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="true" />
     </application>
 
 </manifest>
