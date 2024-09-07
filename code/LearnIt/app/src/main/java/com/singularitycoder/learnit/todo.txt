@@ -1,0 +1,24 @@
+
+
+Add default item to db when app opens - Data Science - Numpy - create numpy array
+double back press to exit
+upload routines from csv
+
+On alarm accepted navigate directly to subtopics sheet
+
+
+Common spaced repetition system
+This system suggests reviewing material one day after the initial learning, then seven days later, 16 days later, and 35 days later.
+0 +1 +7 +16 +35
+
+
+Emoji on completion
+
+Search in all screens
+
+
+https://stackoverflow.com/questions/44364240/android-room-get-the-id-of-new-inserted-row-with-auto-generate
+A method annotated with the @Insert annotation can return:
+long for single insert operation
+long[] or Long[] or List<Long> for multiple insert operations
+void if you don't care about the inserted id(s)

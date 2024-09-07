@@ -1,17 +1,18 @@
-package com.singularitycoder.learnit
+package com.singularitycoder.learnit.topic.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.singularitycoder.learnit.helpers.DbTable
+import com.singularitycoder.learnit.topic.model.Topic
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface BookDataDao {
+interface TopicDao {
 
     /** room database will replace data based on primary key */
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(topic: Topic)
+    suspend fun insert(topic: Topic): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(list: List<Topic>)

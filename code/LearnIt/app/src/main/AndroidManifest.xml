@@ -25,9 +25,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LearnIt"
         tools:targetApi="31">
+
+        <!--windowSoftInputMode: https://stackoverflow.com/a/40506771/6802949-->
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".subject.view.MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="stateAlwaysVisible">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

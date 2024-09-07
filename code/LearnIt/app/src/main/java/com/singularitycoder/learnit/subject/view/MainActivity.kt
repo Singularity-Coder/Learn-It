@@ -1,4 +1,4 @@
-package com.singularitycoder.learnit
+package com.singularitycoder.learnit.subject.view
 
 import android.os.Bundle
 import android.view.WindowInsetsController
@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.ActivityMainBinding
 import com.singularitycoder.learnit.helpers.FragmentsTag
 import com.singularitycoder.learnit.helpers.showScreen

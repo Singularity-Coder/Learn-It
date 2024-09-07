@@ -2,8 +2,10 @@ package com.singularitycoder.learnit.helpers
 
 import android.os.Parcelable
 import com.singularitycoder.learnit.BuildConfig
-import com.singularitycoder.learnit.MainFragment
+import com.singularitycoder.learnit.subject.view.MainFragment
 import com.singularitycoder.learnit.R
+import com.singularitycoder.learnit.subtopic.view.AddSubTopicFragment
+import com.singularitycoder.learnit.topic.view.TopicFragment
 import kotlinx.parcelize.Parcelize
 
 const val FILE_PROVIDER = "${BuildConfig.APPLICATION_ID}.fileprovider"
@@ -13,13 +15,14 @@ val globalSlideToBottomAnimation = R.anim.layout_animation_fall_down
 val globalSlideToTopAnimation = R.anim.layout_animation_slide_from_bottom
 
 object FragmentResultKey {
-    const val RENAME_DOWNLOAD_FILE = "RENAME_DOWNLOAD_FILE"
-    const val CREATE_NEW_DOWNLOAD_FOLDER = "CREATE_NEW_DOWNLOAD_FOLDER"
+    const val ADD_SUBJECT = "ADD_SUBJECT"
+    const val ADD_TOPIC = "ADD_TOPIC"
 }
 
 object FragmentResultBundleKey {
-    const val RENAME_DOWNLOAD_FILE = "RENAME_DOWNLOAD_FILE"
-    const val CREATE_NEW_DOWNLOAD_FOLDER = "CREATE_NEW_DOWNLOAD_FOLDER"
+    const val SUBJECT = "SUBJECT"
+    const val TOPIC_ID = "TOPIC"
+    const val SUB_TOPIC = "SUB_TOPIC"
 }
 
 object WakeLockKey {
@@ -52,12 +55,13 @@ object IntentExtraValue {
 }
 
 object Db {
-    const val PLAY_BOOKS = "db_play_books"
+    const val LEARN_IT = "db_learn_it"
 }
 
 object DbTable {
     const val SUBJECT = "table_subject"
     const val TOPIC = "table_topic"
+    const val SUB_TOPIC = "table_sub_topic"
 }
 
 object BroadcastKey {
@@ -65,6 +69,8 @@ object BroadcastKey {
 
 object FragmentsTag {
     val MAIN: String = MainFragment::class.java.simpleName
+    val TOPIC: String = TopicFragment::class.java.simpleName
+    val ADD_TOPIC: String = AddSubTopicFragment::class.java.simpleName
 }
 
 object TtsTag {
@@ -86,6 +92,6 @@ object WorkerTag {
 
 @Parcelize
 enum class EditEvent : Parcelable {
-    CREATE_NEW_DOWNLOAD_FOLDER,
-    RENAME_DOWNLOAD_FILE,
+    ADD_TOPIC,
+    UPDATE_TOPIC,
 }

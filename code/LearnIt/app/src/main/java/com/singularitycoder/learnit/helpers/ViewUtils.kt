@@ -29,7 +29,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.singularitycoder.learnit.MainActivity
+import com.singularitycoder.learnit.subject.view.MainActivity
 import com.singularitycoder.learnit.R
 
 // https://stackoverflow.com/questions/2004344/how-do-i-handle-imeoptions-done-button-click
@@ -121,7 +121,7 @@ fun Context.showAlertDialog(
         dialog.getButton(DialogInterface.BUTTON_POSITIVE).apply {
             setHapticFeedback()
             isAllCaps = false
-            setPadding(0, 0, 16.dpToPx().toInt(), 0)
+//            setPadding(0, 0, -16.dpToPx().toInt(), 0)
             if (positiveBtnColor != null) setTextColor(this@showAlertDialog.color(positiveBtnColor))
         }
         dialog.getButton(DialogInterface.BUTTON_NEGATIVE).apply {
@@ -132,7 +132,7 @@ fun Context.showAlertDialog(
         dialog.getButton(DialogInterface.BUTTON_NEUTRAL).apply {
             setHapticFeedback()
             isAllCaps = false
-            setPadding(16.dpToPx().toInt(), 0, 0, 0)
+//            setPadding(0, 0, -16.dpToPx().toInt(), 0)
             if (neutralBtnColor != null) setTextColor(this@showAlertDialog.color(neutralBtnColor))
         }
     }

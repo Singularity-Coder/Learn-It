@@ -1,4 +1,4 @@
-package com.singularitycoder.learnit
+package com.singularitycoder.learnit.subject.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
@@ -9,10 +9,11 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import com.singularitycoder.learnit.helpers.DbTable
+import com.singularitycoder.learnit.subject.model.Subject
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface BookDao {
+interface SubjectDao {
 
     /** room database will replace data based on primary key */
     @Transaction

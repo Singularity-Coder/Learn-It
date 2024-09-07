@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="-24dp"
+    android:background="@color/white"
+    android:clickable="false"
+    android:fitsSystemWindows="true"
+    tools:context=".subtopic.view.AddSubTopicFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:fitsSystemWindows="true">
+
+        <include
+            android:id="@+id/layout_custom_toolbar"
+            layout="@layout/layout_custom_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!--        <com.google.android.material.textfield.TextInputLayout-->
+        <!--            android:id="@+id/et_topic"-->
+        <!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginStart="16dp"-->
+        <!--            android:layout_marginTop="12dp"-->
+        <!--            android:layout_marginEnd="16dp"-->
+        <!--            android:hint="Topic"-->
+        <!--            app:boxBackgroundColor="@color/black_50"-->
+        <!--            app:boxStrokeWidth="0dp"-->
+        <!--            app:counterEnabled="false"-->
+        <!--            app:endIconMode="clear_text"-->
+        <!--            app:errorEnabled="false"-->
+        <!--            app:helperTextEnabled="false"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/layout_custom_toolbar"-->
+        <!--            app:shapeAppearance="@style/RoundSmallTop"-->
+        <!--            app:startIconContentDescription="Topic">-->
+
+        <!--            <com.google.android.material.textfield.TextInputEditText-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:inputType="text"-->
+        <!--                android:maxLines="1" />-->
+        <!--        </com.google.android.material.textfield.TextInputLayout>-->
+
+        <!--        <com.google.android.material.textfield.TextInputLayout-->
+        <!--            android:id="@+id/et_study_material"-->
+        <!--            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginStart="16dp"-->
+        <!--            android:layout_marginEnd="16dp"-->
+        <!--            android:hint="Study Material"-->
+        <!--            app:boxBackgroundColor="@color/black_50"-->
+        <!--            app:boxStrokeWidth="0dp"-->
+        <!--            app:counterEnabled="false"-->
+        <!--            app:endIconMode="clear_text"-->
+        <!--            app:errorEnabled="false"-->
+        <!--            app:helperTextEnabled="false"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/et_topic"-->
+        <!--            app:shapeAppearance="@style/RoundSmallBottom"-->
+        <!--            app:startIconContentDescription="Study Material">-->
+
+        <!--            <com.google.android.material.textfield.TextInputEditText-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:inputType="text"-->
+        <!--                android:maxLines="1" />-->
+        <!--        </com.google.android.material.textfield.TextInputLayout>-->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_sub_topics"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_custom_toolbar"
+            tools:listitem="@layout/list_item_sub_topic" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <include
+        android:id="@+id/layout_add_item"
+        layout="@layout/layout_add_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="-8dp" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

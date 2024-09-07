@@ -12,7 +12,7 @@ import android.widget.RemoteViews
 import androidx.annotation.DrawableRes
 import androidx.annotation.IntegerRes
 import androidx.core.app.NotificationCompat
-import com.singularitycoder.learnit.MainActivity
+import com.singularitycoder.learnit.subject.view.MainActivity
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.ThisBroadcastReceiver
 
