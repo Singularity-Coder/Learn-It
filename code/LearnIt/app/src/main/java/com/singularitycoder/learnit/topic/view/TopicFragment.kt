@@ -93,6 +93,10 @@ class TopicFragment : Fragment() {
     private fun FragmentTopicBinding.setupUserActionListeners() {
         root.setOnClickListener { }
 
+        topicsAdapter.setOnStartClickListener { topic, position ->
+            // start alarm
+        }
+
         topicsAdapter.setOnItemClickListener { topic, position ->
             topic ?: return@setOnItemClickListener
             CoroutineScope(Dispatchers.IO).launch {
@@ -120,6 +124,7 @@ class TopicFragment : Fragment() {
 
         topicsAdapter.setOnItemLongClickListener { topic, view, position ->
             val optionsList = listOf(
+                Pair("Reset", R.drawable.round_settings_backup_restore_24),
                 Pair("Edit", R.drawable.outline_edit_24),
                 Pair("Delete", R.drawable.outline_delete_24)
             )
@@ -131,6 +136,10 @@ class TopicFragment : Fragment() {
             ) { it: MenuItem? ->
                 when (it?.title?.toString()?.trim()) {
                     optionsList[0].first -> {
+                        // reset alarms
+                    }
+
+                    optionsList[1].first -> {
                         EditBottomSheetFragment.newInstance(
                             eventType = EditEvent.UPDATE_TOPIC,
                             subject = subject,
@@ -138,7 +147,7 @@ class TopicFragment : Fragment() {
                         ).show(parentFragmentManager, BottomSheetTag.TAG_EDIT)
                     }
 
-                    optionsList[1].first -> {
+                    optionsList[2].first -> {
                         requireContext().showAlertDialog(
                             title = "Delete item",
                             message = "Topic \"${topic?.title}\" along with its Sub-Topics will be deleted permanently.",

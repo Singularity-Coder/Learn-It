@@ -25,7 +25,6 @@ import com.singularitycoder.learnit.helpers.layoutAnimationController
 import com.singularitycoder.learnit.helpers.onImeClick
 import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.setTransparentBackground
-import com.singularitycoder.learnit.helpers.showAlertDialog
 import com.singularitycoder.learnit.helpers.showKeyboard
 import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
 import com.singularitycoder.learnit.helpers.showScreen
@@ -106,14 +105,11 @@ class SubTopicBottomSheetFragment : BottomSheetDialogFragment() {
         ivMore.onSafeClick {
             val optionsList = listOf(
                 Pair("Reset", R.drawable.round_settings_backup_restore_24),
-                Pair("Edit", R.drawable.outline_edit_24),
-                Pair("Delete All", R.drawable.outline_delete_24),
+                Pair("Edit", R.drawable.outline_edit_24)
             )
             requireContext().showPopupMenuWithIcons(
                 view = it.first,
-                menuList = optionsList,
-                customColor = R.color.md_red_700,
-                customColorItemText = optionsList.last().first
+                menuList = optionsList
             ) { it: MenuItem? ->
                 when (it?.title?.toString()?.trim()) {
                     optionsList[0].first -> {
@@ -132,19 +128,6 @@ class SubTopicBottomSheetFragment : BottomSheetDialogFragment() {
                             exitAnim = R.anim.slide_to_bottom,
                             popEnterAnim = R.anim.slide_to_top,
                             popExitAnim = R.anim.slide_to_bottom,
-                        )
-                    }
-
-                    optionsList[2].first -> {
-                        requireContext().showAlertDialog(
-                            message = "Delete all items from \"${topic?.title}\" topic? You cannot undo this action.",
-                            positiveBtnText = "Delete",
-                            negativeBtnText = "Cancel",
-                            positiveBtnColor = R.color.md_red_700,
-                            positiveAction = {
-                                subTopicViewModel.deleteAllSubTopicsBy(topic?.id)
-                                dismiss()
-                            }
                         )
                     }
                 }

@@ -6,10 +6,8 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -108,7 +106,6 @@ class AddSubTopicFragment : Fragment() {
     private fun FragmentAddSubTopicBinding.setupUI() {
         layoutCustomToolbar.apply {
             ibBack.setImageDrawable(context?.drawable(R.drawable.ic_round_clear_24))
-            btnDone.isVisible = true
             tvTitle.text = "${topic?.title ?: ""} Sub-Topics"
         }
         layoutAddItem.etItem.hint = "Add Sub-Topic"
@@ -172,13 +169,35 @@ class AddSubTopicFragment : Fragment() {
         }
 
         layoutCustomToolbar.ibBack.setOnClickListener {
-            parentFragmentManager.popBackStackImmediate()
-        }
-
-        layoutCustomToolbar.btnDone.setOnClickListener {
             /** Updating all items to remember the reorder position. Uncomment when u fix drag to reposition */
 //            subTopicViewModel.updateAllSubTopics(addSubTopicsAdapter.subTopicList.filterNotNull())
             parentFragmentManager.popBackStackImmediate()
+        }
+
+        layoutCustomToolbar.ivMore.setOnClickListener { view: View? ->
+            val optionsList = listOf(
+                Pair("Delete All", R.drawable.outline_delete_24),
+            )
+            requireContext().showPopupMenuWithIcons(
+                view = view,
+                menuList = optionsList,
+                customColor = R.color.md_red_700,
+                customColorItemText = optionsList.last().first
+            ) { it: MenuItem? ->
+                when (it?.title?.toString()?.trim()) {
+                    optionsList[0].first -> {
+                        requireContext().showAlertDialog(
+                            message = "Delete all items from \"${topic?.title}\" topic? You cannot undo this action.",
+                            positiveBtnText = "Delete",
+                            negativeBtnText = "Cancel",
+                            positiveBtnColor = R.color.md_red_700,
+                            positiveAction = {
+                                subTopicViewModel.deleteAllSubTopicsBy(topic?.id)
+                            }
+                        )
+                    }
+                }
+            }
         }
     }
 
