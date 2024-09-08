@@ -9,12 +9,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.ListItemTopicBinding
 import com.singularitycoder.learnit.helpers.color
+import com.singularitycoder.learnit.helpers.currentTimeMillis
 import com.singularitycoder.learnit.helpers.onCustomLongClick
 import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.showKeyboard
 import com.singularitycoder.learnit.helpers.toDateTime
 import com.singularitycoder.learnit.subject.view.SubjectsAdapter.ThisViewHolder
 import com.singularitycoder.learnit.topic.model.Topic
+import java.util.concurrent.TimeUnit
+import kotlin.math.floor
 
 class TopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -62,7 +65,6 @@ class TopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         viewHolder.resetRepetitionDayViews()
     }
 
-
     inner class ThisViewHolder(
         private val itemBinding: ListItemTopicBinding,
     ) : RecyclerView.ViewHolder(itemBinding.root) {
@@ -71,7 +73,12 @@ class TopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             itemBinding.apply {
                 tvTitle.text = topic?.title
                 tvStudyMaterial.text = "Study Material: ${topic?.studyMaterial}"
-                tvNextSession.text = "Next Session: ${topic?.nextSessionDate?.toDateTime() ?: "NA"}"
+                val timeLeftMillis = (topic?.nextSessionDate ?: 0L) - currentTimeMillis
+                val totalMinutesLeft = TimeUnit.MILLISECONDS.toMinutes(timeLeftMillis)
+                val daysLeft = totalMinutesLeft / (24 * 60)
+                val hoursLeft = (totalMinutesLeft % (24 * 60)) / 60
+                val minutesLeft = (totalMinutesLeft % (24 * 60)) % 60
+                tvNextSession.text = "Next Session: ${daysLeft}d : ${hoursLeft}h : ${minutesLeft}m"
                 if (topic?.dateStarted != 0L) {
                     setStartedState(topic)
                 }

@@ -11,6 +11,9 @@ fun Int.milliSeconds(): Long = this.toLong()
 val currentTimeMillis: Long
     get() = System.currentTimeMillis()
 
+val twelveHourTimeMillis: Long
+    get() = TimeUnit.HOURS.toMillis(12)
+
 val oneDayTimeMillis: Long
     get() = TimeUnit.DAYS.toMillis(1)
 
