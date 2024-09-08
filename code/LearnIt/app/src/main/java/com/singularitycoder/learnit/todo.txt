@@ -1,4 +1,12 @@
 
+app icon
+Day 5
+Time to recollect Topic Name
+gif of day
+btn - Remind me in
+btn - start
+
+
 
 - Search in all screens
 - double back press to exit in add sub topics
@@ -23,6 +31,7 @@ Common spaced repetition system
 This system suggests reviewing material one day after the initial learning, then seven days later, 16 days later, and 35 days later.
 0 +1 +7 +16 +35
 1, 6, 9, 19
+
 ________________________________________________________________________________________
 
 
@@ -31,3 +40,12 @@ A method annotated with the @Insert annotation can return:
 long for single insert operation
 long[] or Long[] or List<Long> for multiple insert operations
 void if you don't care about the inserted id(s)
+
+________________________________________________________________________________________
+
+GIF:
+https://giphy.com/gifs/G2Esports-hungry-g2hungry-lucas-reich-VP2F9tqaCmUarK7GrU
+https://giphy.com/gifs/life-nickelodeon-brain-OQsa4Yca9BJFS
+https://giphy.com/gifs/relax-idea-ideas-3o6ozkchQhWRbWSTXa
+https://giphy.com/gifs/smile-face-3ohs88j0jPszpGCbYY
+https://giphy.com/gifs/dancing-dog-vVzH2XY3Y0Ar6

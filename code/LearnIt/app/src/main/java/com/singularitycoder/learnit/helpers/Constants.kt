@@ -2,8 +2,8 @@ package com.singularitycoder.learnit.helpers
 
 import android.os.Parcelable
 import com.singularitycoder.learnit.BuildConfig
-import com.singularitycoder.learnit.subject.view.MainFragment
 import com.singularitycoder.learnit.R
+import com.singularitycoder.learnit.subject.view.MainFragment
 import com.singularitycoder.learnit.subtopic.view.AddSubTopicFragment
 import com.singularitycoder.learnit.topic.view.TopicFragment
 import kotlinx.parcelize.Parcelize
@@ -95,3 +95,10 @@ enum class EditEvent : Parcelable {
     ADD_TOPIC,
     UPDATE_TOPIC,
 }
+
+val gifList = listOf(
+    R.drawable.gif1,
+    R.drawable.gif2,
+    R.drawable.gif3,
+    R.drawable.gif4
+)

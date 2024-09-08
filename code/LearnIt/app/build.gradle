@@ -49,6 +49,10 @@ dependencies {
     implementation libs.androidx.fragment.ktx
     implementation libs.androidx.recyclerview
 
+    // Coil Stuff
+    implementation libs.coil
+    implementation libs.coil.gif
+
     // Coroutines
     implementation libs.kotlinx.coroutines.core
     implementation libs.kotlinx.coroutines.android
