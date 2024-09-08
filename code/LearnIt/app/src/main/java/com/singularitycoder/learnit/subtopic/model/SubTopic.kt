@@ -13,6 +13,7 @@ import kotlinx.parcelize.Parcelize
 data class SubTopic(
     @PrimaryKey(autoGenerate = true) var id: Long = 0L,
     var topicId: Long = 0L,
+    var subjectId: Long,
     var title: String = "",
     var isCorrectRecall: Boolean = false,
 ) : Parcelable {

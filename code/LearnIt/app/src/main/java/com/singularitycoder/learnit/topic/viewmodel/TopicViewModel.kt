@@ -33,8 +33,8 @@ class TopicViewModel @Inject constructor(
     }
 
     fun deleteTopic(topic: Topic?) = viewModelScope.launch {
-        subTopicDao.deleteAll()
-        topicDao.delete(topic ?: return@launch)
+        subTopicDao.deleteAllByTopicId(topic?.id ?: return@launch)
+        topicDao.delete(topic)
     }
 
     suspend fun hasSubTopicsWith(topicId: Long?): Boolean {
@@ -43,6 +43,11 @@ class TopicViewModel @Inject constructor(
     }
 
     suspend fun getTopicById(id: Long): Topic = topicDao.getItemById(id)
+
+    fun deleteAllTopicsBy(subjectId: Long?) = viewModelScope.launch {
+        subjectId ?: return@launch
+        topicDao.deleteAllBySubjectId(subjectId)
+    }
 
     suspend fun getAllBookItems() = topicDao.getAll()
 

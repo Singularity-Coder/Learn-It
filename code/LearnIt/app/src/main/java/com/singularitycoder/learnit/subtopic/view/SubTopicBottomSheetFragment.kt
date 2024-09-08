@@ -28,6 +28,7 @@ import com.singularitycoder.learnit.helpers.setTransparentBackground
 import com.singularitycoder.learnit.helpers.showKeyboard
 import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
 import com.singularitycoder.learnit.helpers.showScreen
+import com.singularitycoder.learnit.subject.model.Subject
 import com.singularitycoder.learnit.subject.view.MainActivity
 import com.singularitycoder.learnit.subtopic.model.SubTopic
 import com.singularitycoder.learnit.subtopic.viewmodel.SubTopicViewModel
@@ -39,11 +40,16 @@ class SubTopicBottomSheetFragment : BottomSheetDialogFragment() {
 
     companion object {
         private const val KEY_TOPIC = "KEY_TOPIC"
+        private const val KEY_SUBJECT = "KEY_SUBJECT"
 
         @JvmStatic
-        fun newInstance(topic: Topic) = SubTopicBottomSheetFragment().apply {
+        fun newInstance(
+            topic: Topic?,
+            subject: Subject?
+        ) = SubTopicBottomSheetFragment().apply {
             arguments = Bundle().apply {
                 putParcelable(KEY_TOPIC, topic)
+                putParcelable(KEY_SUBJECT, subject)
             }
         }
     }
@@ -57,13 +63,16 @@ class SubTopicBottomSheetFragment : BottomSheetDialogFragment() {
     private val subTopicsAdapter: SubTopicsAdapter by lazy { SubTopicsAdapter() }
 
     private var topic: Topic? = null
+    private var subject: Subject? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (AndroidVersions.isTiramisu()) {
             topic = arguments?.getParcelable(KEY_TOPIC, Topic::class.java)
+            subject = arguments?.getParcelable(KEY_SUBJECT, Subject::class.java)
         } else {
             topic = arguments?.getParcelable(KEY_TOPIC)
+            subject = arguments?.getParcelable(KEY_SUBJECT)
         }
     }
 
@@ -121,7 +130,7 @@ class SubTopicBottomSheetFragment : BottomSheetDialogFragment() {
                     optionsList[1].first -> {
                         this@SubTopicBottomSheetFragment.dismiss()
                         (requireActivity() as MainActivity).showScreen(
-                            fragment = AddSubTopicFragment.newInstance(topic ?: return@showPopupMenuWithIcons),
+                            fragment = AddSubTopicFragment.newInstance(topic, subject),
                             tag = FragmentsTag.ADD_SUB_TOPIC,
                             isAdd = true,
                             enterAnim = R.anim.slide_to_top,

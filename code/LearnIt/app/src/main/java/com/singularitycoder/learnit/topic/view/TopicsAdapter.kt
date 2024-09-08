@@ -91,7 +91,8 @@ class TopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private fun setStartedState(topic: Topic?) {
             itemBinding.apply {
                 btnStart.isVisible = false
-                clRepetitionDays.isVisible = true
+                tvNextSession.isVisible = btnStart.isVisible.not()
+                clRepetitionDays.isVisible = btnStart.isVisible.not()
                 val dayViewList = listOf(tvDay1, tvDay2, tvDay3, tvDay4, tvDay5)
                 (1..(topic?.finishedSessions ?: 0)).forEachIndexed { index, value ->
                     dayViewList[index].backgroundTintList = ColorStateList.valueOf(root.context.color(R.color.purple_500))
@@ -103,7 +104,8 @@ class TopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         fun resetRepetitionDayViews() {
             itemBinding.apply {
                 btnStart.isVisible = true
-                clRepetitionDays.isVisible = false
+                tvNextSession.isVisible = btnStart.isVisible.not()
+                clRepetitionDays.isVisible = btnStart.isVisible.not()
                 listOf(tvDay1, tvDay2, tvDay3, tvDay4, tvDay5).forEachIndexed { index, textView ->
                     textView.backgroundTintList = ColorStateList.valueOf(root.context.color(R.color.purple_50))
                     textView.setTextColor(root.context.color(R.color.purple_500))

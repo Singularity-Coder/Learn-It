@@ -16,13 +16,17 @@ import com.singularitycoder.learnit.databinding.FragmentAddSubTopicBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
 import com.singularitycoder.learnit.helpers.collectLatestLifecycleFlow
 import com.singularitycoder.learnit.helpers.drawable
+import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.showAlertDialog
 import com.singularitycoder.learnit.helpers.showKeyboard
 import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
+import com.singularitycoder.learnit.subject.model.Subject
 import com.singularitycoder.learnit.subject.view.MainActivity
 import com.singularitycoder.learnit.subtopic.model.SubTopic
 import com.singularitycoder.learnit.subtopic.viewmodel.SubTopicViewModel
 import com.singularitycoder.learnit.topic.model.Topic
+import com.singularitycoder.learnit.topic.view.TopicFragment
+import com.singularitycoder.learnit.topic.view.TopicFragment.Companion
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -32,11 +36,16 @@ class AddSubTopicFragment : Fragment() {
 
     companion object {
         private const val KEY_TOPIC = "KEY_TOPIC"
+        private const val KEY_SUBJECT = "KEY_SUBJECT"
 
         @JvmStatic
-        fun newInstance(topic: Topic) = AddSubTopicFragment().apply {
+        fun newInstance(
+            topic: Topic?,
+            subject: Subject?
+        ) = AddSubTopicFragment().apply {
             arguments = Bundle().apply {
                 putParcelable(KEY_TOPIC, topic)
+                putParcelable(KEY_SUBJECT, subject)
             }
         }
     }
@@ -48,6 +57,7 @@ class AddSubTopicFragment : Fragment() {
     private val subTopicViewModel by activityViewModels<SubTopicViewModel>()
 
     private var topic: Topic? = null
+    private var subject: Subject? = null
 
     /** https://yfujiki.medium.com/drag-and-reorder-recyclerview-items-in-a-user-friendly-manner-1282335141e9
      * https://github.com/yfujiki/Android-DragReorderSample/blob/master/app/src/main/java/com/yfujiki/android_dragreordersample/MainActivity.kt */
@@ -86,8 +96,10 @@ class AddSubTopicFragment : Fragment() {
         super.onCreate(savedInstanceState)
         if (AndroidVersions.isTiramisu()) {
             topic = arguments?.getParcelable(KEY_TOPIC, Topic::class.java)
+            subject = arguments?.getParcelable(KEY_SUBJECT, Subject::class.java)
         } else {
             topic = arguments?.getParcelable(KEY_TOPIC)
+            subject = arguments?.getParcelable(KEY_SUBJECT)
         }
     }
 
@@ -121,6 +133,7 @@ class AddSubTopicFragment : Fragment() {
             if (layoutAddItem.etItem.text.isNullOrBlank()) return@setOnClickListener
             val subTopic = SubTopic(
                 topicId = topic?.id ?: return@setOnClickListener,
+                subjectId = subject?.id ?: return@setOnClickListener,
                 title = layoutAddItem.etItem.text.toString(),
             )
             subTopicViewModel.addSubTopicItem(subTopic)
@@ -168,18 +181,18 @@ class AddSubTopicFragment : Fragment() {
             subTopicViewModel.updateSubTopic(subTopic)
         }
 
-        layoutCustomToolbar.ibBack.setOnClickListener {
+        layoutCustomToolbar.ibBack.onSafeClick {
             /** Updating all items to remember the reorder position. Uncomment when u fix drag to reposition */
 //            subTopicViewModel.updateAllSubTopics(addSubTopicsAdapter.subTopicList.filterNotNull())
             parentFragmentManager.popBackStackImmediate()
         }
 
-        layoutCustomToolbar.ivMore.setOnClickListener { view: View? ->
+        layoutCustomToolbar.ivMore.onSafeClick { pair: Pair<View?, Boolean> ->
             val optionsList = listOf(
                 Pair("Delete All", R.drawable.outline_delete_24),
             )
             requireContext().showPopupMenuWithIcons(
-                view = view,
+                view = pair.first,
                 menuList = optionsList,
                 customColor = R.color.md_red_700,
                 customColorItemText = optionsList.last().first

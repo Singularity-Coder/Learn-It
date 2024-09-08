@@ -69,4 +69,7 @@ interface SubTopicDao {
 
     @Query("DELETE FROM ${DbTable.SUB_TOPIC} WHERE topicId = :topicId")
     suspend fun deleteAllByTopicId(topicId: Long)
+
+    @Query("DELETE FROM ${DbTable.SUB_TOPIC} WHERE subjectId = :subjectId")
+    suspend fun deleteAllBySubjectId(subjectId: Long)
 }

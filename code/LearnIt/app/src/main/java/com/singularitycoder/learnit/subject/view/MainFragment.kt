@@ -1,7 +1,6 @@
 package com.singularitycoder.learnit.subject.view
 
 import android.annotation.SuppressLint
-import android.content.res.Configuration
 import android.os.Bundle
 import android.text.Editable
 import android.view.LayoutInflater
@@ -24,7 +23,6 @@ import com.singularitycoder.learnit.helpers.hideKeyboard
 import com.singularitycoder.learnit.helpers.layoutAnimationController
 import com.singularitycoder.learnit.helpers.onImeClick
 import com.singularitycoder.learnit.helpers.onSafeClick
-import com.singularitycoder.learnit.helpers.sanitize
 import com.singularitycoder.learnit.helpers.showAlertDialog
 import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
 import com.singularitycoder.learnit.helpers.showScreen
@@ -80,6 +78,32 @@ class MainFragment : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     private fun FragmentMainBinding.setupUserActionListeners() {
         root.setOnClickListener {}
+
+        ivHeaderMore.onSafeClick { pair: Pair<View?, Boolean> ->
+            val optionsList = listOf(
+                Pair("Delete All", R.drawable.outline_delete_24),
+            )
+            requireContext().showPopupMenuWithIcons(
+                view = pair.first,
+                menuList = optionsList,
+                customColor = R.color.md_red_700,
+                customColorItemText = optionsList.last().first
+            ) { it: MenuItem? ->
+                when (it?.title?.toString()?.trim()) {
+                    optionsList[0].first -> {
+                        requireContext().showAlertDialog(
+                            message = "Delete all subjects? You cannot undo this action.",
+                            positiveBtnText = "Delete",
+                            negativeBtnText = "Cancel",
+                            positiveBtnColor = R.color.md_red_700,
+                            positiveAction = {
+                                viewModel.deleteAllSubjects()
+                            }
+                        )
+                    }
+                }
+            }
+        }
 
         subjectsAdapter.setOnItemClickListener { subject, position ->
             if (layoutAddItem.etItem.isFocused) {

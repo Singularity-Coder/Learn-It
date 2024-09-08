@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -126,11 +125,12 @@ class TopicFragment : Fragment() {
                 withContext(Dispatchers.Main) {
                     if (hasSubTopics) {
                         SubTopicBottomSheetFragment.newInstance(
-                            topic = topic
+                            topic = topic,
+                            subject = subject
                         ).show(parentFragmentManager, BottomSheetTag.TAG_SUB_TOPICS)
                     } else {
                         (requireActivity() as MainActivity).showScreen(
-                            fragment = AddSubTopicFragment.newInstance(topic),
+                            fragment = AddSubTopicFragment.newInstance(topic, subject),
                             tag = FragmentsTag.ADD_SUB_TOPIC,
                             isAdd = true,
                             enterAnim = R.anim.slide_to_top,
@@ -201,6 +201,32 @@ class TopicFragment : Fragment() {
             parentFragmentManager.popBackStackImmediate()
         }
 
+        layoutCustomToolbar.ivMore.onSafeClick { pair: Pair<View?, Boolean> ->
+            val optionsList = listOf(
+                Pair("Delete All", R.drawable.outline_delete_24),
+            )
+            requireContext().showPopupMenuWithIcons(
+                view = pair.first,
+                menuList = optionsList,
+                customColor = R.color.md_red_700,
+                customColorItemText = optionsList.last().first
+            ) { it: MenuItem? ->
+                when (it?.title?.toString()?.trim()) {
+                    optionsList[0].first -> {
+                        requireContext().showAlertDialog(
+                            message = "Delete all items from \"${subject?.title}\" subject? You cannot undo this action.",
+                            positiveBtnText = "Delete",
+                            negativeBtnText = "Cancel",
+                            positiveBtnColor = R.color.md_red_700,
+                            positiveAction = {
+                                viewModel.deleteAllTopicsBy(subject?.id)
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
         fabAdd.onSafeClick {
             EditBottomSheetFragment.newInstance(
                 eventType = EditEvent.ADD_TOPIC,
@@ -219,7 +245,7 @@ class TopicFragment : Fragment() {
                 bundle.getParcelable(FragmentResultBundleKey.TOPIC)
             } ?: return@setFragmentResultListener
             (requireActivity() as MainActivity).showScreen(
-                fragment = AddSubTopicFragment.newInstance(topic),
+                fragment = AddSubTopicFragment.newInstance(topic, subject),
                 tag = FragmentsTag.ADD_SUB_TOPIC,
                 isAdd = true,
                 enterAnim = R.anim.slide_to_top,

@@ -51,6 +51,7 @@
         android:layout_marginEnd="4dp"
         android:ellipsize="end"
         android:maxLines="1"
+        android:visibility="gone"
         android:text="Next session: 16 d : 23 h : 15 m"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@android:color/darker_gray"
