@@ -14,11 +14,11 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.FragmentMainBinding
-import com.singularitycoder.learnit.helpers.FragmentResultBundleKey
-import com.singularitycoder.learnit.helpers.FragmentResultKey
-import com.singularitycoder.learnit.helpers.FragmentsTag
+import com.singularitycoder.learnit.helpers.constants.FragmentResultBundleKey
+import com.singularitycoder.learnit.helpers.constants.FragmentResultKey
+import com.singularitycoder.learnit.helpers.constants.FragmentsTag
 import com.singularitycoder.learnit.helpers.collectLatestLifecycleFlow
-import com.singularitycoder.learnit.helpers.globalLayoutAnimation
+import com.singularitycoder.learnit.helpers.constants.globalLayoutAnimation
 import com.singularitycoder.learnit.helpers.hideKeyboard
 import com.singularitycoder.learnit.helpers.layoutAnimationController
 import com.singularitycoder.learnit.helpers.onImeClick

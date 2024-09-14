@@ -3,7 +3,7 @@ package com.singularitycoder.learnit.topic.model
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.singularitycoder.learnit.helpers.DbTable
+import com.singularitycoder.learnit.helpers.constants.DbTable
 import kotlinx.parcelize.Parcelize
 
 @Entity(tableName = DbTable.TOPIC)

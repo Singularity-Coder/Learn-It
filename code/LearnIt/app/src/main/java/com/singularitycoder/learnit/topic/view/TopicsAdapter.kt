@@ -10,6 +10,7 @@ import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.ListItemTopicBinding
 import com.singularitycoder.learnit.helpers.color
 import com.singularitycoder.learnit.helpers.currentTimeMillis
+import com.singularitycoder.learnit.helpers.drawable
 import com.singularitycoder.learnit.helpers.onCustomLongClick
 import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.showKeyboard
@@ -84,6 +85,12 @@ class TopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 if (topic?.dateStarted != 0L) {
                     setStartedState(topic)
                 }
+                if (timeLeftMillis < 0) {
+                    tvNextSession.isVisible = false
+                }
+                if ((topic?.finishedSessions ?: 0) >= 5) {
+                    topicMastered()
+                }
                 root.onSafeClick {
                     itemClickListener.invoke(topic, bindingAdapterPosition)
                 }
@@ -112,13 +119,39 @@ class TopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         fun resetRepetitionDayViews() {
             itemBinding.apply {
+                resetColors()
                 btnStart.isVisible = true
+                tvMasteredIt.isVisible = btnStart.isVisible.not()
                 tvNextSession.isVisible = btnStart.isVisible.not()
                 clRepetitionDays.isVisible = btnStart.isVisible.not()
                 listOf(tvDay1, tvDay2, tvDay3, tvDay4, tvDay5).forEachIndexed { index, textView ->
                     textView.backgroundTintList = ColorStateList.valueOf(root.context.color(R.color.purple_50))
                     textView.setTextColor(root.context.color(R.color.purple_500))
                 }
+            }
+        }
+
+        private fun topicMastered() {
+            itemBinding.apply {
+                root.background = root.context.drawable(R.drawable.shape_rounded_square_border_purple)
+                tvTitle.setTextColor(root.context.color(R.color.white))
+                tvStudyMaterial.setTextColor(root.context.color(R.color.md_indigo_200))
+                tvMasteredIt.isVisible = true
+                btnStart.isVisible = tvMasteredIt.isVisible.not()
+                tvNextSession.isVisible = tvMasteredIt.isVisible.not()
+                clRepetitionDays.isVisible = tvMasteredIt.isVisible.not()
+                divider.dividerColor = root.context.color(R.color.md_indigo_500)
+                ivArrowRight.imageTintList = ColorStateList.valueOf(root.context.color(R.color.md_indigo_400))
+            }
+        }
+
+        private fun resetColors() {
+            itemBinding.apply {
+                root.background = root.context.drawable(R.drawable.shape_rounded_square_border)
+                tvTitle.setTextColor(root.context.color(R.color.title_color))
+                tvStudyMaterial.setTextColor(root.context.color(android.R.color.darker_gray))
+                divider.dividerColor = root.context.color(R.color.black_50)
+                ivArrowRight.imageTintList = ColorStateList.valueOf(root.context.color(R.color.light_gray))
             }
         }
     }

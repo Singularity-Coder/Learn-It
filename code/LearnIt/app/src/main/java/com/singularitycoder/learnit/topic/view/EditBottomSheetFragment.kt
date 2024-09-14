@@ -14,9 +14,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.FragmentEditBottomSheetBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
-import com.singularitycoder.learnit.helpers.EditEvent
-import com.singularitycoder.learnit.helpers.FragmentResultBundleKey
-import com.singularitycoder.learnit.helpers.FragmentResultKey
+import com.singularitycoder.learnit.helpers.constants.EditEvent
+import com.singularitycoder.learnit.helpers.constants.FragmentResultBundleKey
+import com.singularitycoder.learnit.helpers.constants.FragmentResultKey
 import com.singularitycoder.learnit.helpers.color
 import com.singularitycoder.learnit.helpers.dpToPx
 import com.singularitycoder.learnit.helpers.enableSoftInput

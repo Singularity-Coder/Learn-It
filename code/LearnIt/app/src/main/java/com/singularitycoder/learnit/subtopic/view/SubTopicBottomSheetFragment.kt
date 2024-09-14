@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
@@ -15,11 +16,13 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.FragmentSubTopicBottomSheetBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
-import com.singularitycoder.learnit.helpers.FragmentsTag
+import com.singularitycoder.learnit.helpers.constants.FragmentsTag
 import com.singularitycoder.learnit.helpers.collectLatestLifecycleFlow
+import com.singularitycoder.learnit.helpers.constants.FragmentResultBundleKey
+import com.singularitycoder.learnit.helpers.constants.FragmentResultKey
 import com.singularitycoder.learnit.helpers.enableSoftInput
-import com.singularitycoder.learnit.helpers.globalLayoutAnimation
-import com.singularitycoder.learnit.helpers.globalSlideToBottomAnimation
+import com.singularitycoder.learnit.helpers.constants.globalLayoutAnimation
+import com.singularitycoder.learnit.helpers.constants.globalSlideToBottomAnimation
 import com.singularitycoder.learnit.helpers.hideKeyboard
 import com.singularitycoder.learnit.helpers.layoutAnimationController
 import com.singularitycoder.learnit.helpers.onImeClick
@@ -34,6 +37,8 @@ import com.singularitycoder.learnit.subtopic.model.SubTopic
 import com.singularitycoder.learnit.subtopic.viewmodel.SubTopicViewModel
 import com.singularitycoder.learnit.topic.model.Topic
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class SubTopicBottomSheetFragment : BottomSheetDialogFragment() {
@@ -91,7 +96,7 @@ class SubTopicBottomSheetFragment : BottomSheetDialogFragment() {
     private fun FragmentSubTopicBottomSheetBinding.setupUI() {
         enableSoftInput()
         setTransparentBackground()
-        tvHeader.text = topic?.title
+        tvHeader.text = "Recall ${topic?.title}"
         rvCollections.apply {
             layoutAnimation = rvCollections.context.layoutAnimationController(globalLayoutAnimation)
             layoutManager = LinearLayoutManager(context)
@@ -184,6 +189,21 @@ class SubTopicBottomSheetFragment : BottomSheetDialogFragment() {
             subTopicList = list
             subTopicsAdapter.subTopicList = subTopicList
             subTopicsAdapter.notifyDataSetChanged()
+            if (subTopicList.all { it?.isCorrectRecall == true }) {
+                subTopicViewModel.updateAllSubTopics(
+                    subTopicList.map { it?.copy(isCorrectRecall = false) }.filterNotNull()
+                )
+                withContext(Dispatchers.Main) {
+                    try {
+                        parentFragmentManager.setFragmentResult(
+                            /* requestKey = */ FragmentResultKey.SHOW_KONFETTI,
+                            /* result = */ bundleOf()
+                        )
+                    } catch (_: Exception) {
+                    }
+                    dismiss()
+                }
+            }
         }
     }
 }

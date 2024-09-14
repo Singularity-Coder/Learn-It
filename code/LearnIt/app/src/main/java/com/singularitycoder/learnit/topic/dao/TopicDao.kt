@@ -2,7 +2,7 @@ package com.singularitycoder.learnit.topic.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.singularitycoder.learnit.helpers.DbTable
+import com.singularitycoder.learnit.helpers.constants.DbTable
 import com.singularitycoder.learnit.topic.model.Topic
 import kotlinx.coroutines.flow.Flow
 

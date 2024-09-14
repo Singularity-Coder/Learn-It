@@ -19,7 +19,10 @@ import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.view.animation.LayoutAnimationController
 import android.view.inputmethod.EditorInfo
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.ListPopupWindow
 import android.widget.PopupMenu
 import androidx.annotation.AnimRes
 import androidx.annotation.ColorRes
@@ -302,6 +305,33 @@ fun Context.showSingleSelectionPopupMenu(
         false
     }
     popupMenu.show()
+}
+
+fun Context.showListPopupMenu2(
+    anchorView: View?,
+    menuList: List<String?>,
+    onItemClick: (position: Int) -> Unit
+) {
+    val adapter = ArrayAdapter(
+        /* context = */ this,
+        /* resource = */ android.R.layout.simple_list_item_1,
+        /* objects = */ menuList
+    )
+    ListPopupWindow(
+        /* context = */ this,
+        /* attrs = */ null,
+        /* defStyleAttr = */ /* R.attr.listPopupWindowStyle */ 0,
+        /* defStyleRes = */ R.style.ListPopupWindowTheme
+    ).apply {
+        this.anchorView = anchorView
+        setAdapter(adapter)
+        setOnItemClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
+            view?.setHapticFeedback()
+            onItemClick.invoke(position)
+            this.dismiss()
+        }
+        show()
+    }
 }
 
 // https://stackoverflow.com/questions/32969172/how-to-display-menu-item-with-icon-and-text-in-appcompatactivity

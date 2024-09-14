@@ -11,6 +11,18 @@ fun Int.milliSeconds(): Long = this.toLong()
 val currentTimeMillis: Long
     get() = System.currentTimeMillis()
 
+val thirtyMinTimeMillis: Long
+    get() = TimeUnit.MINUTES.toMillis(30)
+
+val oneHourTimeMillis: Long
+    get() = TimeUnit.HOURS.toMillis(1)
+
+val threeHourTimeMillis: Long
+    get() = TimeUnit.HOURS.toMillis(3)
+
+val sixHourTimeMillis: Long
+    get() = TimeUnit.HOURS.toMillis(6)
+
 val twelveHourTimeMillis: Long
     get() = TimeUnit.HOURS.toMillis(12)
 

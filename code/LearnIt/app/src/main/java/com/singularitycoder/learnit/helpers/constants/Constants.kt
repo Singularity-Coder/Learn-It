@@ -1,4 +1,4 @@
-package com.singularitycoder.learnit.helpers
+package com.singularitycoder.learnit.helpers.constants
 
 import android.os.Parcelable
 import com.singularitycoder.learnit.BuildConfig
@@ -17,6 +17,7 @@ val globalSlideToTopAnimation = R.anim.layout_animation_slide_from_bottom
 object FragmentResultKey {
     const val ADD_SUBJECT = "ADD_SUBJECT"
     const val ADD_TOPIC = "ADD_TOPIC"
+    const val SHOW_KONFETTI = "SHOW_KONFETTI"
 }
 
 object FragmentResultBundleKey {
@@ -42,14 +43,20 @@ object IntentKey {
     const val NOTIF_BTN_CLICK_BROADCAST = "NOTIF_BTN_CLICK_BROADCAST"
     const val NOTIF_BTN_CLICK_BROADCAST_2 = "NOTIF_BTN_CLICK_BROADCAST_2"
     const val MAIN_BROADCAST_FROM_SERVICE = "MAIN_BROADCAST_FROM_SERVICE"
+    const val ALARM_BROADCAST = "ALARM_BROADCAST"
 }
 
 object IntentExtraKey {
     const val NOTIF_BTN_CLICK_TYPE = "NOTIF_BTN_CLICK_TYPE"
     const val NOTIF_BTN_CLICK_TYPE_2 = "NOTIF_BTN_CLICK_TYPE_2"
+    const val SHOW_ALARM_VIEW = "SHOW_ALARM_VIEW"
+    const val TOPIC_ID = "TOPIC_ID"
+    const val TOPIC_ID_2 = "TOPIC_ID_2"
+    const val TOPIC_ID_3 = "TOPIC_ID_3"
 }
 
 object IntentExtraValue {
+    const val SHOW_ALARM_VIEW = "SHOW_ALARM_VIEW"
     const val UNBIND = "UNBIND"
     const val FOREGROUND_SERVICE_READY = "UPDATE_PROGRESS"
 }

@@ -8,7 +8,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import com.singularitycoder.learnit.helpers.DbTable
+import com.singularitycoder.learnit.helpers.constants.DbTable
 import com.singularitycoder.learnit.subject.model.Subject
 import kotlinx.coroutines.flow.Flow
 

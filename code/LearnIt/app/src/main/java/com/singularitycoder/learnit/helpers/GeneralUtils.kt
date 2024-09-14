@@ -6,7 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
-import android.net.Uri
+import android.media.Ringtone
+import android.media.RingtoneManager
+import android.os.Vibrator
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -94,4 +96,22 @@ fun EditText?.showKeyboard() {
         val imm = this.context?.getSystemService(Activity.INPUT_METHOD_SERVICE) as? InputMethodManager
         imm?.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
     }
+}
+
+fun Context.ringtone(): Ringtone {
+    // we will use vibrator first
+    val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    vibrator.vibrate(4000)
+
+    Toast.makeText(this, "Alarm! Wake up! Wake up!", Toast.LENGTH_LONG).show()
+    var alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+    if (alarmUri == null) {
+        alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+    }
+
+    // setting default ringtone
+    val ringtone = RingtoneManager.getRingtone(this, alarmUri)
+
+    // play ringtone
+    return ringtone
 }

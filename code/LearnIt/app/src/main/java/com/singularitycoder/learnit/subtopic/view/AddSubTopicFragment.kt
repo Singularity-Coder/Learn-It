@@ -122,7 +122,8 @@ class AddSubTopicFragment : Fragment() {
         }
         layoutAddItem.etItem.hint = "Add Sub-Topic"
         rvSubTopics.apply {
-            itemTouchHelper.attachToRecyclerView(this)
+            // TODO fix dragging
+//            itemTouchHelper.attachToRecyclerView(this)
             layoutManager = LinearLayoutManager(context)
             adapter = addSubTopicsAdapter
         }

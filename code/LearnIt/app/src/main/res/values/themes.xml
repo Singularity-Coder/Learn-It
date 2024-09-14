@@ -108,4 +108,9 @@
         <item name="cornerSizeBottomRight">16dp</item>
         <item name="cornerSizeBottomLeft">16dp</item>
     </style>
+
+    <style name="ListPopupWindowTheme" parent="Widget.AppCompat.ListPopupWindow">
+        <item name="attributeName">?attr/listPopupWindowStyle</item>
+        <item name="android:popupBackground">@drawable/bg_popup_menu_rounded</item>
+    </style>
 </resources>

@@ -13,18 +13,20 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.singularitycoder.learnit.BuildConfig
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.ThisBroadcastReceiver
 import com.singularitycoder.learnit.databinding.FragmentTopicBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
-import com.singularitycoder.learnit.helpers.BottomSheetTag
-import com.singularitycoder.learnit.helpers.EditEvent
-import com.singularitycoder.learnit.helpers.FragmentResultBundleKey
-import com.singularitycoder.learnit.helpers.FragmentResultKey
-import com.singularitycoder.learnit.helpers.FragmentsTag
+import com.singularitycoder.learnit.helpers.constants.BottomSheetTag
+import com.singularitycoder.learnit.helpers.constants.EditEvent
+import com.singularitycoder.learnit.helpers.constants.FragmentResultBundleKey
+import com.singularitycoder.learnit.helpers.constants.FragmentResultKey
+import com.singularitycoder.learnit.helpers.constants.FragmentsTag
+import com.singularitycoder.learnit.helpers.constants.IntentExtraKey
 import com.singularitycoder.learnit.helpers.collectLatestLifecycleFlow
 import com.singularitycoder.learnit.helpers.currentTimeMillis
-import com.singularitycoder.learnit.helpers.globalLayoutAnimation
+import com.singularitycoder.learnit.helpers.constants.globalLayoutAnimation
 import com.singularitycoder.learnit.helpers.layoutAnimationController
 import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.oneDayTimeMillis
@@ -119,6 +121,8 @@ class TopicFragment : Fragment() {
 
         topicsAdapter.setOnItemClickListener { topic, position ->
             topic ?: return@setOnItemClickListener
+            if (topic.dateStarted == 0L) return@setOnItemClickListener
+//            if (topic.finishedSessions >= 5) return@setOnItemClickListener
             CoroutineScope(Dispatchers.IO).launch {
                 val hasSubTopics = viewModel.hasSubTopicsWith(topic.id)
 
@@ -254,11 +258,21 @@ class TopicFragment : Fragment() {
                 popExitAnim = R.anim.slide_to_bottom,
             )
         }
+
+        parentFragmentManager.setFragmentResultListener(
+            /* requestKey = */ FragmentResultKey.SHOW_KONFETTI,
+            /* lifecycleOwner = */ viewLifecycleOwner
+        ) { _, _ ->
+            (activity as? MainActivity)?.explode()
+        }
     }
 
     private fun startAlarm(topic: Topic?) {
         context?.showToast("ALARM ON")
-        val intent = Intent(context, ThisBroadcastReceiver::class.java)
+        val intent = Intent(context, ThisBroadcastReceiver::class.java).apply {
+            action = "${BuildConfig.APPLICATION_ID}.${topic?.id}"
+            putExtra(IntentExtraKey.TOPIC_ID, topic?.id)
+        }
 
         // we call broadcast using pendingIntent
         pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)

@@ -1,16 +1,14 @@
 
-app icon
-Day 5
-Time to recollect Topic Name
-gif of day
-btn - Remind me in
-btn - start
 
+- on start -> view chnages, alarm set for 24 hr, alarm rings, notif shows up, alarm screen shows up,
+-> on start revision click -> +1 finished session count -> set next session date -> set new alarm with that time
+-> On remind me click -> update next seession count -> set new alarm with that time
+-> if finished session count == 5 dont set alarm
 
+- alarm, vibrate, on device restart,
 
 - Search in all screens
 - double back press to exit in add sub topics
-- Add default item to db when app opens - Data Science - Numpy - create numpy array
 - On start schedule next alarm
 
 - demo page on how to use it
@@ -24,6 +22,10 @@ Alarms:
 https://www.geeksforgeeks.org/how-to-build-a-simple-alarm-setter-app-in-android/
 https://stackoverflow.com/questions/60732308/android-displaying-view-over-the-lockscreen-like-google-maps
 https://developer.android.com/develop/background-work/services/alarms/schedule
+Cancel Alarm - https://stackoverflow.com/questions/4556670/how-to-check-if-alarmmanager-already-has-an-alarm-set
+
+- On Android 12 (API level 31) and higher, the system invokes the alarm within one hour of the supplied trigger time, unless any battery-saving restrictions are in effect such as battery saver or Doze.
+
 
 ________________________________________________________________________________________
 
