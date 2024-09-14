@@ -20,6 +20,7 @@ import com.singularitycoder.learnit.databinding.FragmentMainBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
 import com.singularitycoder.learnit.helpers.AppPreferences
 import com.singularitycoder.learnit.helpers.askAlarmPermission
+import com.singularitycoder.learnit.helpers.canScheduleAlarms
 import com.singularitycoder.learnit.helpers.collectLatestLifecycleFlow
 import com.singularitycoder.learnit.helpers.constants.FragmentResultBundleKey
 import com.singularitycoder.learnit.helpers.constants.FragmentResultKey
@@ -103,7 +104,7 @@ class MainFragment : Fragment() {
         }
 
         AppPreferences.getInstance().hasNotificationPermission = true
-        AppPreferences.getInstance().hasAlarmPermission = (context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager).canScheduleExactAlarms()
+        AppPreferences.getInstance().hasAlarmPermission = context?.canScheduleAlarms() == true
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -169,7 +170,7 @@ class MainFragment : Fragment() {
                 }
             }
 
-            if ((context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager).canScheduleExactAlarms().not()) {
+            if (context?.canScheduleAlarms()?.not() == true) {
                 AppPreferences.getInstance().hasAlarmPermission = false
                 context?.askAlarmPermission()
                 return@setOnItemClickListener

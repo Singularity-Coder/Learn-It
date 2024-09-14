@@ -1,10 +1,14 @@
 package com.singularitycoder.learnit.lockscreen
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.media.Ringtone
+import android.media.RingtoneManager
 import android.os.Bundle
+import android.os.Vibrator
 import android.util.Log
 import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
@@ -23,17 +27,18 @@ import com.singularitycoder.learnit.databinding.ActivityLockScreenBinding
 import com.singularitycoder.learnit.helpers.constants.IntentExtraKey
 import com.singularitycoder.learnit.helpers.constants.IntentKey
 import com.singularitycoder.learnit.helpers.drawable
+import com.singularitycoder.learnit.helpers.getAlarmUri
 import com.singularitycoder.learnit.helpers.nineDayTimeMillis
 import com.singularitycoder.learnit.helpers.nineteenDayTimeMillis
 import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.oneDayTimeMillis
 import com.singularitycoder.learnit.helpers.oneHourTimeMillis
-import com.singularitycoder.learnit.helpers.ringtone
 import com.singularitycoder.learnit.helpers.showListPopupMenu2
 import com.singularitycoder.learnit.helpers.sixDayTimeMillis
 import com.singularitycoder.learnit.helpers.sixHourTimeMillis
 import com.singularitycoder.learnit.helpers.thirtyMinTimeMillis
 import com.singularitycoder.learnit.helpers.threeHourTimeMillis
+import com.singularitycoder.learnit.helpers.turnScreenOn
 import com.singularitycoder.learnit.helpers.twelveHourTimeMillis
 import com.singularitycoder.learnit.topic.model.Topic
 import com.singularitycoder.learnit.topic.viewmodel.TopicViewModel
@@ -52,18 +57,14 @@ class LockScreenActivity : AppCompatActivity() {
 
     private var topic: Topic? = null
 
-    private var alarmManager: AlarmManager? = null
+    private lateinit var alarmManager: AlarmManager
+
+    private lateinit var ringtone: Ringtone
+
+    private lateinit var vibrator: Vibrator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        window.addFlags(
-            WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
-                    WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
-                    WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
-                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-        )
-
         enableEdgeToEdge()
         binding = ActivityLockScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -72,9 +73,19 @@ class LockScreenActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        binding.setupUI()
+        setupUI()
         binding.setupUserActionListeners()
         observeForData()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        stopRingtone()
+    }
+
+    @SuppressLint("MissingSuperCall")
+    override fun onBackPressed() {
+        binding.btnStartRevision.performClick()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -82,19 +93,20 @@ class LockScreenActivity : AppCompatActivity() {
         doOnIntentReceived(intent)
     }
 
-    private fun ActivityLockScreenBinding.setupUI() {
+    private fun setupUI() {
+        turnScreenOn()
         /** Since its repeating alarm u should stop previous ringtone to avoid multiple tracks playing simultaneously */
-        ringtone().stop()
-        ringtone().play()
+        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        ringtone = RingtoneManager.getRingtone(this@LockScreenActivity, getAlarmUri())
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 //        val topicId = intent.getLongExtra(IntentExtraKey.TOPIC_ID_3, 0L)
 //        loadTopicData(topicId)
         doOnIntentReceived(intent)
+        startRingtone()
     }
 
     private fun ActivityLockScreenBinding.setupUserActionListeners() {
         btnRemindMeIn.onSafeClick {
-            // 30 min, 1 hr, 3 hr, 6 hr, 12 hr, tomorrow
             val items = listOf(
                 "30 Minutes",
                 "1 Hour",
@@ -123,7 +135,7 @@ class LockScreenActivity : AppCompatActivity() {
                     )
                     withContext(Dispatchers.Main) {
                         onBackPressedDispatcher.onBackPressed()
-                        ringtone().stop()
+                        stopRingtone()
                         // TODO start alarm for next session
                     }
                 }
@@ -146,15 +158,16 @@ class LockScreenActivity : AppCompatActivity() {
                     )
                 )
                 withContext(Dispatchers.Main) {
+                    stopRingtone()
                     val pendingIntent = PendingIntent.getBroadcast(
                         /* context = */ this@LockScreenActivity,
                         /* requestCode = */ 0,
-                        /* intent = */ Intent("${BuildConfig.APPLICATION_ID}.${topic?.id}"),
+                        /* intent = */ Intent(IntentKey.REVISION_ALARM),
                         /* flags = */ PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
                     )
                     if (pendingIntent != null && (topic?.finishedSessions ?: 0) >= 5) {
                         Log.d("myTag", "Alarm is already active")
-                        alarmManager?.cancel(pendingIntent)
+                        alarmManager.cancel(pendingIntent)
                         // TODO cancel alarm
                     } else {
                         // TODO set next alarm with nextSessionDate
@@ -203,6 +216,16 @@ class LockScreenActivity : AppCompatActivity() {
                 binding.tvTopicTitle.text = "Day $session: Time to recollect ${topic?.title}"
             }
         }
+    }
+
+    private fun startRingtone() {
+        vibrator.vibrate(4000)
+        ringtone.play()
+    }
+
+    private fun stopRingtone() {
+        vibrator.cancel()
+        ringtone.stop()
     }
 
     private fun doOnIntentReceived(intent: Intent) {

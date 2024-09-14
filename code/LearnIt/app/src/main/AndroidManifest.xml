@@ -34,8 +34,11 @@
         <activity
             android:name=".lockscreen.LockScreenActivity"
             android:exported="false"
-            android:launchMode="singleTop"
-            android:showOnLockScreen="true"/>
+            android:showOnLockScreen="true"
+            android:configChanges="orientation|keyboardHidden|keyboard|navigation"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:taskAffinity=""/>
 
         <!-- windowSoftInputMode: https://stackoverflow.com/a/40506771/6802949 -->
         <activity

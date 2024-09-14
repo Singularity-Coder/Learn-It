@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.singularitycoder.learnit.helpers.canScheduleAlarms
 import com.singularitycoder.learnit.helpers.constants.IntentExtraKey
 import com.singularitycoder.learnit.helpers.constants.IntentKey
 import com.singularitycoder.learnit.lockscreen.LockScreenActivity
@@ -15,7 +16,7 @@ class ThisBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
             AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED -> {
-                if ((context.getSystemService(Context.ALARM_SERVICE) as AlarmManager).canScheduleExactAlarms().not()) {
+                if (context.canScheduleAlarms().not()) {
                     val alarmIntent = Intent(context, MainActivity::class.java).apply {
                         action = IntentKey.ALARM_SETTINGS_BROADCAST
                         putExtra(IntentExtraKey.CANNOT_SET_ALARM, true)

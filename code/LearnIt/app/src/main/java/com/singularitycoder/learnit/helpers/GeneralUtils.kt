@@ -1,15 +1,18 @@
 package com.singularitycoder.learnit.helpers
 
 import android.app.Activity
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
-import android.media.Ringtone
 import android.media.RingtoneManager
-import android.os.Vibrator
+import android.net.Uri
+import android.os.Build
 import android.view.View
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
@@ -98,20 +101,45 @@ fun EditText?.showKeyboard() {
     }
 }
 
-fun Context.ringtone(): Ringtone {
-    // we will use vibrator first
-    val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-    vibrator.vibrate(4000)
+fun getAlarmUri(): Uri? {
+    return RingtoneManager.getDefaultUri(
+        RingtoneManager.TYPE_ALARM
+    ) ?: RingtoneManager.getDefaultUri(
+        RingtoneManager.TYPE_NOTIFICATION
+    )
+}
 
-    Toast.makeText(this, "Alarm! Wake up! Wake up!", Toast.LENGTH_LONG).show()
-    var alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-    if (alarmUri == null) {
-        alarmUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-    }
+/**
+ * ## Turns the screen on
+ *
+ * See https://github.com/yuriykulikov/AlarmClock/issues/360 It seems that on some devices with
+ * API>=27 calling `setTurnScreenOn(true)` is not enough, so we will just add all flags regardless
+ * of the API level, and call `setTurnScreenOn(true)` if API level is 27+
+ *
+ * ### 3.07.01 reference In `3.07.01` we added these 4 flags:
+ * ```
+ * final Window win = getWindow();
+ * win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+ * win.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+ *         | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+ *         | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON);
+ * ```
+ */
+fun Activity.turnScreenOn() {
+    setShowWhenLocked(true)
+    setTurnScreenOn(true)
+    // Deprecated flags are required on some devices, even with API>=27
+    window.addFlags(
+        WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON or
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+}
 
-    // setting default ringtone
-    val ringtone = RingtoneManager.getRingtone(this, alarmUri)
+fun pendingIntentUpdateCurrentFlag(): Int {
+    return PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+}
 
-    // play ringtone
-    return ringtone
+fun Context.canScheduleAlarms(): Boolean {
+    return AndroidVersions.isTiramisu() && (getSystemService(Context.ALARM_SERVICE) as AlarmManager).canScheduleExactAlarms()
 }

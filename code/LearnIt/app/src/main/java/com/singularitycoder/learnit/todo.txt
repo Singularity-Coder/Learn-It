@@ -1,5 +1,4 @@
 
--> show topic and subtopic count
 - on start -> view chnages, alarm set for 24 hr, alarm rings, notif shows up, alarm screen shows up,
 -> on start revision click -> +1 finished session count -> set next session date -> set new alarm with that time
 -> On remind me click -> update next seession count -> set new alarm with that time
@@ -29,7 +28,7 @@ https://github.com/commonsguy/cw-omnibus/tree/master/AlarmManager
 - On Android 12 (API level 31) and higher, the system invokes the alarm within one hour of the supplied trigger time, unless any battery-saving restrictions are in effect such as battery saver or Doze.
 - system uptime - SystemClock.uptimeMillis() - Returns milliseconds since boot, not counting time spent in deep sleep.
 - real time - SystemClock.elapsedRealtime() - Returns milliseconds since boot, including time spent in sleep.
-
+- Wakes screen up for alarm - https://github.com/yuriykulikov/AlarmClock?tab=readme-ov-file
 ________________________________________________________________________________________
 
 Common spaced repetition system

@@ -17,6 +17,7 @@ import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.ThisBroadcastReceiver
 import com.singularitycoder.learnit.databinding.FragmentTopicBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
+import com.singularitycoder.learnit.helpers.canScheduleAlarms
 import com.singularitycoder.learnit.helpers.collectLatestLifecycleFlow
 import com.singularitycoder.learnit.helpers.constants.BottomSheetTag
 import com.singularitycoder.learnit.helpers.constants.EditEvent
@@ -30,6 +31,7 @@ import com.singularitycoder.learnit.helpers.currentTimeMillis
 import com.singularitycoder.learnit.helpers.layoutAnimationController
 import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.oneDayTimeMillis
+import com.singularitycoder.learnit.helpers.pendingIntentUpdateCurrentFlag
 import com.singularitycoder.learnit.helpers.showAlertDialog
 import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
 import com.singularitycoder.learnit.helpers.showScreen
@@ -112,7 +114,7 @@ class TopicFragment : Fragment() {
         root.setOnClickListener { }
 
         topicsAdapter.setOnStartClickListener { topic, position ->
-            if (alarmManager?.canScheduleExactAlarms()?.not() == true) {
+            if (context?.canScheduleAlarms()?.not() == true) {
                 binding.root.showSnackBar("You did not grant alarm permission")
                 return@setOnStartClickListener
             }
@@ -288,7 +290,7 @@ class TopicFragment : Fragment() {
             /* context = */ context,
             /* requestCode = */ 0,
             /* intent = */ intent,
-            /* flags = */ PendingIntent.FLAG_IMMUTABLE
+            /* flags = */ pendingIntentUpdateCurrentFlag()
         )
 
         /** https://stackoverflow.com/a/34699710/6802949
@@ -318,14 +320,6 @@ class TopicFragment : Fragment() {
             /* info = */ clockInfo,
             /* operation = */ pendingIntent ?: return
         )
-
-//        // Alarm rings continuously until stopped
-//        alarmManager?.setRepeating(
-//            /* type = */ AlarmManager.RTC_WAKEUP,
-//            /* triggerAtMillis = */ topic?.nextSessionDate ?: 0,
-//            /* intervalMillis = */ 5000,
-//            /* operation = */ pendingIntent ?: return
-//        )
     }
 
     private fun stopAlarm() {
@@ -343,6 +337,9 @@ class TopicFragment : Fragment() {
             topicsAdapter.notifyDataSetChanged()
             binding.layoutCustomToolbar.tvCount.text =
                 "${list.size} Topics   |   ${list.filter { it?.finishedSessions == 5 }.size} Mastered"
+            if (list.isEmpty()) {
+                binding.fabAdd.performClick()
+            }
         }
     }
 }
