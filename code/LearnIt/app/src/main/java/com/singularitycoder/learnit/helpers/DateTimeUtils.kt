@@ -11,6 +11,9 @@ fun Int.milliSeconds(): Long = this.toLong()
 val currentTimeMillis: Long
     get() = System.currentTimeMillis()
 
+val thirtySecondsTimeMillis: Long
+    get() = TimeUnit.SECONDS.toMillis(30)
+
 val thirtyMinTimeMillis: Long
     get() = TimeUnit.MINUTES.toMillis(30)
 

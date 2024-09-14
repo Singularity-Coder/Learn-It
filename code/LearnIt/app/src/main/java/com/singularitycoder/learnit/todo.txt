@@ -23,9 +23,12 @@ https://www.geeksforgeeks.org/how-to-build-a-simple-alarm-setter-app-in-android/
 https://stackoverflow.com/questions/60732308/android-displaying-view-over-the-lockscreen-like-google-maps
 https://developer.android.com/develop/background-work/services/alarms/schedule
 Cancel Alarm - https://stackoverflow.com/questions/4556670/how-to-check-if-alarmmanager-already-has-an-alarm-set
+https://developer.android.com/reference/android/app/AlarmManager#setAlarmClock(android.app.AlarmManager.AlarmClockInfo,%20android.app.PendingIntent)
+https://github.com/commonsguy/cw-omnibus/tree/master/AlarmManager
 
 - On Android 12 (API level 31) and higher, the system invokes the alarm within one hour of the supplied trigger time, unless any battery-saving restrictions are in effect such as battery saver or Doze.
-
+- system uptime - SystemClock.uptimeMillis() - Returns milliseconds since boot, not counting time spent in deep sleep.
+- real time - SystemClock.elapsedRealtime() - Returns milliseconds since boot, including time spent in sleep.
 
 ________________________________________________________________________________________
 

@@ -29,6 +29,14 @@ class AppPreferences(context: Context) {
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
+    var hasNotificationPermission: Boolean
+        get() = sharedPreferences.getBoolean("NOTIFICATION_PERMISSION_PREF", false)
+        set(value) = sharedPreferences.edit { putBoolean("NOTIFICATION_PERMISSION_PREF", value) }
+
+    var hasAlarmPermission: Boolean
+        get() = sharedPreferences.getBoolean("ALARM_PERMISSION_PREF", false)
+        set(value) = sharedPreferences.edit { putBoolean("ALARM_PERMISSION_PREF", value) }
+
     var ttsSpeechRate: Int
         get() = sharedPreferences.getInt("TTS_SPEECH_RATE_PREF", 0)
         set(value) = sharedPreferences.edit { putInt("TTS_SPEECH_RATE_PREF", value) }

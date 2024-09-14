@@ -43,7 +43,8 @@ object IntentKey {
     const val NOTIF_BTN_CLICK_BROADCAST = "NOTIF_BTN_CLICK_BROADCAST"
     const val NOTIF_BTN_CLICK_BROADCAST_2 = "NOTIF_BTN_CLICK_BROADCAST_2"
     const val MAIN_BROADCAST_FROM_SERVICE = "MAIN_BROADCAST_FROM_SERVICE"
-    const val ALARM_BROADCAST = "ALARM_BROADCAST"
+    const val ALARM_SETTINGS_BROADCAST = "ALARM_SETTINGS_BROADCAST"
+    const val REVISION_ALARM = "${BuildConfig.APPLICATION_ID}.revision_alarm"
 }
 
 object IntentExtraKey {
@@ -53,6 +54,7 @@ object IntentExtraKey {
     const val TOPIC_ID = "TOPIC_ID"
     const val TOPIC_ID_2 = "TOPIC_ID_2"
     const val TOPIC_ID_3 = "TOPIC_ID_3"
+    const val CANNOT_SET_ALARM = "CANNOT_SET_ALARM"
 }
 
 object IntentExtraValue {

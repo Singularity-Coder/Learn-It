@@ -16,13 +16,13 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.ActivityMainBinding
+import com.singularitycoder.learnit.helpers.askAlarmPermission
 import com.singularitycoder.learnit.helpers.constants.FragmentsTag
 import com.singularitycoder.learnit.helpers.constants.IntentExtraKey
 import com.singularitycoder.learnit.helpers.constants.IntentKey
 import com.singularitycoder.learnit.helpers.konfetti.Presets
 import com.singularitycoder.learnit.helpers.konfetti.image.ImageUtil
 import com.singularitycoder.learnit.helpers.showScreen
-import com.singularitycoder.learnit.lockscreen.LockScreenActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -32,11 +32,11 @@ class MainActivity : AppCompatActivity() {
 
     private val alarmReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action != IntentKey.ALARM_BROADCAST) return
-            val activityIntent = Intent(this@MainActivity, LockScreenActivity::class.java).apply {
-                putExtra(IntentExtraKey.TOPIC_ID_3, intent.getLongExtra(IntentExtraKey.TOPIC_ID_2, 0L))
-            }
-            startActivity(activityIntent)
+//            if (intent.action != IntentKey.ALARM_BROADCAST) return
+//            val activityIntent = Intent(this@MainActivity, LockScreenActivity::class.java).apply {
+//                putExtra(IntentExtraKey.TOPIC_ID_3, intent.getLongExtra(IntentExtraKey.TOPIC_ID_2, 0L))
+//            }
+//            startActivity(activityIntent)
         }
     }
 
@@ -65,13 +65,20 @@ class MainActivity : AppCompatActivity() {
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
             /* receiver = */ alarmReceiver,
-            /* filter = */ IntentFilter(IntentKey.ALARM_BROADCAST)
+            /* filter = */ IntentFilter(IntentKey.ALARM_SETTINGS_BROADCAST)
         )
+
+        doOnIntentReceived(intent)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        LocalBroadcastManager.getInstance(this)?.unregisterReceiver(alarmReceiver)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(alarmReceiver)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        doOnIntentReceived(intent)
     }
 
     fun festive() {
@@ -90,5 +97,13 @@ class MainActivity : AppCompatActivity() {
 
     fun rain() {
         binding.konfettiView.start(Presets.rain())
+    }
+
+    private fun doOnIntentReceived(intent: Intent) {
+        val isAlarmAction = intent.action == IntentKey.ALARM_SETTINGS_BROADCAST
+        val isScheduleAlarmFeatureDisabled = intent.getBooleanExtra(IntentExtraKey.CANNOT_SET_ALARM, false)
+        if (isAlarmAction && isScheduleAlarmFeatureDisabled) {
+            askAlarmPermission()
+        }
     }
 }

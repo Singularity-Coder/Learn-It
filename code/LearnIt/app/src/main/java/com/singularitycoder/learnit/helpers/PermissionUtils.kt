@@ -44,6 +44,10 @@ fun Activity.hasNotificationsPermission(): Boolean {
     return hasPermission(android.Manifest.permission.POST_NOTIFICATIONS)
 }
 
+fun Activity.hasAlarmPermission(): Boolean {
+    return hasPermission(android.Manifest.permission.SCHEDULE_EXACT_ALARM)
+}
+
 fun Activity.showAppSettings() {
     this.startActivity(
         Intent(
@@ -51,6 +55,13 @@ fun Activity.showAppSettings() {
             Uri.fromParts("package", this.packageName, null)
         )
     )
+}
+
+fun Context.askAlarmPermission() {
+    val intent = Intent().apply {
+        action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+    }
+    startActivity(intent)
 }
 
 fun Activity.hasStoragePermissionApi30(): Boolean {

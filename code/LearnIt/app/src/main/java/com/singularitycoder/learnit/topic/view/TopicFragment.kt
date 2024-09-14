@@ -13,27 +13,30 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.singularitycoder.learnit.BuildConfig
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.ThisBroadcastReceiver
 import com.singularitycoder.learnit.databinding.FragmentTopicBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
+import com.singularitycoder.learnit.helpers.collectLatestLifecycleFlow
 import com.singularitycoder.learnit.helpers.constants.BottomSheetTag
 import com.singularitycoder.learnit.helpers.constants.EditEvent
 import com.singularitycoder.learnit.helpers.constants.FragmentResultBundleKey
 import com.singularitycoder.learnit.helpers.constants.FragmentResultKey
 import com.singularitycoder.learnit.helpers.constants.FragmentsTag
 import com.singularitycoder.learnit.helpers.constants.IntentExtraKey
-import com.singularitycoder.learnit.helpers.collectLatestLifecycleFlow
-import com.singularitycoder.learnit.helpers.currentTimeMillis
+import com.singularitycoder.learnit.helpers.constants.IntentKey
 import com.singularitycoder.learnit.helpers.constants.globalLayoutAnimation
+import com.singularitycoder.learnit.helpers.currentTimeMillis
 import com.singularitycoder.learnit.helpers.layoutAnimationController
 import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.oneDayTimeMillis
 import com.singularitycoder.learnit.helpers.showAlertDialog
 import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
 import com.singularitycoder.learnit.helpers.showScreen
+import com.singularitycoder.learnit.helpers.showSnackBar
 import com.singularitycoder.learnit.helpers.showToast
+import com.singularitycoder.learnit.helpers.thirtySecondsTimeMillis
+import com.singularitycoder.learnit.lockscreen.LockScreenActivity
 import com.singularitycoder.learnit.subject.model.Subject
 import com.singularitycoder.learnit.subject.view.MainActivity
 import com.singularitycoder.learnit.subtopic.view.AddSubTopicFragment
@@ -109,6 +112,11 @@ class TopicFragment : Fragment() {
         root.setOnClickListener { }
 
         topicsAdapter.setOnStartClickListener { topic, position ->
+            if (alarmManager?.canScheduleExactAlarms()?.not() == true) {
+                binding.root.showSnackBar("You did not grant alarm permission")
+                return@setOnStartClickListener
+            }
+
             viewModel.updateTopic2(
                 topic = topic?.copy(
                     dateStarted = currentTimeMillis,
@@ -116,6 +124,7 @@ class TopicFragment : Fragment() {
                     finishedSessions = 1
                 )
             )
+
             startAlarm(topic)
         }
 
@@ -269,21 +278,54 @@ class TopicFragment : Fragment() {
 
     private fun startAlarm(topic: Topic?) {
         context?.showToast("ALARM ON")
+
+        /** we call broadcast using pendingIntent */
         val intent = Intent(context, ThisBroadcastReceiver::class.java).apply {
-            action = "${BuildConfig.APPLICATION_ID}.${topic?.id}"
+            action = IntentKey.REVISION_ALARM
             putExtra(IntentExtraKey.TOPIC_ID, topic?.id)
         }
+        pendingIntent = PendingIntent.getBroadcast(
+            /* context = */ context,
+            /* requestCode = */ 0,
+            /* intent = */ intent,
+            /* flags = */ PendingIntent.FLAG_IMMUTABLE
+        )
 
-        // we call broadcast using pendingIntent
-        pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        /** https://stackoverflow.com/a/34699710/6802949
+         * Tapping on the alarm time in the notification shade will invoke the PendingIntent
+         * that you put into the AlarmClockInfo object. when the user taps on the time in the notification shade,
+         * LockScreenActivity will appear. The idea is that you should supply an activity here that allows
+         * the user to cancel or reschedule this alarm. */
+        val intent2 = Intent(context, LockScreenActivity::class.java).apply {
+            action = IntentKey.ALARM_SETTINGS_BROADCAST
+            putExtra(IntentExtraKey.TOPIC_ID_2, topic?.id)
+        }
+        val pendingIntent2 = PendingIntent.getActivity(
+            /* context = */ context,
+            /* requestCode = */ 0,
+            /* intent = */ intent2,
+            /* flags = */ PendingIntent.FLAG_IMMUTABLE
+        )
 
-        // Alarm rings continuously until stopped
-        alarmManager?.setRepeating(
-            /* type = */ AlarmManager.RTC_WAKEUP,
-            /* triggerAtMillis = */ topic?.nextSessionDate ?: 0,
-            /* intervalMillis = */ 5000,
+        /** [pendingIntent2] - an intent that can be used to show or edit details of the alarm clock. */
+        val clockInfo = AlarmManager.AlarmClockInfo(
+            /* triggerTime = */ currentTimeMillis + thirtySecondsTimeMillis,
+            /* showIntent = */ pendingIntent2
+        )
+
+        /** [pendingIntent] - Action to perform when the alarm goes off */
+        alarmManager?.setAlarmClock(
+            /* info = */ clockInfo,
             /* operation = */ pendingIntent ?: return
         )
+
+//        // Alarm rings continuously until stopped
+//        alarmManager?.setRepeating(
+//            /* type = */ AlarmManager.RTC_WAKEUP,
+//            /* triggerAtMillis = */ topic?.nextSessionDate ?: 0,
+//            /* intervalMillis = */ 5000,
+//            /* operation = */ pendingIntent ?: return
+//        )
     }
 
     private fun stopAlarm() {

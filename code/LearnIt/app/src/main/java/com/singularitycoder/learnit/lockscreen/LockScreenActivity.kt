@@ -21,6 +21,7 @@ import com.singularitycoder.learnit.BuildConfig
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.ActivityLockScreenBinding
 import com.singularitycoder.learnit.helpers.constants.IntentExtraKey
+import com.singularitycoder.learnit.helpers.constants.IntentKey
 import com.singularitycoder.learnit.helpers.drawable
 import com.singularitycoder.learnit.helpers.nineDayTimeMillis
 import com.singularitycoder.learnit.helpers.nineteenDayTimeMillis
@@ -76,40 +77,19 @@ class LockScreenActivity : AppCompatActivity() {
         observeForData()
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        doOnIntentReceived(intent)
+    }
+
     private fun ActivityLockScreenBinding.setupUI() {
         /** Since its repeating alarm u should stop previous ringtone to avoid multiple tracks playing simultaneously */
         ringtone().stop()
         ringtone().play()
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val topicId = intent.getLongExtra(IntentExtraKey.TOPIC_ID_3, 0L)
-        lifecycleScope.launch {
-            topic = topicsViewModel.getTopicById(topicId)
-            val drawableRes = when (topic?.finishedSessions) {
-                1 -> R.drawable.gif1
-                2 -> R.drawable.gif2
-                3 -> R.drawable.gif3
-                4 -> R.drawable.gif4
-                else -> R.drawable.gif1
-            }
-
-            val imageLoader = ImageLoader.Builder(this@LockScreenActivity)
-                .components {
-                    add(GifDecoder.Factory())
-                }
-                .build()
-            val imageRequest = ImageRequest.Builder(this@LockScreenActivity)
-                .data(this@LockScreenActivity.drawable(drawableRes))
-                .build()
-            val drawable = imageLoader.execute(imageRequest).drawable
-
-            withContext(Dispatchers.Main) {
-                ivGif.load(drawable, imageLoader) {
-                    placeholder(R.color.black)
-                    error(R.color.md_red_700)
-                }
-                tvTopicTitle.text = "Day ${(topic?.finishedSessions ?: 0) + 1}: Time to recollect ${topic?.title}"
-            }
-        }
+//        val topicId = intent.getLongExtra(IntentExtraKey.TOPIC_ID_3, 0L)
+//        loadTopicData(topicId)
+        doOnIntentReceived(intent)
     }
 
     private fun ActivityLockScreenBinding.setupUserActionListeners() {
@@ -153,11 +133,10 @@ class LockScreenActivity : AppCompatActivity() {
         btnStartRevision.onSafeClick {
             lifecycleScope.launch {
                 // TODO set next alarm
-                val nextSessionDate = when (topic?.finishedSessions) {
-                    2 -> oneDayTimeMillis
-                    3 -> sixDayTimeMillis
-                    4 -> nineDayTimeMillis
-                    5 -> nineteenDayTimeMillis
+                val nextSessionDate = when ((topic?.finishedSessions ?: 0) + 1) {
+                    2 -> sixDayTimeMillis
+                    3 -> nineDayTimeMillis
+                    4 -> nineteenDayTimeMillis
                     else -> 0
                 } + (topic?.nextSessionDate ?: 0L)
                 topicsViewModel.updateTopic(
@@ -187,6 +166,51 @@ class LockScreenActivity : AppCompatActivity() {
     }
 
     private fun observeForData() {
+    }
+
+    private fun loadTopicData(topicId: Long) {
+        lifecycleScope.launch {
+            topic = topicsViewModel.getTopicById(topicId)
+            val drawableRes = when (topic?.finishedSessions) {
+                1 -> R.drawable.gif1
+                2 -> R.drawable.gif2
+                3 -> R.drawable.gif3
+                4 -> R.drawable.gif4
+                else -> R.drawable.gif4
+            }
+
+            val imageLoader = ImageLoader.Builder(this@LockScreenActivity)
+                .components {
+                    add(GifDecoder.Factory())
+                }
+                .build()
+            val imageRequest = ImageRequest.Builder(this@LockScreenActivity)
+                .data(this@LockScreenActivity.drawable(drawableRes))
+                .build()
+            val drawable = imageLoader.execute(imageRequest).drawable
+
+            withContext(Dispatchers.Main) {
+                binding.ivGif.load(drawable, imageLoader) {
+                    placeholder(R.color.black)
+                    error(R.color.md_red_700)
+                }
+                val session = when ((topic?.finishedSessions ?: 0) + 1) {
+                    2 -> 1
+                    3 -> 7
+                    4 -> 16
+                    else -> 35
+                }
+                binding.tvTopicTitle.text = "Day $session: Time to recollect ${topic?.title}"
+            }
+        }
+    }
+
+    private fun doOnIntentReceived(intent: Intent) {
+        val isAlarmAction = intent.action == IntentKey.ALARM_SETTINGS_BROADCAST
+        if (isAlarmAction) {
+            val topicId = intent.getLongExtra(IntentExtraKey.TOPIC_ID_2, 0L)
+            loadTopicData(topicId)
+        }
     }
 }
 
