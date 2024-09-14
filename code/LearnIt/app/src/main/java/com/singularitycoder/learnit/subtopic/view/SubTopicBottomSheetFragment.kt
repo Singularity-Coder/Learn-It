@@ -189,6 +189,7 @@ class SubTopicBottomSheetFragment : BottomSheetDialogFragment() {
             subTopicList = list
             subTopicsAdapter.subTopicList = subTopicList
             subTopicsAdapter.notifyDataSetChanged()
+            binding.tvCount.text = "${list.size} Sub-Topics   |   ${list.filter { it.isCorrectRecall }.size} Recalled"
             if (subTopicList.all { it?.isCorrectRecall == true }) {
                 subTopicViewModel.updateAllSubTopics(
                     subTopicList.map { it?.copy(isCorrectRecall = false) }.filterNotNull()

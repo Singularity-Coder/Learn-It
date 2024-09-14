@@ -341,6 +341,8 @@ class TopicFragment : Fragment() {
             topicList = list
             topicsAdapter.topicList = topicList
             topicsAdapter.notifyDataSetChanged()
+            binding.layoutCustomToolbar.tvCount.text =
+                "${list.size} Topics   |   ${list.filter { it?.finishedSessions == 5 }.size} Mastered"
         }
     }
 }

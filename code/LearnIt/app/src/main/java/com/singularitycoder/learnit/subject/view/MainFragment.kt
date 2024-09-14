@@ -1,6 +1,5 @@
 package com.singularitycoder.learnit.subject.view
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.content.Context
@@ -62,8 +61,7 @@ class MainFragment : Fragment() {
 
     private val viewModel by viewModels<SubjectViewModel>()
 
-    private var notificationPermissionCount = 0
-
+    @SuppressLint("InlinedApi")
     private val notificationPermissionResult = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean? ->
         isGranted ?: return@registerForActivityResult
 
@@ -71,23 +69,32 @@ class MainFragment : Fragment() {
             requireContext().showAlertDialog(
                 title = "Grant permission",
                 message = "You must grant notification permission to use this App.",
-                positiveBtnText = "Settings",
+                positiveBtnText = if (AppPreferences.getInstance().notifPermissionDeniedCount >= 1) {
+                    "Settings"
+                } else "Grant",
                 negativeBtnText = "Cancel",
                 positiveAction = {
-                    activity?.showAppSettings()
+                    if (AppPreferences.getInstance().notifPermissionDeniedCount >= 1) {
+                        activity?.showAppSettings()
+                    } else {
+                        AppPreferences.getInstance().notifPermissionDeniedCount += 1
+                        askNotificationPermission()
+                    }
+                },
+                negativeAction = {
+                    AppPreferences.getInstance().notifPermissionDeniedCount += 1
                 }
             )
         }
 
         val isDeniedShowRationale = activity?.shouldShowRationaleFor(android.Manifest.permission.POST_NOTIFICATIONS) == true
         if (isDeniedShowRationale) {
-            notificationPermissionCount++
             showRationale()
             return@registerForActivityResult
         }
 
         if (isGranted.not()) {
-            if (notificationPermissionCount >= 1) {
+            if (AppPreferences.getInstance().notifPermissionDeniedCount >= 1) {
                 showRationale()
             } else {
                 askNotificationPermission()
@@ -156,15 +163,20 @@ class MainFragment : Fragment() {
         subjectsAdapter.setOnItemClickListener { subject, position ->
             if (AndroidVersions.isTiramisu()) {
                 if (activity?.hasNotificationsPermission()?.not() == true) {
+                    AppPreferences.getInstance().hasNotificationPermission = false
                     askNotificationPermission()
                     return@setOnItemClickListener
                 }
             }
 
             if ((context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager).canScheduleExactAlarms().not()) {
+                AppPreferences.getInstance().hasAlarmPermission = false
                 context?.askAlarmPermission()
                 return@setOnItemClickListener
             }
+
+            AppPreferences.getInstance().hasNotificationPermission = true
+            AppPreferences.getInstance().hasAlarmPermission = true
 
             if (layoutAddItem.etItem.isFocused) {
                 layoutAddItem.etItem.hideKeyboard()
@@ -279,10 +291,11 @@ class MainFragment : Fragment() {
 
     @SuppressLint("InlinedApi")
     private fun askNotificationPermission() {
-        notificationPermissionResult.launch(Manifest.permission.POST_NOTIFICATIONS)
+        notificationPermissionResult.launch(android.Manifest.permission.POST_NOTIFICATIONS)
     }
 
     private fun askPermissions() {
+        if (AndroidVersions.isTiramisu().not()) return
         if (AppPreferences.getInstance().hasNotificationPermission && AppPreferences.getInstance().hasAlarmPermission) return
         requireContext().showAlertDialog(
             title = "Grant permissions",

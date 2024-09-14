@@ -1,5 +1,5 @@
 
-
+-> show topic and subtopic count
 - on start -> view chnages, alarm set for 24 hr, alarm rings, notif shows up, alarm screen shows up,
 -> on start revision click -> +1 finished session count -> set next session date -> set new alarm with that time
 -> On remind me click -> update next seession count -> set new alarm with that time

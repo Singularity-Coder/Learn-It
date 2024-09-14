@@ -228,6 +228,7 @@ class AddSubTopicFragment : Fragment() {
             addSubTopicsAdapter.subTopicList = list.toMutableList()
             addSubTopicsAdapter.notifyDataSetChanged()
             layoutAddItem.etItem.setText("")
+            binding.layoutCustomToolbar.tvCount.text = "${list.size} Topics"
         }
     }
 }

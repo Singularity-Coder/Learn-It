@@ -37,6 +37,10 @@ class AppPreferences(context: Context) {
         get() = sharedPreferences.getBoolean("ALARM_PERMISSION_PREF", false)
         set(value) = sharedPreferences.edit { putBoolean("ALARM_PERMISSION_PREF", value) }
 
+    var notifPermissionDeniedCount: Int
+        get() = sharedPreferences.getInt("NOTIF_PERMISSION_DENIED_COUNT_PREF", 0)
+        set(value) = sharedPreferences.edit { putInt("NOTIF_PERMISSION_DENIED_COUNT_PREF", value) }
+
     var ttsSpeechRate: Int
         get() = sharedPreferences.getInt("TTS_SPEECH_RATE_PREF", 0)
         set(value) = sharedPreferences.edit { putInt("TTS_SPEECH_RATE_PREF", value) }
