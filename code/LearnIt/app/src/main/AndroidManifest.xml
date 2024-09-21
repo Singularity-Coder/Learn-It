@@ -52,8 +52,8 @@
             </intent-filter>
         </activity>
         <!--
-If the affected app component does not need to receive Intents from other apps, you can make that app component private by setting android:exported=”false” in your manifest.
-       https://support.google.com/faqs/answer/9267555?hl=en-AU
+        If the affected app component does not need to receive Intents from other apps, you can make that app component private by setting android:exported=”false” in your manifest.
+        https://support.google.com/faqs/answer/9267555?hl=en-AU
         -->
         <receiver
             android:name=".ThisBroadcastReceiver"

@@ -1,7 +1,13 @@
 package com.singularitycoder.learnit.subtopic.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
 import com.singularitycoder.learnit.helpers.constants.DbTable
 import com.singularitycoder.learnit.subtopic.model.SubTopic
 import kotlinx.coroutines.flow.Flow

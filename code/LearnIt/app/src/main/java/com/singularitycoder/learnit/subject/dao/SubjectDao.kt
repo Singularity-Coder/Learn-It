@@ -1,6 +1,7 @@
 package com.singularitycoder.learnit.subject.dao
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -10,7 +11,9 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.singularitycoder.learnit.helpers.constants.DbTable
 import com.singularitycoder.learnit.subject.model.Subject
+import com.singularitycoder.learnit.topic.model.Topic
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 @Dao
 interface SubjectDao {
@@ -73,4 +76,31 @@ interface SubjectDao {
     @Transaction
     @Query("DELETE FROM ${DbTable.SUBJECT}")
     suspend fun deleteAll()
+
+    // https://stackoverflow.com/questions/44711911/android-room-database-transactions
+    @Transaction
+    suspend fun deleteSubjectAndTopicAndSubTopics(subject: Subject) {
+        deleteAllSubTopicsBySubjectId(subject.id)
+        deleteAllTopicsBySubjectId(subject.id)
+        delete(subject)
+    }
+
+    @Query("DELETE FROM ${DbTable.SUB_TOPIC} WHERE subjectId = :subjectId")
+    suspend fun deleteAllSubTopicsBySubjectId(subjectId: Long)
+
+    @Query("DELETE FROM ${DbTable.TOPIC} WHERE subjectId = :subjectId")
+    suspend fun deleteAllTopicsBySubjectId(subjectId: Long)
+
+    @Transaction
+    suspend fun deleteAllSubjectsTopicsSubTopics() {
+        deleteAllSubTopics()
+        deleteAllTopics()
+        deleteAll()
+    }
+
+    @Query("DELETE FROM ${DbTable.TOPIC}")
+    suspend fun deleteAllTopics()
+
+    @Query("DELETE FROM ${DbTable.SUB_TOPIC}")
+    suspend fun deleteAllSubTopics()
 }

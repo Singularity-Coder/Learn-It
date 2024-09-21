@@ -84,7 +84,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_start_revision"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -98,8 +98,9 @@
         android:insetBottom="0dp"
         android:text="Start Revision"
         android:textAllCaps="false"
-        android:textColor="@color/purple_50"
+        android:textColor="@color/purple_500"
         android:textStyle="bold"
+        android:backgroundTint="@color/purple_50"
         app:cornerRadius="24dp"
         app:elevation="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

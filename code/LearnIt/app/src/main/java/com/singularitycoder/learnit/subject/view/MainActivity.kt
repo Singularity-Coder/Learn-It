@@ -5,12 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.view.WindowInsetsController
-import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -22,6 +19,8 @@ import com.singularitycoder.learnit.helpers.constants.IntentExtraKey
 import com.singularitycoder.learnit.helpers.constants.IntentKey
 import com.singularitycoder.learnit.helpers.konfetti.Presets
 import com.singularitycoder.learnit.helpers.konfetti.image.ImageUtil
+import com.singularitycoder.learnit.helpers.playSound
+import com.singularitycoder.learnit.helpers.setStatusBarColor
 import com.singularitycoder.learnit.helpers.showScreen
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -43,11 +42,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-        window.insetsController?.setSystemBarsAppearance(0, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS)
-        window.statusBarColor = ContextCompat.getColor(this, R.color.purple_700)
-
+        setStatusBarColor(R.color.purple_700)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
@@ -88,6 +83,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun explode() {
+        playSound(R.raw.fireworks2)
         binding.konfettiView.start(Presets.explode())
     }
 

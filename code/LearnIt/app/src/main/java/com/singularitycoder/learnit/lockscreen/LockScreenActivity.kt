@@ -10,10 +10,10 @@ import android.media.RingtoneManager
 import android.os.Bundle
 import android.os.Vibrator
 import android.util.Log
-import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
@@ -21,11 +21,12 @@ import coil.ImageLoader
 import coil.decode.GifDecoder
 import coil.load
 import coil.request.ImageRequest
-import com.singularitycoder.learnit.BuildConfig
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.ActivityLockScreenBinding
+import com.singularitycoder.learnit.helpers.color
 import com.singularitycoder.learnit.helpers.constants.IntentExtraKey
 import com.singularitycoder.learnit.helpers.constants.IntentKey
+import com.singularitycoder.learnit.helpers.currentTimeMillis
 import com.singularitycoder.learnit.helpers.drawable
 import com.singularitycoder.learnit.helpers.getAlarmUri
 import com.singularitycoder.learnit.helpers.nineDayTimeMillis
@@ -66,6 +67,7 @@ class LockScreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        window.navigationBarColor = color(R.color.black)
         binding = ActivityLockScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -129,7 +131,7 @@ class LockScreenActivity : AppCompatActivity() {
                         "12 Hours" -> twelveHourTimeMillis
                         "Tomorrow" -> oneDayTimeMillis
                         else -> 0
-                    } + (topic?.nextSessionDate ?: 0L)
+                    } + currentTimeMillis
                     topicsViewModel.updateTopic(
                         topic = topic?.copy(nextSessionDate = nextSessionDate)
                     )

@@ -14,10 +14,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.FragmentEditBottomSheetBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
+import com.singularitycoder.learnit.helpers.color
 import com.singularitycoder.learnit.helpers.constants.EditEvent
 import com.singularitycoder.learnit.helpers.constants.FragmentResultBundleKey
 import com.singularitycoder.learnit.helpers.constants.FragmentResultKey
-import com.singularitycoder.learnit.helpers.color
 import com.singularitycoder.learnit.helpers.dpToPx
 import com.singularitycoder.learnit.helpers.enableSoftInput
 import com.singularitycoder.learnit.helpers.onSafeClick
@@ -110,7 +110,12 @@ class EditBottomSheetFragment : BottomSheetDialogFragment() {
             else -> Unit
         }
 
-        btnDone.isEnabled = false
+        val isDoneBtnEnabled = etEdit.editText?.text.isNullOrBlank().not() && etEdit2.editText?.text.isNullOrBlank().not()
+        btnDone.isEnabled = isDoneBtnEnabled
+        if (isDoneBtnEnabled) {
+            isValidTopic = true
+            isValidStudyMaterial = true
+        }
         etEdit.editText?.showKeyboard()
     }
 

@@ -8,15 +8,20 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.view.View
+import android.view.WindowInsetsController
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
+import androidx.annotation.ColorRes
+import androidx.annotation.RawRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -142,4 +147,33 @@ fun pendingIntentUpdateCurrentFlag(): Int {
 
 fun Context.canScheduleAlarms(): Boolean {
     return AndroidVersions.isTiramisu() && (getSystemService(Context.ALARM_SERVICE) as AlarmManager).canScheduleExactAlarms()
+}
+
+fun Activity.setStatusBarColor(@ColorRes color: Int) {
+    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+    window.insetsController?.setSystemBarsAppearance(0, WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS)
+    window.statusBarColor = ContextCompat.getColor(this, color)
+}
+
+fun Context?.playSound(@RawRes sound: Int) {
+    var mediaPlayer: MediaPlayer? = null
+    try {
+        mediaPlayer = MediaPlayer.create(this, sound)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    } finally {
+        mediaPlayer?.setOnCompletionListener { it: MediaPlayer? ->
+            try {
+                it?.reset()
+                it?.release()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    try {
+        mediaPlayer?.start()
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 }

@@ -40,9 +40,10 @@ class SubjectViewModel @Inject constructor(
 //    suspend fun getLast3BookItems() = bookDao.getLast3By()
 
     fun deleteSubjectItem(subject: Subject?) = viewModelScope.launch {
-        subTopicDao.deleteAllBySubjectId(subject?.id ?: return@launch)
-        topicDao.deleteAllBySubjectId(subject.id)
-        subjectDao.delete(subject)
+//        subTopicDao.deleteAllBySubjectId(subject?.id ?: return@launch)
+//        topicDao.deleteAllBySubjectId(subject.id)
+//        subjectDao.delete(subject)
+        subjectDao.deleteSubjectAndTopicAndSubTopics(subject ?: return@launch)
     }
 
 //    fun deleteBookDataItem(subject: Subject?) = viewModelScope.launch {
@@ -50,9 +51,10 @@ class SubjectViewModel @Inject constructor(
 //    }
 
     fun deleteAllSubjects() = viewModelScope.launch {
-        subTopicDao.deleteAll()
-        topicDao.deleteAll()
-        subjectDao.deleteAll()
+//        subTopicDao.deleteAll()
+//        topicDao.deleteAll()
+//        subjectDao.deleteAll()
+        subjectDao.deleteAllSubjectsTopicsSubTopics()
     }
 //
 //    fun deleteAllBookDataItems() = viewModelScope.launch {

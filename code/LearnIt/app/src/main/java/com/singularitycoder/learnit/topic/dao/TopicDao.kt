@@ -62,4 +62,14 @@ interface TopicDao {
 
     @Query("DELETE FROM ${DbTable.TOPIC} WHERE subjectId = :subjectId")
     suspend fun deleteAllBySubjectId(subjectId: Long)
+
+    // https://stackoverflow.com/questions/44711911/android-room-database-transactions
+    @Transaction
+    suspend fun deleteTopicAndSubTopics(topic: Topic) {
+        deleteAllTopicsByTopicId(topic.id)
+        delete(topic)
+    }
+
+    @Query("DELETE FROM ${DbTable.SUB_TOPIC} WHERE topicId = :topicId")
+    suspend fun deleteAllTopicsByTopicId(topicId: Long)
 }
