@@ -20,6 +20,7 @@ val DEFAULT_TOPICS = listOf(
         dateStarted = 0L,
         nextSessionDate = 0L,
         finishedSessions = 0,
+        revisionCount = 0
     ),
     Topic(
         id = 2,
@@ -29,6 +30,7 @@ val DEFAULT_TOPICS = listOf(
         dateStarted = 0L,
         nextSessionDate = 0L,
         finishedSessions = 0,
+        revisionCount = 0
     ),
     Topic(
         id = 3,
@@ -38,6 +40,7 @@ val DEFAULT_TOPICS = listOf(
         dateStarted = 0L,
         nextSessionDate = 0L,
         finishedSessions = 0,
+        revisionCount = 0
     )
 )
 

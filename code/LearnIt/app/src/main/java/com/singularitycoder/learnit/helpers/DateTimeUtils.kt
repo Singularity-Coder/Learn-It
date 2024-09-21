@@ -32,14 +32,23 @@ val twelveHourTimeMillis: Long
 val oneDayTimeMillis: Long
     get() = TimeUnit.DAYS.toMillis(1)
 
+val sevenDayTimeMillis: Long
+    get() = TimeUnit.DAYS.toMillis(7)
+
 val sixDayTimeMillis: Long
     get() = TimeUnit.DAYS.toMillis(6)
 
 val nineDayTimeMillis: Long
     get() = TimeUnit.DAYS.toMillis(9)
 
+val sixteenDayTimeMillis: Long
+    get() = TimeUnit.DAYS.toMillis(16)
+
 val nineteenDayTimeMillis: Long
     get() = TimeUnit.DAYS.toMillis(19)
+
+val thirtyFiveDayTimeMillis: Long
+    get() = TimeUnit.DAYS.toMillis(35)
 
 fun Long.toDateTime(type: String = "dd-MMM-yyyy @ h:mm a"): String {
     val date = Date(this)

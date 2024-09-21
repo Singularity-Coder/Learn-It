@@ -183,6 +183,7 @@ class EditBottomSheetFragment : BottomSheetDialogFragment() {
                             dateStarted = 0L,
                             nextSessionDate = 0L,
                             finishedSessions = 0,
+                            revisionCount = 0
                         )
                         val topicId = topicViewModel.addTopic(topic)
                         val topicWithId = topicViewModel.getTopicById(topicId)

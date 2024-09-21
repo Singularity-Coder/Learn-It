@@ -1,5 +1,6 @@
 [versions]
 agp = "8.5.2"
+balloon = "1.6.7"
 coil = "2.4.0"
 coilGif = "2.4.0"
 fragmentKtx = "1.8.3"
@@ -35,6 +36,7 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
+balloon = { module = "com.github.skydoves:balloon", version.ref = "balloon" }
 coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coilGif" }
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }

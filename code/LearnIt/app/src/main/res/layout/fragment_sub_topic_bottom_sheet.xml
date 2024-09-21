@@ -89,6 +89,7 @@
                 android:maxLines="1"
                 android:paddingStart="16dp"
                 android:text="0 Sub-Topics"
+                android:textAlignment="center"
                 android:paddingTop="4dp"
                 android:paddingBottom="4dp"
                 android:background="@color/screen_background"

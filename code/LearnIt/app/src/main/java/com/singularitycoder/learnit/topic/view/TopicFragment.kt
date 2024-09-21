@@ -29,15 +29,22 @@ import com.singularitycoder.learnit.helpers.constants.IntentKey
 import com.singularitycoder.learnit.helpers.constants.globalLayoutAnimation
 import com.singularitycoder.learnit.helpers.currentTimeMillis
 import com.singularitycoder.learnit.helpers.layoutAnimationController
+import com.singularitycoder.learnit.helpers.nineDayTimeMillis
+import com.singularitycoder.learnit.helpers.nineteenDayTimeMillis
 import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.oneDayTimeMillis
 import com.singularitycoder.learnit.helpers.pendingIntentUpdateCurrentFlag
+import com.singularitycoder.learnit.helpers.sevenDayTimeMillis
 import com.singularitycoder.learnit.helpers.showAlertDialog
 import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
 import com.singularitycoder.learnit.helpers.showScreen
 import com.singularitycoder.learnit.helpers.showSnackBar
 import com.singularitycoder.learnit.helpers.showToast
+import com.singularitycoder.learnit.helpers.sixDayTimeMillis
+import com.singularitycoder.learnit.helpers.sixteenDayTimeMillis
+import com.singularitycoder.learnit.helpers.thirtyFiveDayTimeMillis
 import com.singularitycoder.learnit.helpers.thirtySecondsTimeMillis
+import com.singularitycoder.learnit.helpers.toDateTime
 import com.singularitycoder.learnit.lockscreen.LockScreenActivity
 import com.singularitycoder.learnit.subject.model.Subject
 import com.singularitycoder.learnit.subject.view.MainActivity
@@ -45,6 +52,10 @@ import com.singularitycoder.learnit.subtopic.view.AddSubTopicFragment
 import com.singularitycoder.learnit.subtopic.view.SubTopicBottomSheetFragment
 import com.singularitycoder.learnit.topic.model.Topic
 import com.singularitycoder.learnit.topic.viewmodel.TopicViewModel
+import com.skydoves.balloon.ArrowPositionRules
+import com.skydoves.balloon.Balloon
+import com.skydoves.balloon.BalloonAnimation
+import com.skydoves.balloon.BalloonSizeSpec
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -128,6 +139,36 @@ class TopicFragment : Fragment() {
             )
 
             startAlarm(topic)
+        }
+
+        topicsAdapter.setOnDayClickListener { topic, day, view ->
+            view ?: return@setOnDayClickListener
+            topic ?: return@setOnDayClickListener
+            val date = when (day) {
+                1 -> topic.dateStarted
+                2 -> topic.dateStarted + oneDayTimeMillis
+                3 -> topic.dateStarted + sevenDayTimeMillis
+                4 -> topic.dateStarted + sixteenDayTimeMillis
+                5 -> topic.dateStarted + thirtyFiveDayTimeMillis
+                else -> 0
+            }
+
+            val balloon = Balloon.Builder(requireContext())
+                .setHeight(BalloonSizeSpec.WRAP)
+                .setWidth(BalloonSizeSpec.WRAP)
+                .setText(date.toDateTime())
+                .setTextColorResource(R.color.purple_300)
+                .setTextSize(15f)
+                .setArrowPositionRules(ArrowPositionRules.ALIGN_ANCHOR)
+                .setArrowSize(12)
+                .setArrowPosition(0.5f)
+                .setPadding(12)
+                .setCornerRadius(8f)
+                .setBackgroundColorResource(R.color.purple_50)
+                .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
+                .setLifecycleOwner(this@TopicFragment)
+                .build()
+            balloon.showAlignTop(anchor = view)
         }
 
         topicsAdapter.setOnItemClickListener { topic, position ->
@@ -273,8 +314,14 @@ class TopicFragment : Fragment() {
         parentFragmentManager.setFragmentResultListener(
             /* requestKey = */ FragmentResultKey.SHOW_KONFETTI,
             /* lifecycleOwner = */ viewLifecycleOwner
-        ) { _, _ ->
+        ) { _, bundle: Bundle ->
             (activity as? MainActivity)?.explode()
+            val topic = if (AndroidVersions.isTiramisu()) {
+                bundle.getParcelable(FragmentResultBundleKey.TOPIC, Topic::class.java)
+            } else {
+                bundle.getParcelable(FragmentResultBundleKey.TOPIC)
+            } ?: return@setFragmentResultListener
+            viewModel.updateTopic2(topic.copy(revisionCount = topic.revisionCount + 1))
         }
     }
 

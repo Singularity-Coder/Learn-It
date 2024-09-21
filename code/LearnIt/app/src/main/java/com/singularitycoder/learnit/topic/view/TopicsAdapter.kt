@@ -26,6 +26,7 @@ class TopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var itemClickListener: (topic: Topic?, position: Int) -> Unit = { _, _ -> }
     private var itemLongClickListener: (topic: Topic?, view: View?, position: Int) -> Unit = { _, _, _ -> }
     private var startClickListener: (topic: Topic?, position: Int) -> Unit = { _, _ -> }
+    private var dayClickListener: (topic: Topic?, day: Int, view: View?) -> Unit = { _, _, _ -> }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val itemBinding = ListItemTopicBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -46,6 +47,10 @@ class TopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     fun setOnStartClickListener(listener: (topic: Topic?, position: Int) -> Unit) {
         startClickListener = listener
+    }
+
+    fun setOnDayClickListener(listener: (topic: Topic?, day: Int, view: View?) -> Unit) {
+        dayClickListener = listener
     }
 
     fun setOnItemLongClickListener(
@@ -100,6 +105,21 @@ class TopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 btnStart.onSafeClick {
                     setStartedState(topic)
                     startClickListener.invoke(topic, bindingAdapterPosition)
+                }
+                tvDay1.onSafeClick {
+                    dayClickListener.invoke(topic, 1, it.first)
+                }
+                tvDay2.onSafeClick {
+                    dayClickListener.invoke(topic, 2, it.first)
+                }
+                tvDay3.onSafeClick {
+                    dayClickListener.invoke(topic, 3, it.first)
+                }
+                tvDay4.onSafeClick {
+                    dayClickListener.invoke(topic, 4, it.first)
+                }
+                tvDay5.onSafeClick {
+                    dayClickListener.invoke(topic, 5, it.first)
                 }
             }
         }

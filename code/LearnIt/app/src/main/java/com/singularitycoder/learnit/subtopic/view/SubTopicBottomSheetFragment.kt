@@ -16,13 +16,13 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.FragmentSubTopicBottomSheetBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
-import com.singularitycoder.learnit.helpers.constants.FragmentsTag
 import com.singularitycoder.learnit.helpers.collectLatestLifecycleFlow
 import com.singularitycoder.learnit.helpers.constants.FragmentResultBundleKey
 import com.singularitycoder.learnit.helpers.constants.FragmentResultKey
-import com.singularitycoder.learnit.helpers.enableSoftInput
+import com.singularitycoder.learnit.helpers.constants.FragmentsTag
 import com.singularitycoder.learnit.helpers.constants.globalLayoutAnimation
 import com.singularitycoder.learnit.helpers.constants.globalSlideToBottomAnimation
+import com.singularitycoder.learnit.helpers.enableSoftInput
 import com.singularitycoder.learnit.helpers.hideKeyboard
 import com.singularitycoder.learnit.helpers.layoutAnimationController
 import com.singularitycoder.learnit.helpers.onImeClick
@@ -189,7 +189,8 @@ class SubTopicBottomSheetFragment : BottomSheetDialogFragment() {
             subTopicList = list
             subTopicsAdapter.subTopicList = subTopicList
             subTopicsAdapter.notifyDataSetChanged()
-            binding.tvCount.text = "${list.size} Sub-Topics   |   ${list.filter { it.isCorrectRecall }.size} Recalled"
+            binding.tvCount.text =
+                "${list.size} Sub-Topics   |   ${list.filter { it.isCorrectRecall }.size} Recalled   |   ${topic?.revisionCount} Revisions"
             if (subTopicList.all { it?.isCorrectRecall == true }) {
                 subTopicViewModel.updateAllSubTopics(
                     subTopicList.map { it?.copy(isCorrectRecall = false) }.filterNotNull()
@@ -198,7 +199,7 @@ class SubTopicBottomSheetFragment : BottomSheetDialogFragment() {
                     try {
                         parentFragmentManager.setFragmentResult(
                             /* requestKey = */ FragmentResultKey.SHOW_KONFETTI,
-                            /* result = */ bundleOf()
+                            /* result = */ bundleOf(FragmentResultBundleKey.TOPIC to topic)
                         )
                     } catch (_: Exception) {
                     }
