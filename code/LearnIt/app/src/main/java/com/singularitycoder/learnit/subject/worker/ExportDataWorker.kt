@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.singularitycoder.learnit.helpers.NotificationsHelper
 import com.singularitycoder.learnit.helpers.constants.TEXT_FILE_TABLE_DIVIDER
 import com.singularitycoder.learnit.helpers.constants.WorkerData
 import com.singularitycoder.learnit.helpers.currentTimeMillis
@@ -47,10 +48,12 @@ class ExportDataWorker(val context: Context, workerParams: WorkerParameters) : C
             val isImportData = inputData.getBoolean(WorkerData.IS_IMPORT_DATA, false)
             val uri = inputData.getString(WorkerData.URI)
 
-            // TODO show notification on start
+            NotificationsHelper.createNotificationChannel(context)
+            NotificationsHelper.createNotification(context = context, title = "Import Export Data")
 
             try {
                 if (isImportData) {
+                    NotificationsHelper.updateNotification(context = context, title = "Importing data")
                     val outputFile = File("${context.cacheDir}/learn_it_import_data.txt")
                     try {
                         context.contentResolver?.openInputStream(Uri.parse(uri)).use { inputStream ->
@@ -69,7 +72,9 @@ class ExportDataWorker(val context: Context, workerParams: WorkerParameters) : C
                     subjectDao.insertAll(subjects)
                     topicDao.insertAll(topics)
                     subTopicDao.insertAll(subTopics)
+                    NotificationsHelper.updateNotification(context = context, title = "Finished Importing data")
                 } else {
+                    NotificationsHelper.updateNotification(context = context, title = "Exporting data")
                     val subjects = listToString(ArrayList(subjectDao.getAll()))
                     val topics = listToString(ArrayList(topicDao.getAll()))
                     val subTopics = listToString(ArrayList(subTopicDao.getAll()))
@@ -79,9 +84,8 @@ class ExportDataWorker(val context: Context, workerParams: WorkerParameters) : C
                         text = text,
                         fileNameWithExtension = "learn_it_export_${currentTimeMillis.toDateTime(type = "dd_MMM_yyyy_h_mm_ss_a")}.txt"
                     )
+                    NotificationsHelper.updateNotification(context = context, title = "Exported data to \"Downloads\" folder")
                 }
-
-                // TODO show notification on completion
 
                 Result.success()
             } catch (_: Exception) {

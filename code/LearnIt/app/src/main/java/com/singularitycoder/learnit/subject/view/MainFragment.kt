@@ -81,6 +81,8 @@ class MainFragment : Fragment() {
 
     private var filePicker = registerForActivityResult<String, Uri>(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri ?: return@registerForActivityResult
+
+        // TODO validate
         // content://com.android.providers.downloads.documents/document/raw%3A%2Fstorage%2Femulated%2F0%2FDownload%2Flearn_it_export_22_Sep_2024_11_19_51_PM.txt
         println("uri.authority: " + uri.authority) // com.android.providers.downloads.documents
         println("uri.scheme: " + uri.scheme) // content
