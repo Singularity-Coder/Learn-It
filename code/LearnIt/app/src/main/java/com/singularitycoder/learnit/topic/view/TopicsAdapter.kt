@@ -77,6 +77,7 @@ class TopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         fun setData(topic: Topic?) {
             itemBinding.apply {
+                ivArrowRight.isVisible = false
                 tvTitle.text = topic?.title
                 tvStudyMaterial.text = "Study Material: ${topic?.studyMaterial}"
 
@@ -127,6 +128,7 @@ class TopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private fun setStartedState(topic: Topic?) {
             itemBinding.apply {
                 btnStart.isVisible = false
+                ivArrowRight.isVisible = btnStart.isVisible.not()
                 tvNextSession.isVisible = btnStart.isVisible.not()
                 clRepetitionDays.isVisible = btnStart.isVisible.not()
                 val dayViewList = listOf(tvDay1, tvDay2, tvDay3, tvDay4, tvDay5)
@@ -141,6 +143,7 @@ class TopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             itemBinding.apply {
                 resetColors()
                 btnStart.isVisible = true
+                ivArrowRight.isVisible = btnStart.isVisible.not()
                 tvMasteredIt.isVisible = btnStart.isVisible.not()
                 tvNextSession.isVisible = btnStart.isVisible.not()
                 clRepetitionDays.isVisible = btnStart.isVisible.not()
@@ -161,6 +164,7 @@ class TopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 tvNextSession.isVisible = tvMasteredIt.isVisible.not()
                 clRepetitionDays.isVisible = tvMasteredIt.isVisible.not()
                 divider.dividerColor = root.context.color(R.color.md_indigo_500)
+                ivArrowRight.isVisible = true
                 ivArrowRight.imageTintList = ColorStateList.valueOf(root.context.color(R.color.md_indigo_400))
             }
         }

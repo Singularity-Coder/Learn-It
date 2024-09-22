@@ -1,9 +1,9 @@
 package com.singularitycoder.learnit.subject.view
 
 import android.annotation.SuppressLint
-import android.app.AlarmManager
 import android.content.Context
 import android.os.Bundle
+import android.os.PowerManager
 import android.text.Editable
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -15,6 +15,12 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.FragmentMainBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
@@ -25,12 +31,17 @@ import com.singularitycoder.learnit.helpers.collectLatestLifecycleFlow
 import com.singularitycoder.learnit.helpers.constants.FragmentResultBundleKey
 import com.singularitycoder.learnit.helpers.constants.FragmentResultKey
 import com.singularitycoder.learnit.helpers.constants.FragmentsTag
+import com.singularitycoder.learnit.helpers.constants.WakeLockKey
+import com.singularitycoder.learnit.helpers.constants.WorkerData
+import com.singularitycoder.learnit.helpers.constants.WorkerTag
 import com.singularitycoder.learnit.helpers.constants.globalLayoutAnimation
 import com.singularitycoder.learnit.helpers.hasNotificationsPermission
+import com.singularitycoder.learnit.helpers.hasStoragePermissionApi30
 import com.singularitycoder.learnit.helpers.hideKeyboard
 import com.singularitycoder.learnit.helpers.layoutAnimationController
 import com.singularitycoder.learnit.helpers.onImeClick
 import com.singularitycoder.learnit.helpers.onSafeClick
+import com.singularitycoder.learnit.helpers.requestStoragePermissionApi30
 import com.singularitycoder.learnit.helpers.shouldShowRationaleFor
 import com.singularitycoder.learnit.helpers.showAlertDialog
 import com.singularitycoder.learnit.helpers.showAppSettings
@@ -38,6 +49,7 @@ import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
 import com.singularitycoder.learnit.helpers.showScreen
 import com.singularitycoder.learnit.subject.model.Subject
 import com.singularitycoder.learnit.subject.viewmodel.SubjectViewModel
+import com.singularitycoder.learnit.subject.worker.ExportDataWorker
 import com.singularitycoder.learnit.topic.view.TopicFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -59,6 +71,8 @@ class MainFragment : Fragment() {
     private val subjectsAdapter = SubjectsAdapter()
 
     private var subjectList = listOf<Subject?>()
+
+    private var wakeLock: PowerManager.WakeLock? = null
 
     private val viewModel by viewModels<SubjectViewModel>()
 
@@ -119,6 +133,11 @@ class MainFragment : Fragment() {
         observeForData()
     }
 
+    override fun onPause() {
+        super.onPause()
+        releaseWakeLock()
+    }
+
     private fun FragmentMainBinding.setupUI() {
         askPermissions()
         activity?.window?.navigationBarColor = requireContext().getColor(R.color.white)
@@ -137,6 +156,8 @@ class MainFragment : Fragment() {
 
         ivHeaderMore.onSafeClick { pair: Pair<View?, Boolean> ->
             val optionsList = listOf(
+                Pair("Import", R.drawable.round_south_west_24),
+                Pair("Export", R.drawable.round_north_east_24),
                 Pair("Delete All", R.drawable.outline_delete_24),
             )
             requireContext().showPopupMenuWithIcons(
@@ -147,6 +168,23 @@ class MainFragment : Fragment() {
             ) { it: MenuItem? ->
                 when (it?.title?.toString()?.trim()) {
                     optionsList[0].first -> {
+                        if (activity?.hasStoragePermissionApi30()?.not() == true) {
+                            showStoragePermissionPopup()
+                            return@showPopupMenuWithIcons
+                        }
+
+                        startImportExportDataWorker(isImportData = true)
+                    }
+
+                    optionsList[1].first -> {
+                        if (activity?.hasStoragePermissionApi30()?.not() == true) {
+                            showStoragePermissionPopup()
+                            return@showPopupMenuWithIcons
+                        }
+
+                        startImportExportDataWorker(isImportData = false)
+                    }
+                    optionsList[2].first -> {
                         requireContext().showAlertDialog(
                             message = "Delete all subjects? You cannot undo this action.",
                             positiveBtnText = "Delete",
@@ -290,6 +328,17 @@ class MainFragment : Fragment() {
         }
     }
 
+    private fun showStoragePermissionPopup() {
+        requireContext().showAlertDialog(
+            title = "Grant Storage Permission",
+            message = "Please grant storage permission for \"Downloads\" folder to import or export data.",
+            positiveBtnText = "Grant",
+            positiveAction = {
+                requireActivity().requestStoragePermissionApi30()
+            }
+        )
+    }
+
     @SuppressLint("InlinedApi")
     private fun askNotificationPermission() {
         notificationPermissionResult.launch(android.Manifest.permission.POST_NOTIFICATIONS)
@@ -306,5 +355,49 @@ class MainFragment : Fragment() {
                 askNotificationPermission()
             }
         )
+    }
+
+    @SuppressLint("WakelockTimeout")
+    private fun startImportExportDataWorker(isImportData: Boolean) {
+        /** This is to make sure books are loading even if screen is turned off. Keeps CPU awake. */
+        wakeLock = (requireContext().getSystemService(Context.POWER_SERVICE) as PowerManager).run {
+            newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WakeLockKey.IMPORT_EXPORT_DATA).apply {
+                acquire()
+            }
+        }
+
+        val data = Data.Builder().putBoolean(WorkerData.IS_IMPORT_DATA, isImportData).build()
+
+        val workRequest = OneTimeWorkRequestBuilder<ExportDataWorker>()
+            .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+            .setInputData(data)
+            .build()
+        WorkManager.getInstance(requireContext()).enqueueUniqueWork(WorkerTag.IMPORT_EXPORT_DATA, ExistingWorkPolicy.KEEP, workRequest)
+        WorkManager.getInstance(requireContext()).getWorkInfoByIdLiveData(workRequest.id).observe(viewLifecycleOwner) { workInfo: WorkInfo? ->
+            when (workInfo?.state) {
+                WorkInfo.State.RUNNING -> Unit
+                WorkInfo.State.ENQUEUED -> Unit
+                WorkInfo.State.SUCCEEDED -> {
+                    releaseWakeLock()
+                }
+
+                WorkInfo.State.FAILED -> {
+                    releaseWakeLock()
+                }
+
+                WorkInfo.State.BLOCKED -> Unit
+                WorkInfo.State.CANCELLED -> {
+                    releaseWakeLock()
+                }
+
+                else -> Unit
+            }
+        }
+    }
+
+    private fun releaseWakeLock() {
+        if (wakeLock?.isHeld == true) {
+            wakeLock?.release()
+        }
     }
 }

@@ -232,7 +232,7 @@ fun readFromTextFile(inputFile: File): String {
 }
 
 // https://www.youtube.com/watch?v=tFdTNANwgcw&ab_channel=edureka%21
-fun writeToTextOrCsvFile(
+fun writeToTextFile(
     outputFile: File,
     text: String,
     fileNameWithExtension: String

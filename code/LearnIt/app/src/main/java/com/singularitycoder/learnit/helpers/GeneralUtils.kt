@@ -27,9 +27,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.reflect.TypeToken
+import com.singularitycoder.learnit.helpers.LearnItUtils.gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.lang.reflect.Type
 
 // https://stackoverflow.com/questions/3160447/how-to-show-up-the-settings-for-text-to-speech-in-my-app
 fun Activity.showTtsSettings() {
@@ -176,4 +179,26 @@ fun Context?.playSound(@RawRes sound: Int) {
     } catch (e: Exception) {
         e.printStackTrace()
     }
+}
+
+inline fun <reified T : Any> listToString(list: ArrayList<T>?): String? {
+    if (null == list) return null
+    val type: Type = object : TypeToken<ArrayList<T>?>() {}.type
+    return gson.toJson(list, type)
+}
+
+inline fun <reified T : Any> stringToList(string: String?): ArrayList<T>? {
+    if (null == string) return null
+    val type: Type = object : TypeToken<ArrayList<T>?>() {}.type
+    return gson.fromJson<ArrayList<T>?>(string, type)
+}
+
+inline fun <reified T : Any> objectToString(obj: T?): String? {
+    obj ?: return null
+    return gson.toJson(obj)
+}
+
+inline fun <reified T : Any> stringToObject(string: String?): T? {
+    string ?: return null
+    return gson.fromJson(string, T::class.java)
 }

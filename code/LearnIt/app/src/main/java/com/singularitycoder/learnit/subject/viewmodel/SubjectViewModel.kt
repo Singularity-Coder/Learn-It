@@ -27,7 +27,7 @@ class SubjectViewModel @Inject constructor(
 
     fun getAllSubjectItemsFlow() = subjectDao.getAllItemsStateFlow()
 
-    suspend fun getAllBookItems() = subjectDao.getAll()
+    suspend fun getAllSubjects() = subjectDao.getAll()
 
     suspend fun hasBooks() = subjectDao.hasItems()
 

@@ -9,6 +9,8 @@ import com.singularitycoder.learnit.topic.view.TopicFragment
 import kotlinx.parcelize.Parcelize
 
 const val FILE_PROVIDER = "${BuildConfig.APPLICATION_ID}.fileprovider"
+const val TEXT_FILE_ITEM_DIVIDER = "\n--------iiiiiiii--------\n"
+const val TEXT_FILE_TABLE_DIVIDER = "\n--------tttttttt--------\n"
 
 val globalLayoutAnimation = R.anim.layout_animation_fall_down
 val globalSlideToBottomAnimation = R.anim.layout_animation_fall_down
@@ -27,8 +29,8 @@ object FragmentResultBundleKey {
 }
 
 object WakeLockKey {
-    const val LOADING_BOOKS = "${BuildConfig.APPLICATION_ID}:LOADING_BOOKS"
-    const val PLAYING_BOOK = "${BuildConfig.APPLICATION_ID}:PLAYING_BOOK"
+    const val IMPORT_EXPORT_DATA = "${BuildConfig.APPLICATION_ID}:EXPORT_DATA"
+    const val IMPORT_DATA = "${BuildConfig.APPLICATION_ID}:IMPORT_DATA"
 }
 
 enum class NotificationAction {
@@ -92,11 +94,11 @@ object BottomSheetTag {
 }
 
 object WorkerData {
-    const val KEY_PROGRESS = "KEY_PROGRESS"
+    const val IS_IMPORT_DATA = "IS_EXPORT"
 }
 
 object WorkerTag {
-    const val PDF_TO_TEXT_CONVERTER = "PDF_TO_TEXT_CONVERTER"
+    const val IMPORT_EXPORT_DATA = "EXPORT_DATA"
 }
 
 @Parcelize
