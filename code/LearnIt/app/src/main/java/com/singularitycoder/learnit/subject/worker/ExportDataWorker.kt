@@ -1,6 +1,7 @@
 package com.singularitycoder.learnit.subject.worker
 
 import android.content.Context
+import android.net.Uri
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.singularitycoder.learnit.helpers.constants.TEXT_FILE_TABLE_DIVIDER
@@ -10,8 +11,12 @@ import com.singularitycoder.learnit.helpers.db.LearnItDatabase
 import com.singularitycoder.learnit.helpers.getDownloadDirectory
 import com.singularitycoder.learnit.helpers.listToString
 import com.singularitycoder.learnit.helpers.readFromTextFile
+import com.singularitycoder.learnit.helpers.stringToList
 import com.singularitycoder.learnit.helpers.toDateTime
 import com.singularitycoder.learnit.helpers.writeToTextFile
+import com.singularitycoder.learnit.subject.model.Subject
+import com.singularitycoder.learnit.subtopic.model.SubTopic
+import com.singularitycoder.learnit.topic.model.Topic
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -19,8 +24,9 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
-/** For setting progress - https://developer.android.com/develop/background-work/background-tasks/persistent/how-to/observe */
 class ExportDataWorker(val context: Context, workerParams: WorkerParameters) : CoroutineWorker(context, workerParams) {
 
     @EntryPoint
@@ -39,21 +45,35 @@ class ExportDataWorker(val context: Context, workerParams: WorkerParameters) : C
             val subTopicDao = dbEntryPoint.db().subTopicDao()
 
             val isImportData = inputData.getBoolean(WorkerData.IS_IMPORT_DATA, false)
+            val uri = inputData.getString(WorkerData.URI)
 
             // TODO show notification on start
 
             try {
-                val subjects = listToString(ArrayList(subjectDao.getAll()))
-                val topics = listToString(ArrayList(topicDao.getAll()))
-                val subTopics = listToString(ArrayList(subTopicDao.getAll()))
-
                 if (isImportData) {
-                    // TODO file selection
-//                    readFromTextFile(
-//                        inputFile = File("${getDownloadDirectory().absolutePath}/")
-//                    )
+                    val outputFile = File("${context.cacheDir}/learn_it_import_data.txt")
+                    try {
+                        context.contentResolver?.openInputStream(Uri.parse(uri)).use { inputStream ->
+                            val fileOutputStream = FileOutputStream(outputFile)
+                            fileOutputStream.write(inputStream?.readBytes())
+                            fileOutputStream.flush()
+                            fileOutputStream.close()
+                        }
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
+                    val data = readFromTextFile(inputFile = outputFile).split(TEXT_FILE_TABLE_DIVIDER)
+                    val subjects = stringToList<Subject>(data.getOrNull(0))?.toList() ?: emptyList()
+                    val topics = stringToList<Topic>(data.getOrNull(1))?.toList() ?: emptyList()
+                    val subTopics = stringToList<SubTopic>(data.getOrNull(2))?.toList() ?: emptyList()
+                    subjectDao.insertAll(subjects)
+                    topicDao.insertAll(topics)
+                    subTopicDao.insertAll(subTopics)
                 } else {
-                    val text = "$subjects$TEXT_FILE_TABLE_DIVIDER$topics$TEXT_FILE_TABLE_DIVIDER$subTopics"
+                    val subjects = listToString(ArrayList(subjectDao.getAll()))
+                    val topics = listToString(ArrayList(topicDao.getAll()))
+                    val subTopics = listToString(ArrayList(subTopicDao.getAll()))
+                    val text = "$subjects\n$TEXT_FILE_TABLE_DIVIDER\n$topics\n$TEXT_FILE_TABLE_DIVIDER\n$subTopics"
                     writeToTextFile(
                         outputFile = getDownloadDirectory(),
                         text = text,

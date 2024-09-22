@@ -57,10 +57,9 @@ https://giphy.com/gifs/dancing-dog-vVzH2XY3Y0Ar6
 ________________________________________________________________________________________
 
 
-Read Write CSV:
-https://stackoverflow.com/questions/4632501/android-generate-csv-file-from-table-values
-https://stackoverflow.com/questions/9561749/create-csv-file-in-android-application
-
+File Picker:
+https://stackoverflow.com/a/74494730/6802949
+https://developer.android.com/training/basics/intents/result
 
 ________________________________________________________________________________________
 

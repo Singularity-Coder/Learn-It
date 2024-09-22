@@ -2,6 +2,7 @@ package com.singularitycoder.learnit.subject.view
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.os.PowerManager
 import android.text.Editable
@@ -52,6 +53,8 @@ import com.singularitycoder.learnit.subject.viewmodel.SubjectViewModel
 import com.singularitycoder.learnit.subject.worker.ExportDataWorker
 import com.singularitycoder.learnit.topic.view.TopicFragment
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.IOException
+
 
 /**
  * android:fitsSystemWindows="true" adds weird padding on top and bottom.
@@ -75,6 +78,15 @@ class MainFragment : Fragment() {
     private var wakeLock: PowerManager.WakeLock? = null
 
     private val viewModel by viewModels<SubjectViewModel>()
+
+    private var filePicker = registerForActivityResult<String, Uri>(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri ?: return@registerForActivityResult
+        // content://com.android.providers.downloads.documents/document/raw%3A%2Fstorage%2Femulated%2F0%2FDownload%2Flearn_it_export_22_Sep_2024_11_19_51_PM.txt
+        println("uri.authority: " + uri.authority) // com.android.providers.downloads.documents
+        println("uri.scheme: " + uri.scheme) // content
+
+        startImportExportDataWorker(isImportData = true, uri = uri)
+    }
 
     @SuppressLint("InlinedApi")
     private val notificationPermissionResult = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean? ->
@@ -173,7 +185,7 @@ class MainFragment : Fragment() {
                             return@showPopupMenuWithIcons
                         }
 
-                        startImportExportDataWorker(isImportData = true)
+                        filePicker.launch("text/plain")
                     }
 
                     optionsList[1].first -> {
@@ -184,6 +196,7 @@ class MainFragment : Fragment() {
 
                         startImportExportDataWorker(isImportData = false)
                     }
+
                     optionsList[2].first -> {
                         requireContext().showAlertDialog(
                             message = "Delete all subjects? You cannot undo this action.",
@@ -358,7 +371,7 @@ class MainFragment : Fragment() {
     }
 
     @SuppressLint("WakelockTimeout")
-    private fun startImportExportDataWorker(isImportData: Boolean) {
+    private fun startImportExportDataWorker(isImportData: Boolean, uri: Uri? = null) {
         /** This is to make sure books are loading even if screen is turned off. Keeps CPU awake. */
         wakeLock = (requireContext().getSystemService(Context.POWER_SERVICE) as PowerManager).run {
             newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WakeLockKey.IMPORT_EXPORT_DATA).apply {
@@ -366,7 +379,10 @@ class MainFragment : Fragment() {
             }
         }
 
-        val data = Data.Builder().putBoolean(WorkerData.IS_IMPORT_DATA, isImportData).build()
+        val data = Data.Builder()
+            .putBoolean(WorkerData.IS_IMPORT_DATA, isImportData)
+            .putString(WorkerData.URI, uri.toString())
+            .build()
 
         val workRequest = OneTimeWorkRequestBuilder<ExportDataWorker>()
             .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)

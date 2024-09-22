@@ -385,6 +385,7 @@ class TopicFragment : Fragment() {
             binding.layoutCustomToolbar.tvCount.text =
                 "${list.size} Topics   |   ${list.filter { it?.finishedSessions == 5 }.size} Mastered"
             if (list.isEmpty()) {
+                if (this.isVisible.not()) return@collectLatestLifecycleFlow
                 binding.fabAdd.performClick()
             }
         }

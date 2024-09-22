@@ -9,8 +9,8 @@ import com.singularitycoder.learnit.topic.view.TopicFragment
 import kotlinx.parcelize.Parcelize
 
 const val FILE_PROVIDER = "${BuildConfig.APPLICATION_ID}.fileprovider"
-const val TEXT_FILE_ITEM_DIVIDER = "\n--------iiiiiiii--------\n"
-const val TEXT_FILE_TABLE_DIVIDER = "\n--------tttttttt--------\n"
+const val TEXT_FILE_ITEM_DIVIDER = "--------iiiiiiii--------"
+const val TEXT_FILE_TABLE_DIVIDER = "--------tttttttt--------"
 
 val globalLayoutAnimation = R.anim.layout_animation_fall_down
 val globalSlideToBottomAnimation = R.anim.layout_animation_fall_down
@@ -95,6 +95,7 @@ object BottomSheetTag {
 
 object WorkerData {
     const val IS_IMPORT_DATA = "IS_EXPORT"
+    const val URI = "URI"
 }
 
 object WorkerTag {
