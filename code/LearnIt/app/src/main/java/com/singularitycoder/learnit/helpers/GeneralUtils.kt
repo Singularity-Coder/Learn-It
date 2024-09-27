@@ -11,7 +11,6 @@ import android.content.res.Resources
 import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.net.Uri
-import android.os.Build
 import android.view.View
 import android.view.WindowInsetsController
 import android.view.WindowManager
@@ -141,7 +140,8 @@ fun Activity.turnScreenOn() {
         WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
                 WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON or
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
-                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+    )
 }
 
 fun pendingIntentUpdateCurrentFlag(): Int {

@@ -29,6 +29,10 @@ class AppPreferences(context: Context) {
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
+    var hasCompletedTutorial: Boolean
+        get() = sharedPreferences.getBoolean("COMPLETED_TUTORIAL", false)
+        set(value) = sharedPreferences.edit { putBoolean("COMPLETED_TUTORIAL", value) }
+
     var hasNotificationPermission: Boolean
         get() = sharedPreferences.getBoolean("NOTIFICATION_PERMISSION_PREF", false)
         set(value) = sharedPreferences.edit { putBoolean("NOTIFICATION_PERMISSION_PREF", value) }

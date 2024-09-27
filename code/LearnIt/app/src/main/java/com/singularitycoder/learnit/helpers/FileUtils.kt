@@ -13,8 +13,6 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.FileWriter
-import java.io.IOException
-import java.io.OutputStreamWriter
 import java.util.Scanner
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
@@ -242,83 +240,5 @@ fun writeToTextFile(
         e.printStackTrace()
     } finally {
         writer?.close()
-    }
-}
-
-// https://stackoverflow.com/a/43055945/6802949
-//fun readFromCsvFile(inputFile: File): String {
-//    return try {
-////        val csvfile = File(Environment.getExternalStorageDirectory().toString() + "/csvfile.csv")
-//        val reader = CSVReader(FileReader(inputFile.absolutePath))
-////        var nextLine: Array<String>
-////        while ((reader.readNext().also { nextLine = it }) != null) {
-//            // nextLine[] is an array of values from the line
-////            println(nextLine[0] + nextLine[1] + "etc...")
-////        }
-////        nextLine.joinToString(separator = " ")
-//        reader.readAll().map { it.joinToString(" ") }.joinToString(" ")
-//    } catch (e: Exception) {
-//        e.printStackTrace()
-//        ""
-//    }
-//}
-
-// https://stackoverflow.com/a/48643905/6802949
-//fun writeToCsvFile(
-//    outputFile: File,
-//    text: String,
-//    fileNameWithExtension: String
-//) {
-//    var writer: CSVWriter? = null
-//    try {
-//        writer = CSVWriter(FileWriter(outputFile.absolutePath + "/$fileNameWithExtension"))
-//
-//        val data: MutableList<Array<String>> = ArrayList()
-//        data.add(arrayOf("Country", "Capital"))
-//        data.add(arrayOf("India", "New Delhi"))
-//        data.add(arrayOf("United States", "Washington D.C"))
-//        data.add(arrayOf("Germany", "Berlin"))
-//
-//        writer.writeAll(data) // data is adding to csv
-//    } catch (e: IOException) {
-//        e.printStackTrace()
-//    } finally {
-//        writer?.close()
-//    }
-//}
-
-// https://stackoverflow.com/a/11342234/6802949
-fun writeToCsvFile2(
-    outputFile: File,
-    text: String,
-    fileNameWithExtension: String
-) {
-    var fo: FileOutputStream? = null
-    var osw: OutputStreamWriter? = null
-
-    try {
-        fo = FileOutputStream(outputFile.absolutePath + "/$fileNameWithExtension")
-        osw = OutputStreamWriter(fo)
-
-        // Write the string to the file
-//        i = 1
-//        while (i < total_row) {
-//            j = 1
-//            while (j < total_col) {
-//                str += table.get(i).get(j).getText().toString() // to pass in every widget a context of activity (necessary)
-//                str += " ,"
-//                j++
-//            }
-//            str += "\n"
-//            i++
-//        }
-
-        osw.write(text)
-    } catch (e: IOException) {
-        e.printStackTrace()
-    } finally {
-        osw?.flush()
-        osw?.close()
-        fo?.close()
     }
 }

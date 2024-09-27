@@ -1,4 +1,19 @@
+Tutorial
+- first read subject
+- prepare study material - single source
+- prepare cheat sheet for revision and active recall
+- set fixed time for revision
+- stick to 10 or 15 topics per session
 
+
+
+- Search topics
+- alarm TTS
+- on import show alert warning of data override
+- Alarm rings perpetually until dismissed
+- gradual fade in of alarm sound
+- How to make sure alarms do not conflict?
+- Badge on compeltiion of session - can be just diff emojis
 - on start -> view chnages, alarm set for 24 hr, alarm rings, notif shows up, alarm screen shows up,
 -> on start revision click -> +1 finished session count -> set next session date -> set new alarm with that time
 -> On remind me click -> update next seession count -> set new alarm with that time
@@ -17,6 +32,7 @@
 
 ________________________________________________________________________________________
 
+
 Alarms:
 https://www.geeksforgeeks.org/how-to-build-a-simple-alarm-setter-app-in-android/
 https://stackoverflow.com/questions/60732308/android-displaying-view-over-the-lockscreen-like-google-maps
@@ -28,7 +44,12 @@ https://github.com/commonsguy/cw-omnibus/tree/master/AlarmManager
 - On Android 12 (API level 31) and higher, the system invokes the alarm within one hour of the supplied trigger time, unless any battery-saving restrictions are in effect such as battery saver or Doze.
 - system uptime - SystemClock.uptimeMillis() - Returns milliseconds since boot, not counting time spent in deep sleep.
 - real time - SystemClock.elapsedRealtime() - Returns milliseconds since boot, including time spent in sleep.
+
+Primary Reference for Lock Screen Alarm Views:
+- Wakes screen up for alarm - https://github.com/WrichikBasu/ShakeAlarmClock?tab=readme-ov-file
 - Wakes screen up for alarm - https://github.com/yuriykulikov/AlarmClock?tab=readme-ov-file
+
+
 ________________________________________________________________________________________
 
 Common spaced repetition system
@@ -60,10 +81,19 @@ ________________________________________________________________________________
 File Picker:
 https://stackoverflow.com/a/74494730/6802949
 https://developer.android.com/training/basics/intents/result
+https://developer.android.com/training/data-storage/shared/documents-files
+https://commonsware.com/blog/2016/03/15/how-consume-content-uri.html
 
 ________________________________________________________________________________________
 
 
-Sound Credits:
+Media Credits:
 1. Sound Effect by <a href="https://pixabay.com/users/audiocoffee-27005420/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=174521">Denys Kyshchuk</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=174521">Pixabay</a>
 2. Sound Effect by <a href="https://pixabay.com/users/audiocoffee-27005420/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=180205">Denys Kyshchuk</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=180205">Pixabay</a>
+3. https://www.pinatafarm.com/memegenerator/27e4e5b4-72c8-458c-ad58-09245deb255c
+
+________________________________________________________________________________________
+
+
+Notifications:
+https://developer.android.com/develop/ui/views/notifications/time-sensitive

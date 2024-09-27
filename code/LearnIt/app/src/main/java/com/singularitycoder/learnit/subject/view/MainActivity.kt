@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.ActivityMainBinding
+import com.singularitycoder.learnit.helpers.AppPreferences
 import com.singularitycoder.learnit.helpers.askAlarmPermission
 import com.singularitycoder.learnit.helpers.constants.FragmentsTag
 import com.singularitycoder.learnit.helpers.constants.IntentExtraKey
@@ -22,6 +23,7 @@ import com.singularitycoder.learnit.helpers.konfetti.image.ImageUtil
 import com.singularitycoder.learnit.helpers.playSound
 import com.singularitycoder.learnit.helpers.setStatusBarColor
 import com.singularitycoder.learnit.helpers.showScreen
+import com.singularitycoder.learnit.intro.TutorialFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -51,12 +53,21 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        showScreen(
-            fragment = MainFragment.newInstance(),
-            tag = FragmentsTag.MAIN,
-            isAdd = true,
-            isAddToBackStack = false
-        )
+        if (AppPreferences.getInstance().hasCompletedTutorial) {
+            showScreen(
+                fragment = MainFragment.newInstance(),
+                tag = FragmentsTag.MAIN,
+                isAdd = true,
+                isAddToBackStack = false
+            )
+        } else {
+            showScreen(
+                fragment = TutorialFragment.newInstance(),
+                tag = FragmentsTag.TUTORIAL,
+                isAdd = true,
+                isAddToBackStack = false
+            )
+        }
 
         LocalBroadcastManager.getInstance(this).registerReceiver(
             /* receiver = */ alarmReceiver,
@@ -102,4 +113,8 @@ class MainActivity : AppCompatActivity() {
             askAlarmPermission()
         }
     }
+
+//    override fun onSupportNavigateUp(): Boolean {
+//        return super.onSupportNavigateUp()
+//    }
 }

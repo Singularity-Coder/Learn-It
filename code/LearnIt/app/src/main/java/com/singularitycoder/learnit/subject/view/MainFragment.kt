@@ -48,6 +48,7 @@ import com.singularitycoder.learnit.helpers.showAlertDialog
 import com.singularitycoder.learnit.helpers.showAppSettings
 import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
 import com.singularitycoder.learnit.helpers.showScreen
+import com.singularitycoder.learnit.helpers.showSnackBar
 import com.singularitycoder.learnit.subject.model.Subject
 import com.singularitycoder.learnit.subject.viewmodel.SubjectViewModel
 import com.singularitycoder.learnit.subject.worker.ExportDataWorker
@@ -401,6 +402,7 @@ class MainFragment : Fragment() {
 
                 WorkInfo.State.FAILED -> {
                     releaseWakeLock()
+                    binding.root.showSnackBar("Something went wrong. Please try again.")
                 }
 
                 WorkInfo.State.BLOCKED -> Unit

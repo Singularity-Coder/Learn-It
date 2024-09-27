@@ -1,8 +1,11 @@
 package com.singularitycoder.learnit.helpers.constants
 
 import android.os.Parcelable
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import com.singularitycoder.learnit.BuildConfig
 import com.singularitycoder.learnit.R
+import com.singularitycoder.learnit.intro.TutorialFragment
 import com.singularitycoder.learnit.subject.view.MainFragment
 import com.singularitycoder.learnit.subtopic.view.AddSubTopicFragment
 import com.singularitycoder.learnit.topic.view.TopicFragment
@@ -80,6 +83,7 @@ object BroadcastKey {
 
 object FragmentsTag {
     val MAIN: String = MainFragment::class.java.simpleName
+    val TUTORIAL: String = TutorialFragment::class.java.simpleName
     val TOPIC: String = TopicFragment::class.java.simpleName
     val ADD_SUB_TOPIC: String = AddSubTopicFragment::class.java.simpleName
 }
@@ -114,3 +118,15 @@ val gifList = listOf(
     R.drawable.gif3,
     R.drawable.gif4
 )
+
+enum class Tutorial(
+    @DrawableRes val image: Int,
+    val title: String,
+    @StringRes val subTitle: Int
+) {
+    WELCOME(image = R.drawable.tut0, title = "Hello", subTitle = R.string.tut1),
+    HOME(image = R.drawable.tut1, title = "Subjects", subTitle = R.string.tut2),
+    TOPIC(image = R.drawable.tut2, title = "Topics", subTitle = R.string.tut3),
+    SUB_TOPIC(image = R.drawable.tut3, title = "Sub-Topics", subTitle = R.string.tut4),
+    ALARM(image = R.drawable.tut4, title = "Reminders", subTitle = R.string.tut5),
+}
