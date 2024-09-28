@@ -11,7 +11,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:background="@color/white"
+        tools:context=".topic.view.TopicFragment">
 
         <include
             android:id="@+id/layout_custom_toolbar"
@@ -20,7 +21,7 @@
             android:layout_height="wrap_content" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_topics"
+            android:id="@+id/rv_permissions"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="8dp"
@@ -30,19 +31,6 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/layout_custom_toolbar"
-            tools:listitem="@layout/list_item_topic" />
+            tools:listitem="@layout/list_item_permission" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_add"
-        style="@style/Fab_Rounded"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:contentDescription="Add"
-        app:backgroundTint="@color/purple_500"
-        app:fabSize="normal"
-        app:srcCompat="@drawable/ic_round_add_24"
-        app:tint="@android:color/white" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

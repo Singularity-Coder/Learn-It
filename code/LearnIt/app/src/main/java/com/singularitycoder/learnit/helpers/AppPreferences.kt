@@ -33,6 +33,10 @@ class AppPreferences(context: Context) {
         get() = sharedPreferences.getBoolean("COMPLETED_TUTORIAL", false)
         set(value) = sharedPreferences.edit { putBoolean("COMPLETED_TUTORIAL", value) }
 
+    var hasGrantedAllPermissions: Boolean
+        get() = sharedPreferences.getBoolean("GRANTED_ALL_PERMISSIONS", false)
+        set(value) = sharedPreferences.edit { putBoolean("GRANTED_ALL_PERMISSIONS", value) }
+
     var hasNotificationPermission: Boolean
         get() = sharedPreferences.getBoolean("NOTIFICATION_PERMISSION_PREF", false)
         set(value) = sharedPreferences.edit { putBoolean("NOTIFICATION_PERMISSION_PREF", value) }

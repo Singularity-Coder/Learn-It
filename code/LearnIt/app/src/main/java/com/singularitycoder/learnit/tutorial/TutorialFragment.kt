@@ -1,4 +1,4 @@
-package com.singularitycoder.learnit.intro
+package com.singularitycoder.learnit.tutorial
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -24,6 +24,7 @@ import com.singularitycoder.learnit.helpers.constants.Tutorial
 import com.singularitycoder.learnit.helpers.drawable
 import com.singularitycoder.learnit.helpers.setNavigationBarColor
 import com.singularitycoder.learnit.helpers.showScreen
+import com.singularitycoder.learnit.permissions.PermissionsFragment
 import com.singularitycoder.learnit.subject.view.MainActivity
 import com.singularitycoder.learnit.subject.view.MainFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -153,12 +154,22 @@ class TutorialFragment : Fragment() {
             return
         }
         AppPreferences.getInstance().hasCompletedTutorial = true
-        (activity as MainActivity).showScreen(
-            fragment = MainFragment.newInstance(),
-            tag = FragmentsTag.MAIN,
-            isAdd = true,
-            isAddToBackStack = false
-        )
+
+        if (AppPreferences.getInstance().hasGrantedAllPermissions) {
+            (activity as MainActivity).showScreen(
+                fragment = MainFragment.newInstance(),
+                tag = FragmentsTag.MAIN,
+                isAdd = true,
+                isAddToBackStack = false
+            )
+        } else {
+            (activity as MainActivity).showScreen(
+                fragment = PermissionsFragment.newInstance(),
+                tag = FragmentsTag.PERMISSIONS,
+                isAdd = true,
+                isAddToBackStack = false
+            )
+        }
     }
 
     inner class MainViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle) : FragmentStateAdapter(fragmentManager, lifecycle) {

@@ -23,7 +23,8 @@ import com.singularitycoder.learnit.helpers.konfetti.image.ImageUtil
 import com.singularitycoder.learnit.helpers.playSound
 import com.singularitycoder.learnit.helpers.setStatusBarColor
 import com.singularitycoder.learnit.helpers.showScreen
-import com.singularitycoder.learnit.intro.TutorialFragment
+import com.singularitycoder.learnit.permissions.PermissionsFragment
+import com.singularitycoder.learnit.tutorial.TutorialFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -53,20 +54,33 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        if (AppPreferences.getInstance().hasCompletedTutorial) {
-            showScreen(
-                fragment = MainFragment.newInstance(),
-                tag = FragmentsTag.MAIN,
-                isAdd = true,
-                isAddToBackStack = false
-            )
-        } else {
-            showScreen(
-                fragment = TutorialFragment.newInstance(),
-                tag = FragmentsTag.TUTORIAL,
-                isAdd = true,
-                isAddToBackStack = false
-            )
+        when {
+            AppPreferences.getInstance().hasCompletedTutorial && AppPreferences.getInstance().hasGrantedAllPermissions -> {
+                showScreen(
+                    fragment = MainFragment.newInstance(),
+                    tag = FragmentsTag.MAIN,
+                    isAdd = true,
+                    isAddToBackStack = false
+                )
+            }
+
+            AppPreferences.getInstance().hasCompletedTutorial.not() -> {
+                showScreen(
+                    fragment = TutorialFragment.newInstance(),
+                    tag = FragmentsTag.TUTORIAL,
+                    isAdd = true,
+                    isAddToBackStack = false
+                )
+            }
+
+            else -> {
+                showScreen(
+                    fragment = PermissionsFragment.newInstance(),
+                    tag = FragmentsTag.PERMISSIONS,
+                    isAdd = true,
+                    isAddToBackStack = false
+                )
+            }
         }
 
         LocalBroadcastManager.getInstance(this).registerReceiver(

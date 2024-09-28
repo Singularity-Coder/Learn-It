@@ -1,11 +1,14 @@
 package com.singularitycoder.learnit.helpers.constants
 
+import android.content.res.Resources
 import android.os.Parcelable
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.singularitycoder.learnit.BuildConfig
 import com.singularitycoder.learnit.R
-import com.singularitycoder.learnit.intro.TutorialFragment
+import com.singularitycoder.learnit.tutorial.TutorialFragment
+import com.singularitycoder.learnit.permissions.Permission
+import com.singularitycoder.learnit.permissions.PermissionsFragment
 import com.singularitycoder.learnit.subject.view.MainFragment
 import com.singularitycoder.learnit.subtopic.view.AddSubTopicFragment
 import com.singularitycoder.learnit.topic.view.TopicFragment
@@ -84,6 +87,7 @@ object BroadcastKey {
 object FragmentsTag {
     val MAIN: String = MainFragment::class.java.simpleName
     val TUTORIAL: String = TutorialFragment::class.java.simpleName
+    val PERMISSIONS: String = PermissionsFragment::class.java.simpleName
     val TOPIC: String = TopicFragment::class.java.simpleName
     val ADD_SUB_TOPIC: String = AddSubTopicFragment::class.java.simpleName
 }
@@ -132,3 +136,31 @@ enum class Tutorial(
     SUB_TOPIC(image = R.drawable.tut3, title = "Sub-Topics", subTitle = R.string.tut4),
     ALARM(image = R.drawable.tut4, title = "Reminders", subTitle = R.string.tut5),
 }
+
+val PERMISSION_LIST = listOf(
+    Permission(
+        title = R.string.perm_title_post_notif,
+        subtitle = R.string.perm_exp_post_notif,
+        requirementType = R.string.essential
+    ),
+    Permission(
+        title = R.string.perm_title_exact_alarms,
+        subtitle = R.string.perm_expln_exact_alarms,
+        requirementType = R.string.essential
+    ),
+    Permission(
+        title = R.string.perm_title_ign_bat_optim,
+        subtitle = R.string.perm_exp_ign_bat_optim,
+        requirementType = R.string.highly_recommended
+    ),
+    Permission(
+        title = R.string.perm_title_notif_policy,
+        subtitle = R.string.perm_exp_notif_policy,
+        requirementType = R.string.highly_recommended
+    ),
+    Permission(
+        title = R.string.perm_title_storage_access,
+        subtitle = R.string.perm_exp_storage_access,
+        requirementType = R.string.optional
+    )
+)

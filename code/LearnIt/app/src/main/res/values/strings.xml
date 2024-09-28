@@ -14,4 +14,32 @@
     <string name="tut3">Create a list of topics you want to learn within that subject.</string>
     <string name="tut4">Create a list of sub-topics you want to recollect within that topic.</string>
     <string name="tut5">We will remind you to actively recall subject matter without using reference material.</string>
+
+    <string name="perm_title_post_notif">🔔 Post notifications</string>
+    <string name="perm_exp_post_notif">This permission allows the app to post notifications. Without this, you will
+    not see the alarm screen when an alarm rings, nor be able to dismiss it later from the notification.</string>
+
+    <string name="perm_title_exact_alarms">⏰ Schedule Alarms</string>
+    <string name="perm_expln_exact_alarms">Android versions S and above need a permission to
+    schedule exact alarms. Without this, the app will not be able to schedule any alarms. </string>
+
+    <string name="perm_title_ign_bat_optim">🔋 Ignore Battery Optimizations</string>
+    <string name="perm_exp_ign_bat_optim">The Android system, by default, sets all user installed apps
+    to be optimized to save battery. While this is OK for many apps, this app is an alarm clock app, and often faces trouble
+    if set to optimize battery. With this enabled, the Android system can kill the app at any time and/or cancel the alarms it has set, which
+    will be detrimental to the working of the app. We recommend you to whitelist this app from battery optimizations.</string>
+
+    <string name="perm_title_notif_policy">🙅 Change \"Do Not Disturb\" settings</string>
+    <string name="perm_exp_notif_policy">The app allows you to set different ring volumes for each alarm.
+    Before ringing the alarm, the app tries to change the volume of the system alarm stream to the volume you
+    have set (and restores it to what it was initially). To change the volume, the permission
+    to change Do Not Disturb settings is needed in Android Nougat and above. If not granted, the app will
+    simply not set the volume before ringing the alarm.</string>
+
+    <string name="perm_title_storage_access">💾 Storage Access</string>
+    <string name="perm_exp_storage_access">To import and export all App data, App requires storage access to backup and restore data.</string>
+    <string name="essential">Essential</string>
+    <string name="highly_recommended">Highly Recommended</string>
+    <string name="optional">Optional</string>
+
 </resources>

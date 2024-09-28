@@ -1,4 +1,4 @@
-package com.singularitycoder.learnit.intro
+package com.singularitycoder.learnit.tutorial
 
 import android.os.Bundle
 import android.view.LayoutInflater
