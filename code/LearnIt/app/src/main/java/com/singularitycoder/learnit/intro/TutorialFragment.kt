@@ -148,6 +148,10 @@ class TutorialFragment : Fragment() {
     }
 
     private fun showHome() {
+        if (AppPreferences.getInstance().hasCompletedTutorial) {
+            parentFragmentManager.popBackStackImmediate()
+            return
+        }
         AppPreferences.getInstance().hasCompletedTutorial = true
         (activity as MainActivity).showScreen(
             fragment = MainFragment.newInstance(),

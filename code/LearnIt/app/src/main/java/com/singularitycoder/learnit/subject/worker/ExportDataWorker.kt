@@ -3,6 +3,7 @@ package com.singularitycoder.learnit.subject.worker
 import android.content.Context
 import android.net.Uri
 import androidx.work.CoroutineWorker
+import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.singularitycoder.learnit.helpers.NotificationsHelper
 import com.singularitycoder.learnit.helpers.constants.TEXT_FILE_TABLE_DIVIDER
@@ -51,6 +52,8 @@ class ExportDataWorker(val context: Context, workerParams: WorkerParameters) : C
             NotificationsHelper.createNotificationChannel(context)
             NotificationsHelper.createNotification(context = context, title = "Import Export Data")
 
+            val successData: Data.Builder = Data.Builder()
+
             try {
                 if (isImportData) {
                     NotificationsHelper.updateNotification(context = context, title = "Importing data")
@@ -73,21 +76,29 @@ class ExportDataWorker(val context: Context, workerParams: WorkerParameters) : C
                     topicDao.insertAll(topics)
                     subTopicDao.insertAll(subTopics)
                     NotificationsHelper.updateNotification(context = context, title = "Finished Importing data")
+                    successData.putBoolean(WorkerData.IS_EXPORT, false)
                 } else {
                     NotificationsHelper.updateNotification(context = context, title = "Exporting data")
                     val subjects = listToString(ArrayList(subjectDao.getAll()))
                     val topics = listToString(ArrayList(topicDao.getAll()))
                     val subTopics = listToString(ArrayList(subTopicDao.getAll()))
                     val text = "$subjects\n$TEXT_FILE_TABLE_DIVIDER\n$topics\n$TEXT_FILE_TABLE_DIVIDER\n$subTopics"
+                    val fileNameWithExtension = "learn_it_export_${currentTimeMillis.toDateTime(type = "dd_MMM_yyyy_h_mm_ss_a")}.txt"
                     writeToTextFile(
                         outputFile = getDownloadDirectory(),
                         text = text,
-                        fileNameWithExtension = "learn_it_export_${currentTimeMillis.toDateTime(type = "dd_MMM_yyyy_h_mm_ss_a")}.txt"
+                        fileNameWithExtension = fileNameWithExtension
                     )
-                    NotificationsHelper.updateNotification(context = context, title = "Exported data to \"Downloads\" folder")
+                    NotificationsHelper.updateNotification(
+                        context = context,
+                        title = "Exported data to \"Downloads\" folder.\n\nFile name: $fileNameWithExtension"
+                    )
+                    successData
+                        .putBoolean(WorkerData.IS_EXPORT, true)
+                        .putString(WorkerData.FILE_NAME, fileNameWithExtension)
                 }
 
-                Result.success()
+                Result.success(successData.build())
             } catch (_: Exception) {
                 Result.failure()
             }

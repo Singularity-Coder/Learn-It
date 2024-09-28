@@ -15,6 +15,7 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
@@ -28,6 +29,7 @@ import com.singularitycoder.learnit.helpers.AndroidVersions
 import com.singularitycoder.learnit.helpers.AppPreferences
 import com.singularitycoder.learnit.helpers.askAlarmPermission
 import com.singularitycoder.learnit.helpers.canScheduleAlarms
+import com.singularitycoder.learnit.helpers.clipboard
 import com.singularitycoder.learnit.helpers.collectLatestLifecycleFlow
 import com.singularitycoder.learnit.helpers.constants.FragmentResultBundleKey
 import com.singularitycoder.learnit.helpers.constants.FragmentResultKey
@@ -49,12 +51,16 @@ import com.singularitycoder.learnit.helpers.showAppSettings
 import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
 import com.singularitycoder.learnit.helpers.showScreen
 import com.singularitycoder.learnit.helpers.showSnackBar
+import com.singularitycoder.learnit.helpers.showToast
+import com.singularitycoder.learnit.intro.TutorialFragment
 import com.singularitycoder.learnit.subject.model.Subject
 import com.singularitycoder.learnit.subject.viewmodel.SubjectViewModel
 import com.singularitycoder.learnit.subject.worker.ExportDataWorker
 import com.singularitycoder.learnit.topic.view.TopicFragment
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.IOException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 /**
@@ -117,8 +123,8 @@ class MainFragment : Fragment() {
             )
         }
 
-        val isDeniedShowRationale = activity?.shouldShowRationaleFor(android.Manifest.permission.POST_NOTIFICATIONS) == true
-        if (isDeniedShowRationale) {
+        val isDeniedSoShowRationale = activity?.shouldShowRationaleFor(android.Manifest.permission.POST_NOTIFICATIONS) == true
+        if (isDeniedSoShowRationale) {
             showRationale()
             return@registerForActivityResult
         }
@@ -171,8 +177,9 @@ class MainFragment : Fragment() {
 
         ivHeaderMore.onSafeClick { pair: Pair<View?, Boolean> ->
             val optionsList = listOf(
-                Pair("Import", R.drawable.round_south_west_24),
-                Pair("Export", R.drawable.round_north_east_24),
+                Pair("Show Tutorial", R.drawable.outline_help_outline_24),
+                Pair("Import Data", R.drawable.round_south_west_24),
+                Pair("Export Data", R.drawable.round_north_east_24),
                 Pair("Delete All", R.drawable.outline_delete_24),
             )
             requireContext().showPopupMenuWithIcons(
@@ -183,12 +190,12 @@ class MainFragment : Fragment() {
             ) { it: MenuItem? ->
                 when (it?.title?.toString()?.trim()) {
                     optionsList[0].first -> {
-                        if (activity?.hasStoragePermissionApi30()?.not() == true) {
-                            showStoragePermissionPopup()
-                            return@showPopupMenuWithIcons
-                        }
-
-                        filePicker.launch("text/plain")
+                        (activity as MainActivity).showScreen(
+                            fragment = TutorialFragment.newInstance(),
+                            tag = FragmentsTag.TUTORIAL,
+                            isAdd = true,
+                            isAddToBackStack = true
+                        )
                     }
 
                     optionsList[1].first -> {
@@ -197,12 +204,39 @@ class MainFragment : Fragment() {
                             return@showPopupMenuWithIcons
                         }
 
-                        startImportExportDataWorker(isImportData = false)
+                        requireContext().showAlertDialog(
+                            title = "Import Data",
+                            message = "Importing data will replace all existing data. You cannot undo this action.",
+                            positiveBtnText = "Import",
+                            negativeBtnText = "Cancel",
+                            positiveBtnColor = R.color.md_red_700,
+                            positiveAction = {
+                                filePicker.launch("text/plain")
+                            }
+                        )
                     }
 
                     optionsList[2].first -> {
+                        if (activity?.hasStoragePermissionApi30()?.not() == true) {
+                            showStoragePermissionPopup()
+                            return@showPopupMenuWithIcons
+                        }
+
+                        lifecycleScope.launch {
+                            if (viewModel.hasSubjects().not()) {
+                                context?.showToast("Nothing to export.")
+                                return@launch
+                            }
+
+                            withContext(Dispatchers.Main) {
+                                startImportExportDataWorker(isImportData = false)
+                            }
+                        }
+                    }
+
+                    optionsList[3].first -> {
                         requireContext().showAlertDialog(
-                            message = "Delete all subjects? You cannot undo this action.",
+                            message = "Delete all Subjects, Topics and Sub-Topics? You cannot undo this action.",
                             positiveBtnText = "Delete",
                             negativeBtnText = "Cancel",
                             positiveBtnColor = R.color.md_red_700,
@@ -349,6 +383,7 @@ class MainFragment : Fragment() {
             title = "Grant Storage Permission",
             message = "Please grant storage permission for \"Downloads\" folder to import or export data.",
             positiveBtnText = "Grant",
+            negativeBtnText = "Cancel",
             positiveAction = {
                 requireActivity().requestStoragePermissionApi30()
             }
@@ -398,6 +433,24 @@ class MainFragment : Fragment() {
                 WorkInfo.State.ENQUEUED -> Unit
                 WorkInfo.State.SUCCEEDED -> {
                     releaseWakeLock()
+                    val isExport = workInfo.outputData.getBoolean(WorkerData.IS_EXPORT, false)
+                    val fileName = workInfo.outputData.getString(WorkerData.FILE_NAME)
+                    if (isExport) {
+                        requireContext().showAlertDialog(
+                            title = "Export Complete",
+                            message = "Exported data to \"Downloads\" folder.\n\nFile name: $fileName",
+                            positiveBtnText = "Okay",
+                            negativeBtnText = "Copy",
+                            negativeAction = {
+                                context?.clipboard()?.text = fileName
+                            }
+                        )
+                    } else {
+                        requireContext().showAlertDialog(
+                            message = "Import Complete",
+                            positiveBtnText = "Okay"
+                        )
+                    }
                 }
 
                 WorkInfo.State.FAILED -> {

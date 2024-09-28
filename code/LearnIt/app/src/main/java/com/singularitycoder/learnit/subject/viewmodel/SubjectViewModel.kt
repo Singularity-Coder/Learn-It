@@ -29,7 +29,7 @@ class SubjectViewModel @Inject constructor(
 
     suspend fun getAllSubjects() = subjectDao.getAll()
 
-    suspend fun hasBooks() = subjectDao.hasItems()
+    suspend fun hasSubjects() = subjectDao.hasItems()
 
     suspend fun getBookItemById(id: String) = subjectDao.getItemById(id)
 

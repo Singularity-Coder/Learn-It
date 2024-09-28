@@ -100,6 +100,8 @@ object BottomSheetTag {
 object WorkerData {
     const val IS_IMPORT_DATA = "IS_EXPORT"
     const val URI = "URI"
+    const val FILE_NAME = "FILE_NAME"
+    const val IS_EXPORT = "IS_EXPORT"
 }
 
 object WorkerTag {
