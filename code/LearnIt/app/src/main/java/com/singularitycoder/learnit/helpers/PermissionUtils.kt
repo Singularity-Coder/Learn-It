@@ -49,12 +49,11 @@ fun Activity.hasAlarmPermission(): Boolean {
 }
 
 fun Activity.showAppSettings() {
-    this.startActivity(
-        Intent(
-            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-            Uri.fromParts("package", this.packageName, null)
-        )
+    val intent = Intent(
+        /* action = */ Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+        /* uri = */ Uri.fromParts("package", this.packageName, null)
     )
+    this.startActivity(intent)
 }
 
 fun Activity.showNotificationSettings() {
@@ -85,4 +84,28 @@ fun Activity.hasStoragePermissionApi30(): Boolean {
 fun Activity.requestStoragePermissionApi30() {
     val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
     this.startActivityForResult(intent, MANAGE_EXTERNAL_STORAGE_PERMISSION_REQUEST)
+}
+
+fun Activity.showNotificationPermissionRationalePopup(callback: () -> Unit) {
+    showAlertDialog(
+        title = "Grant permission",
+        message = "You must grant notification permission to use this App.",
+        positiveBtnText = "Grant",
+        negativeBtnText = "Cancel",
+        positiveAction = {
+            callback.invoke()
+        }
+    )
+}
+
+fun Activity.showNotificationSettingsPopup() {
+    showAlertDialog(
+        title = "Grant permission",
+        message = "You must grant notification permission to use this App.",
+        positiveBtnText = "Settings",
+        negativeBtnText = "Cancel",
+        positiveAction = {
+            showNotificationSettings()
+        }
+    )
 }

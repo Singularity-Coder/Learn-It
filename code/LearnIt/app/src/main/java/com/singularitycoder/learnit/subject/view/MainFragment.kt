@@ -47,7 +47,8 @@ import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.requestStoragePermissionApi30
 import com.singularitycoder.learnit.helpers.shouldShowRationaleFor
 import com.singularitycoder.learnit.helpers.showAlertDialog
-import com.singularitycoder.learnit.helpers.showNotificationSettings
+import com.singularitycoder.learnit.helpers.showNotificationPermissionRationalePopup
+import com.singularitycoder.learnit.helpers.showNotificationSettingsPopup
 import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
 import com.singularitycoder.learnit.helpers.showScreen
 import com.singularitycoder.learnit.helpers.showSnackBar
@@ -101,37 +102,18 @@ class MainFragment : Fragment() {
     private val notificationPermissionResult = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean? ->
         isGranted ?: return@registerForActivityResult
 
-        fun showRationale() {
-            requireContext().showAlertDialog(
-                title = "Grant permission",
-                message = "You must grant notification permission to use this App.",
-                positiveBtnText = if (AppPreferences.getInstance().notifPermissionDeniedCount >= 1) {
-                    "Settings"
-                } else "Grant",
-                negativeBtnText = "Cancel",
-                positiveAction = {
-                    if (AppPreferences.getInstance().notifPermissionDeniedCount >= 1) {
-                        activity?.showNotificationSettings()
-                    } else {
-                        AppPreferences.getInstance().notifPermissionDeniedCount += 1
-                        askNotificationPermission()
-                    }
-                },
-                negativeAction = {
-                    AppPreferences.getInstance().notifPermissionDeniedCount += 1
-                }
-            )
-        }
-
         val isDeniedSoShowRationale = activity?.shouldShowRationaleFor(android.Manifest.permission.POST_NOTIFICATIONS) == true
         if (isDeniedSoShowRationale) {
-            showRationale()
+            AppPreferences.getInstance().notifPermissionDeniedCount += 1
+            activity?.showNotificationPermissionRationalePopup {
+                askNotificationPermission()
+            }
             return@registerForActivityResult
         }
 
         if (isGranted.not()) {
             if (AppPreferences.getInstance().notifPermissionDeniedCount >= 1) {
-                showRationale()
+                activity?.showNotificationSettingsPopup()
             } else {
                 askNotificationPermission()
             }

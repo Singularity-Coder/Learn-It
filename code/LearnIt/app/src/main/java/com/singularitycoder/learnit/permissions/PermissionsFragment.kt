@@ -24,15 +24,17 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.FragmentPermissionsBinding
+import com.singularitycoder.learnit.helpers.AndroidVersions
 import com.singularitycoder.learnit.helpers.AppPreferences
 import com.singularitycoder.learnit.helpers.canScheduleAlarms
 import com.singularitycoder.learnit.helpers.constants.FragmentsTag
 import com.singularitycoder.learnit.helpers.constants.globalLayoutAnimation
+import com.singularitycoder.learnit.helpers.hasNotificationsPermission
 import com.singularitycoder.learnit.helpers.layoutAnimationController
 import com.singularitycoder.learnit.helpers.setNavigationBarColor
 import com.singularitycoder.learnit.helpers.shouldShowRationaleFor
-import com.singularitycoder.learnit.helpers.showAlertDialog
-import com.singularitycoder.learnit.helpers.showNotificationSettings
+import com.singularitycoder.learnit.helpers.showNotificationPermissionRationalePopup
+import com.singularitycoder.learnit.helpers.showNotificationSettingsPopup
 import com.singularitycoder.learnit.helpers.showScreen
 import com.singularitycoder.learnit.subject.view.MainActivity
 import com.singularitycoder.learnit.subject.view.MainFragment
@@ -60,37 +62,18 @@ class PermissionsFragment : Fragment() {
     private val notificationPermissionResult = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean? ->
         isGranted ?: return@registerForActivityResult
 
-        fun showRationale() {
-            requireContext().showAlertDialog(
-                title = "Grant permission",
-                message = "You must grant notification permission to use this App.",
-                positiveBtnText = if (AppPreferences.getInstance().notifPermissionDeniedCount >= 1) {
-                    "Settings"
-                } else "Grant",
-                negativeBtnText = "Cancel",
-                positiveAction = {
-                    if (AppPreferences.getInstance().notifPermissionDeniedCount >= 1) {
-                        activity?.showNotificationSettings()
-                    } else {
-                        AppPreferences.getInstance().notifPermissionDeniedCount += 1
-                        askNotificationPermission()
-                    }
-                },
-                negativeAction = {
-                    AppPreferences.getInstance().notifPermissionDeniedCount += 1
-                }
-            )
-        }
-
         val isDeniedSoShowRationale = activity?.shouldShowRationaleFor(android.Manifest.permission.POST_NOTIFICATIONS) == true
         if (isDeniedSoShowRationale) {
-            showRationale()
+            AppPreferences.getInstance().notifPermissionDeniedCount += 1
+            activity?.showNotificationPermissionRationalePopup {
+                askNotificationPermission()
+            }
             return@registerForActivityResult
         }
 
         if (isGranted.not()) {
             if (AppPreferences.getInstance().notifPermissionDeniedCount >= 1) {
-                showRationale()
+                activity?.showNotificationSettingsPopup()
             } else {
                 askNotificationPermission()
             }
@@ -125,6 +108,16 @@ class PermissionsFragment : Fragment() {
         binding.setupUI()
         binding.setupUserActionListeners()
         observeForData()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (AndroidVersions.isTiramisu()
+            && activity?.hasNotificationsPermission() == true
+            && AppPreferences.getInstance().hasNotificationPermission.not()
+        ) {
+            askNotificationPermission()
+        }
     }
 
     private fun FragmentPermissionsBinding.setupUI() {
