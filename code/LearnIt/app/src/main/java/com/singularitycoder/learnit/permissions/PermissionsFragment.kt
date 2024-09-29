@@ -21,16 +21,15 @@ import androidx.core.content.ContextCompat.registerReceiver
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.FragmentPermissionsBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
 import com.singularitycoder.learnit.helpers.AppPreferences
 import com.singularitycoder.learnit.helpers.canScheduleAlarms
+import com.singularitycoder.learnit.helpers.constants.Permission
 import com.singularitycoder.learnit.helpers.constants.FragmentsTag
-import com.singularitycoder.learnit.helpers.constants.globalLayoutAnimation
 import com.singularitycoder.learnit.helpers.hasNotificationsPermission
-import com.singularitycoder.learnit.helpers.layoutAnimationController
+import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.setNavigationBarColor
 import com.singularitycoder.learnit.helpers.shouldShowRationaleFor
 import com.singularitycoder.learnit.helpers.showNotificationPermissionRationalePopup
@@ -51,10 +50,6 @@ class PermissionsFragment : Fragment() {
     }
 
     private lateinit var binding: FragmentPermissionsBinding
-
-    private val permissionsAdapter = PermissionsAdapter()
-
-    private var permissionList = listOf<Permission>()
 
     private val viewModel by viewModels<PermissionsViewModel>()
 
@@ -80,9 +75,7 @@ class PermissionsFragment : Fragment() {
             return@registerForActivityResult
         }
 
-        AppPreferences.getInstance().hasNotificationPermission = true
-        AppPreferences.getInstance().hasAlarmPermission = context?.canScheduleAlarms() == true
-        viewModel.removePermission(Manifest.permission.POST_NOTIFICATIONS)
+        doWhenNotificationPermissionGranted()
     }
 
     private val broadcastReceiver = object : BroadcastReceiver() {
@@ -117,58 +110,135 @@ class PermissionsFragment : Fragment() {
             && activity?.hasNotificationsPermission() == true
             && AppPreferences.getInstance().hasNotificationPermission.not()
         ) {
-            askNotificationPermission()
+            doWhenNotificationPermissionGranted()
         }
 
-//        if (context?.canScheduleAlarms() == true
-//            && AppPreferences.getInstance().hasAlarmPermission.not()
-//        ) {
-//            AppPreferences.getInstance().hasAlarmPermission = true
-//            viewModel.removePermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
-//        }
+        if (context?.canScheduleAlarms() == true
+            && AppPreferences.getInstance().hasAlarmPermission.not()
+        ) {
+            AppPreferences.getInstance().hasAlarmPermission = true
+            binding.layoutAlarm.root.isVisible = false
+            viewModel.setPermissionCount((viewModel.permissionCount.value ?: 0) + 1)
+        }
+
+        binding.layoutNotification.root.isVisible = AppPreferences.getInstance().hasNotificationPermission.not()
+        binding.layoutAlarm.root.isVisible = AppPreferences.getInstance().hasAlarmPermission.not()
+        binding.layoutBattery.root.isVisible = AppPreferences.getInstance().hasBatteryOptimisePermission.not()
+        binding.layoutDnd.root.isVisible = AppPreferences.getInstance().hasDndPermission.not()
+        binding.layoutStorage.root.isVisible = AppPreferences.getInstance().hasStoragePermission.not()
     }
 
     private fun FragmentPermissionsBinding.setupUI() {
         activity?.setNavigationBarColor(R.color.white)
+
         layoutCustomToolbar.apply {
             ibBack.isVisible = false
             ivMore.isVisible = false
             tvTitle.text = "Grant Permissions"
             tvCount.text = "This App requires these permissions to work properly."
         }
-        rvPermissions.apply {
-            layoutAnimation = rvPermissions.context.layoutAnimationController(globalLayoutAnimation)
-            layoutManager = LinearLayoutManager(context)
-            adapter = permissionsAdapter
+
+        if (AndroidVersions.isTiramisu().not()) {
+            layoutNotification.root.isVisible = false
+            AppPreferences.getInstance().hasNotificationPermission = true
         }
+
+        layoutNotification.btnLater.isVisible = false
+        layoutAlarm.btnLater.isVisible = false
+
+        val layoutList = listOf(
+            layoutNotification,
+            layoutAlarm,
+            layoutBattery,
+            layoutDnd,
+            layoutStorage
+        )
+
+        Permission.entries.forEachIndexed { index, permission ->
+            layoutList.get(index).apply {
+                tvTitle.text = root.context.getString(permission.title)
+                tvSubtitle.text = root.context.getString(permission.subtitle)
+                tvSubtitle2.text = root.context.getString(permission.requirementType)
+            }
+        }
+
+//        layoutNotification.apply {
+//            tvTitle.text = root.context.getString(R.string.perm_title_post_notif)
+//            tvSubtitle.text = root.context.getString(R.string.perm_exp_post_notif)
+//            tvSubtitle2.text = root.context.getString(R.string.essential)
+//            btnLater.isVisible = false
+//        }
+//
+//        layoutAlarm.apply {
+//            tvTitle.text = root.context.getString(R.string.perm_title_exact_alarms)
+//            tvSubtitle.text = root.context.getString(R.string.perm_expln_exact_alarms)
+//            tvSubtitle2.text = root.context.getString(R.string.essential)
+//            btnLater.isVisible = false
+//        }
+//
+//        layoutBattery.apply {
+//            tvTitle.text = root.context.getString(R.string.perm_title_ign_bat_optim)
+//            tvSubtitle.text = root.context.getString(R.string.perm_exp_ign_bat_optim)
+//            tvSubtitle2.text = root.context.getString(R.string.highly_recommended)
+//        }
+//
+//        layoutDnd.apply {
+//            tvTitle.text = root.context.getString(R.string.perm_title_notif_policy)
+//            tvSubtitle.text = root.context.getString(R.string.perm_exp_notif_policy)
+//            tvSubtitle2.text = root.context.getString(R.string.highly_recommended)
+//        }
+//
+//        layoutStorage.apply {
+//            tvTitle.text = root.context.getString(R.string.perm_title_storage_access)
+//            tvSubtitle.text = root.context.getString(R.string.perm_exp_storage_access)
+//            tvSubtitle2.text = root.context.getString(R.string.optional)
+//        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun FragmentPermissionsBinding.setupUserActionListeners() {
         root.setOnClickListener {}
 
-        permissionsAdapter.setOnGrantClickListener { permission, position ->
-            when (permission.permissionName) {
-                Manifest.permission.POST_NOTIFICATIONS -> askNotificationPermission()
-                Manifest.permission.SCHEDULE_EXACT_ALARM -> requestAlarmPermission()
-                Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS -> requestIgnoreBatteryOptimisePermission()
-                Manifest.permission.ACCESS_NOTIFICATION_POLICY -> requestNotificationPolicyPermission()
-                Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION -> {}
+        layoutNotification.btnGrant.onSafeClick {
+            askNotificationPermission()
+        }
+
+        layoutAlarm.btnGrant.onSafeClick {
+            requestAlarmPermission()
+        }
+
+        layoutBattery.apply {
+            btnGrant.onSafeClick {
+                requestIgnoreBatteryOptimisePermission()
+            }
+            btnLater.onSafeClick {
+
             }
         }
 
-        permissionsAdapter.setOnLaterClickListener { permission, position ->
-            viewModel.removePermission(permission.permissionName)
+        layoutDnd.apply {
+            btnGrant.onSafeClick {
+                requestNotificationPolicyPermission()
+            }
+            btnLater.onSafeClick {
+
+            }
+        }
+
+        layoutStorage.apply {
+            btnGrant.onSafeClick {
+
+            }
+            btnLater.onSafeClick {
+
+            }
         }
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun observeForData() {
-        viewModel.permissionsList.observe(viewLifecycleOwner) { list: List<Permission>? ->
-            this.permissionList = list ?: emptyList()
-            permissionsAdapter.permissionList = permissionList
-            permissionsAdapter.notifyDataSetChanged()
-            if (permissionList.isEmpty()) {
+        viewModel.permissionCount.observe(viewLifecycleOwner) { it: Int? ->
+            if (it == 5) {
                 (activity as MainActivity).showScreen(
                     fragment = MainFragment.newInstance(),
                     tag = FragmentsTag.MAIN,
@@ -256,5 +326,11 @@ class PermissionsFragment : Fragment() {
             ContextCompat.RECEIVER_EXPORTED
         )
         startActivity(intent)
+    }
+
+    private fun doWhenNotificationPermissionGranted() {
+        AppPreferences.getInstance().hasNotificationPermission = true
+        binding.layoutNotification.root.isVisible = false
+        viewModel.setPermissionCount((viewModel.permissionCount.value ?: 0) + 1)
     }
 }

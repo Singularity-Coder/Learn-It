@@ -47,7 +47,7 @@
         android:maxLines="1"
         android:text="Subtitle 2"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textColor="@color/title_color"
+        android:textColor="@color/purple_300"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="@+id/tv_title"
         app:layout_constraintStart_toStartOf="@+id/tv_title"

@@ -38,12 +38,24 @@ class AppPreferences(context: Context) {
         set(value) = sharedPreferences.edit { putBoolean("GRANTED_ALL_PERMISSIONS", value) }
 
     var hasNotificationPermission: Boolean
-        get() = sharedPreferences.getBoolean("NOTIFICATION_PERMISSION_PREF", false)
-        set(value) = sharedPreferences.edit { putBoolean("NOTIFICATION_PERMISSION_PREF", value) }
+        get() = sharedPreferences.getBoolean("NOTIFICATION_PERMISSION", false)
+        set(value) = sharedPreferences.edit { putBoolean("NOTIFICATION_PERMISSION", value) }
 
     var hasAlarmPermission: Boolean
-        get() = sharedPreferences.getBoolean("ALARM_PERMISSION_PREF", false)
-        set(value) = sharedPreferences.edit { putBoolean("ALARM_PERMISSION_PREF", value) }
+        get() = sharedPreferences.getBoolean("ALARM_PERMISSION", false)
+        set(value) = sharedPreferences.edit { putBoolean("ALARM_PERMISSION", value) }
+
+    var hasBatteryOptimisePermission: Boolean
+        get() = sharedPreferences.getBoolean("BATTERY_OPTIMISE_PERMISSION", false)
+        set(value) = sharedPreferences.edit { putBoolean("BATTERY_OPTIMISE_PERMISSION", value) }
+
+    var hasDndPermission: Boolean
+        get() = sharedPreferences.getBoolean("DND_PERMISSION", false)
+        set(value) = sharedPreferences.edit { putBoolean("DND_PERMISSION", value) }
+
+    var hasStoragePermission: Boolean
+        get() = sharedPreferences.getBoolean("STORAGE_PERMISSION", false)
+        set(value) = sharedPreferences.edit { putBoolean("STORAGE_PERMISSION", value) }
 
     var notifPermissionDeniedCount: Int
         get() = sharedPreferences.getInt("NOTIF_PERMISSION_DENIED_COUNT_PREF", 0)
