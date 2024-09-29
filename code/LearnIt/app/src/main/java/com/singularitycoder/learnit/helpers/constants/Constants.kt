@@ -146,12 +146,12 @@ val PERMISSION_LIST = listOf(
         subtitle = R.string.perm_exp_post_notif,
         requirementType = R.string.essential
     ),
-    Permission(
-        permissionName = Manifest.permission.SCHEDULE_EXACT_ALARM,
-        title = R.string.perm_title_exact_alarms,
-        subtitle = R.string.perm_expln_exact_alarms,
-        requirementType = R.string.essential
-    ),
+//    Permission(
+//        permissionName = Manifest.permission.SCHEDULE_EXACT_ALARM,
+//        title = R.string.perm_title_exact_alarms,
+//        subtitle = R.string.perm_expln_exact_alarms,
+//        requirementType = R.string.essential
+//    ),
     Permission(
         permissionName = Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
         title = R.string.perm_title_ign_bat_optim,

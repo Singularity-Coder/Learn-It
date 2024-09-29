@@ -82,7 +82,7 @@ class PermissionsFragment : Fragment() {
 
         AppPreferences.getInstance().hasNotificationPermission = true
         AppPreferences.getInstance().hasAlarmPermission = context?.canScheduleAlarms() == true
-        viewModel.updateList(position = 0)
+        viewModel.removePermission(Manifest.permission.POST_NOTIFICATIONS)
     }
 
     private val broadcastReceiver = object : BroadcastReceiver() {
@@ -112,12 +112,20 @@ class PermissionsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
         if (AndroidVersions.isTiramisu()
             && activity?.hasNotificationsPermission() == true
             && AppPreferences.getInstance().hasNotificationPermission.not()
         ) {
             askNotificationPermission()
         }
+
+//        if (context?.canScheduleAlarms() == true
+//            && AppPreferences.getInstance().hasAlarmPermission.not()
+//        ) {
+//            AppPreferences.getInstance().hasAlarmPermission = true
+//            viewModel.removePermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
+//        }
     }
 
     private fun FragmentPermissionsBinding.setupUI() {
@@ -150,7 +158,7 @@ class PermissionsFragment : Fragment() {
         }
 
         permissionsAdapter.setOnLaterClickListener { permission, position ->
-            viewModel.updateList(position)
+            viewModel.removePermission(permission.permissionName)
         }
     }
 
