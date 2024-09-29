@@ -47,16 +47,16 @@ import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.requestStoragePermissionApi30
 import com.singularitycoder.learnit.helpers.shouldShowRationaleFor
 import com.singularitycoder.learnit.helpers.showAlertDialog
-import com.singularitycoder.learnit.helpers.showAppSettings
+import com.singularitycoder.learnit.helpers.showNotificationSettings
 import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
 import com.singularitycoder.learnit.helpers.showScreen
 import com.singularitycoder.learnit.helpers.showSnackBar
 import com.singularitycoder.learnit.helpers.showToast
-import com.singularitycoder.learnit.tutorial.TutorialFragment
 import com.singularitycoder.learnit.subject.model.Subject
 import com.singularitycoder.learnit.subject.viewmodel.SubjectViewModel
 import com.singularitycoder.learnit.subject.worker.ExportDataWorker
 import com.singularitycoder.learnit.topic.view.TopicFragment
+import com.singularitycoder.learnit.tutorial.TutorialFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -111,7 +111,7 @@ class MainFragment : Fragment() {
                 negativeBtnText = "Cancel",
                 positiveAction = {
                     if (AppPreferences.getInstance().notifPermissionDeniedCount >= 1) {
-                        activity?.showAppSettings()
+                        activity?.showNotificationSettings()
                     } else {
                         AppPreferences.getInstance().notifPermissionDeniedCount += 1
                         askNotificationPermission()

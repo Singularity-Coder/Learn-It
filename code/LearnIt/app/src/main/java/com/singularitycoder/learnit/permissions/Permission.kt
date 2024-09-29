@@ -9,9 +9,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Permission(
+     var permissionName: String,
      @StringRes var title: Int,
      @StringRes var subtitle: Int,
-     @StringRes var requirementType: Int,
-     var isGranted: Boolean = false,
-     var isDenied: Boolean = false
+     @StringRes var requirementType: Int
 ) : Parcelable

@@ -1,7 +1,9 @@
 package com.singularitycoder.learnit.helpers.constants
 
+import android.Manifest
 import android.content.res.Resources
 import android.os.Parcelable
+import android.provider.Settings
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.singularitycoder.learnit.BuildConfig
@@ -139,26 +141,31 @@ enum class Tutorial(
 
 val PERMISSION_LIST = listOf(
     Permission(
+        permissionName = Manifest.permission.POST_NOTIFICATIONS,
         title = R.string.perm_title_post_notif,
         subtitle = R.string.perm_exp_post_notif,
         requirementType = R.string.essential
     ),
     Permission(
+        permissionName = Manifest.permission.SCHEDULE_EXACT_ALARM,
         title = R.string.perm_title_exact_alarms,
         subtitle = R.string.perm_expln_exact_alarms,
         requirementType = R.string.essential
     ),
     Permission(
+        permissionName = Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
         title = R.string.perm_title_ign_bat_optim,
         subtitle = R.string.perm_exp_ign_bat_optim,
         requirementType = R.string.highly_recommended
     ),
     Permission(
+        permissionName = Manifest.permission.ACCESS_NOTIFICATION_POLICY,
         title = R.string.perm_title_notif_policy,
         subtitle = R.string.perm_exp_notif_policy,
         requirementType = R.string.highly_recommended
     ),
     Permission(
+        permissionName = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION,
         title = R.string.perm_title_storage_access,
         subtitle = R.string.perm_exp_storage_access,
         requirementType = R.string.optional

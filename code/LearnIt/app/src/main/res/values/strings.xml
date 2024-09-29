@@ -29,7 +29,7 @@
     if set to optimize battery. With this enabled, the Android system can kill the app at any time and/or cancel the alarms it has set, which
     will be detrimental to the working of the app. We recommend you to whitelist this app from battery optimizations.</string>
 
-    <string name="perm_title_notif_policy">🙅 Change \"Do Not Disturb\" settings</string>
+    <string name="perm_title_notif_policy">🙅🏻 Change \"Do Not Disturb\" settings</string>
     <string name="perm_exp_notif_policy">The app allows you to set different ring volumes for each alarm.
     Before ringing the alarm, the app tries to change the volume of the system alarm stream to the volume you
     have set (and restores it to what it was initially). To change the volume, the permission

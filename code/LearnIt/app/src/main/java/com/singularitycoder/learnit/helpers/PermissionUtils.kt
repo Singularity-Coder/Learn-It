@@ -57,6 +57,14 @@ fun Activity.showAppSettings() {
     )
 }
 
+fun Activity.showNotificationSettings() {
+    val intent = Intent().apply {
+        action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+        putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+    }
+    this.startActivity(intent)
+}
+
 fun Context.askAlarmPermission() {
     val intent = Intent().apply {
         action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM

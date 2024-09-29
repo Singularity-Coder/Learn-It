@@ -6,7 +6,7 @@ Tutorial
 - stick to 10 or 15 topics per session
 
 
-
+- refactor notification permission launcher for playbooks and this as well
 - Search topics
 - alarm TTS
 - on import show alert warning of data override
