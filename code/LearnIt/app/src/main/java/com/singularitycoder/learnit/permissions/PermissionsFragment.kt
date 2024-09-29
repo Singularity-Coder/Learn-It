@@ -18,16 +18,18 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.registerReceiver
+import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.FragmentPermissionsBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
 import com.singularitycoder.learnit.helpers.AppPreferences
 import com.singularitycoder.learnit.helpers.canScheduleAlarms
-import com.singularitycoder.learnit.helpers.constants.Permission
 import com.singularitycoder.learnit.helpers.constants.FragmentsTag
+import com.singularitycoder.learnit.helpers.constants.Permission
 import com.singularitycoder.learnit.helpers.hasNotificationsPermission
 import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.setNavigationBarColor
@@ -51,7 +53,7 @@ class PermissionsFragment : Fragment() {
 
     private lateinit var binding: FragmentPermissionsBinding
 
-    private val viewModel by viewModels<PermissionsViewModel>()
+    private val permissionCount = MutableLiveData<Int>()
 
     @SuppressLint("InlinedApi")
     private val notificationPermissionResult = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean? ->
@@ -118,7 +120,7 @@ class PermissionsFragment : Fragment() {
         ) {
             AppPreferences.getInstance().hasAlarmPermission = true
             binding.layoutAlarm.root.isVisible = false
-            viewModel.setPermissionCount((viewModel.permissionCount.value ?: 0) + 1)
+            permissionCount.value = 0
         }
 
         binding.layoutNotification.root.isVisible = AppPreferences.getInstance().hasNotificationPermission.not()
@@ -161,38 +163,6 @@ class PermissionsFragment : Fragment() {
                 tvSubtitle2.text = root.context.getString(permission.requirementType)
             }
         }
-
-//        layoutNotification.apply {
-//            tvTitle.text = root.context.getString(R.string.perm_title_post_notif)
-//            tvSubtitle.text = root.context.getString(R.string.perm_exp_post_notif)
-//            tvSubtitle2.text = root.context.getString(R.string.essential)
-//            btnLater.isVisible = false
-//        }
-//
-//        layoutAlarm.apply {
-//            tvTitle.text = root.context.getString(R.string.perm_title_exact_alarms)
-//            tvSubtitle.text = root.context.getString(R.string.perm_expln_exact_alarms)
-//            tvSubtitle2.text = root.context.getString(R.string.essential)
-//            btnLater.isVisible = false
-//        }
-//
-//        layoutBattery.apply {
-//            tvTitle.text = root.context.getString(R.string.perm_title_ign_bat_optim)
-//            tvSubtitle.text = root.context.getString(R.string.perm_exp_ign_bat_optim)
-//            tvSubtitle2.text = root.context.getString(R.string.highly_recommended)
-//        }
-//
-//        layoutDnd.apply {
-//            tvTitle.text = root.context.getString(R.string.perm_title_notif_policy)
-//            tvSubtitle.text = root.context.getString(R.string.perm_exp_notif_policy)
-//            tvSubtitle2.text = root.context.getString(R.string.highly_recommended)
-//        }
-//
-//        layoutStorage.apply {
-//            tvTitle.text = root.context.getString(R.string.perm_title_storage_access)
-//            tvSubtitle.text = root.context.getString(R.string.perm_exp_storage_access)
-//            tvSubtitle2.text = root.context.getString(R.string.optional)
-//        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -212,7 +182,8 @@ class PermissionsFragment : Fragment() {
                 requestIgnoreBatteryOptimisePermission()
             }
             btnLater.onSafeClick {
-
+                layoutBattery.root.isVisible = false
+                permissionCount.value = 0
             }
         }
 
@@ -221,7 +192,8 @@ class PermissionsFragment : Fragment() {
                 requestNotificationPolicyPermission()
             }
             btnLater.onSafeClick {
-
+                layoutDnd.root.isVisible = false
+                permissionCount.value = 0
             }
         }
 
@@ -230,15 +202,16 @@ class PermissionsFragment : Fragment() {
 
             }
             btnLater.onSafeClick {
-
+                layoutStorage.root.isVisible = false
+                permissionCount.value = 0
             }
         }
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun observeForData() {
-        viewModel.permissionCount.observe(viewLifecycleOwner) { it: Int? ->
-            if (it == 5) {
+        permissionCount.observe(viewLifecycleOwner) { it: Int? ->
+            if (binding.llContainer.children.toList().all { it.isVisible.not() }) {
                 (activity as MainActivity).showScreen(
                     fragment = MainFragment.newInstance(),
                     tag = FragmentsTag.MAIN,
@@ -331,6 +304,6 @@ class PermissionsFragment : Fragment() {
     private fun doWhenNotificationPermissionGranted() {
         AppPreferences.getInstance().hasNotificationPermission = true
         binding.layoutNotification.root.isVisible = false
-        viewModel.setPermissionCount((viewModel.permissionCount.value ?: 0) + 1)
+        permissionCount.value = 0
     }
 }
