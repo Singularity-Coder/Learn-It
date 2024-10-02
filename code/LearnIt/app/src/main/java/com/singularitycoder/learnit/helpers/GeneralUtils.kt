@@ -2,6 +2,7 @@ package com.singularitycoder.learnit.helpers
 
 import android.app.Activity
 import android.app.AlarmManager
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.ClipboardManager
 import android.content.Context
@@ -11,6 +12,7 @@ import android.content.res.Resources
 import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.net.Uri
+import android.os.PowerManager
 import android.view.View
 import android.view.WindowInsetsController
 import android.view.WindowManager
@@ -150,6 +152,14 @@ fun pendingIntentUpdateCurrentFlag(): Int {
 
 fun Context.canScheduleAlarms(): Boolean {
     return AndroidVersions.isTiramisu() && (getSystemService(Context.ALARM_SERVICE) as AlarmManager).canScheduleExactAlarms()
+}
+
+fun Context.hasNotificationPolicyAccess(): Boolean {
+    return (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).isNotificationPolicyAccessGranted
+}
+
+fun Context.isIgnoringBatteryOptimizations(): Boolean {
+    return (getSystemService(Context.POWER_SERVICE) as PowerManager).isIgnoringBatteryOptimizations(packageName)
 }
 
 fun Activity.setStatusBarColor(@ColorRes color: Int) {

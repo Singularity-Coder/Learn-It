@@ -71,7 +71,7 @@ fun Context.askAlarmPermission() {
     startActivity(intent)
 }
 
-fun Activity.hasStoragePermissionApi30(): Boolean {
+fun Activity.hasFullStoragePermissionApi30(): Boolean {
     val appOps = this.getSystemService(AppOpsManager::class.java)
     val mode = appOps.unsafeCheckOpNoThrow(
         MANAGE_EXTERNAL_STORAGE_PERMISSION,
@@ -81,7 +81,7 @@ fun Activity.hasStoragePermissionApi30(): Boolean {
     return mode == AppOpsManager.MODE_ALLOWED
 }
 
-fun Activity.requestStoragePermissionApi30() {
+fun Activity.askFullStoragePermissionApi30() {
     val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
     this.startActivityForResult(intent, MANAGE_EXTERNAL_STORAGE_PERMISSION_REQUEST)
 }

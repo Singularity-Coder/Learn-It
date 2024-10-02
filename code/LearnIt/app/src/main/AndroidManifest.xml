@@ -7,7 +7,7 @@
         android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" /> <!-- In Android, after about two minutes of inactivity from the user anything non-essential which is without a wakelock will be suspended -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" /> <!-- In Android, after about two minutes of inactivity from the user anything non-essential which is without a wakelock will be suspended -->
     <!-- https://developer.android.com/develop/background-work/background-tasks/scheduling/wakelock -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -18,6 +18,15 @@
     <!--For Android 12 or higher we need this permission-->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" /> <!--DND-->
+
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" /> <!--?-->
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" /> <!--?-->
+
+    <uses-feature
+        android:name="android.hardware.audio.output"
+        android:required="true" />
 
     <application
         android:name=".ThisApp"

@@ -39,12 +39,12 @@ import com.singularitycoder.learnit.helpers.constants.WorkerData
 import com.singularitycoder.learnit.helpers.constants.WorkerTag
 import com.singularitycoder.learnit.helpers.constants.globalLayoutAnimation
 import com.singularitycoder.learnit.helpers.hasNotificationsPermission
-import com.singularitycoder.learnit.helpers.hasStoragePermissionApi30
+import com.singularitycoder.learnit.helpers.hasFullStoragePermissionApi30
 import com.singularitycoder.learnit.helpers.hideKeyboard
 import com.singularitycoder.learnit.helpers.layoutAnimationController
 import com.singularitycoder.learnit.helpers.onImeClick
 import com.singularitycoder.learnit.helpers.onSafeClick
-import com.singularitycoder.learnit.helpers.requestStoragePermissionApi30
+import com.singularitycoder.learnit.helpers.askFullStoragePermissionApi30
 import com.singularitycoder.learnit.helpers.shouldShowRationaleFor
 import com.singularitycoder.learnit.helpers.showAlertDialog
 import com.singularitycoder.learnit.helpers.showNotificationPermissionRationalePopup
@@ -181,7 +181,7 @@ class MainFragment : Fragment() {
                     }
 
                     optionsList[1].first -> {
-                        if (activity?.hasStoragePermissionApi30()?.not() == true) {
+                        if (activity?.hasFullStoragePermissionApi30()?.not() == true) {
                             showStoragePermissionPopup()
                             return@showPopupMenuWithIcons
                         }
@@ -199,7 +199,7 @@ class MainFragment : Fragment() {
                     }
 
                     optionsList[2].first -> {
-                        if (activity?.hasStoragePermissionApi30()?.not() == true) {
+                        if (activity?.hasFullStoragePermissionApi30()?.not() == true) {
                             showStoragePermissionPopup()
                             return@showPopupMenuWithIcons
                         }
@@ -367,7 +367,7 @@ class MainFragment : Fragment() {
             positiveBtnText = "Grant",
             negativeBtnText = "Cancel",
             positiveAction = {
-                requireActivity().requestStoragePermissionApi30()
+                requireActivity().askFullStoragePermissionApi30()
             }
         )
     }

@@ -26,10 +26,14 @@ import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.FragmentPermissionsBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
 import com.singularitycoder.learnit.helpers.AppPreferences
+import com.singularitycoder.learnit.helpers.askFullStoragePermissionApi30
 import com.singularitycoder.learnit.helpers.canScheduleAlarms
 import com.singularitycoder.learnit.helpers.constants.FragmentsTag
 import com.singularitycoder.learnit.helpers.constants.Permission
+import com.singularitycoder.learnit.helpers.hasNotificationPolicyAccess
 import com.singularitycoder.learnit.helpers.hasNotificationsPermission
+import com.singularitycoder.learnit.helpers.hasFullStoragePermissionApi30
+import com.singularitycoder.learnit.helpers.isIgnoringBatteryOptimizations
 import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.setNavigationBarColor
 import com.singularitycoder.learnit.helpers.shouldShowRationaleFor
@@ -52,6 +56,7 @@ class PermissionsFragment : Fragment() {
 
     private lateinit var binding: FragmentPermissionsBinding
 
+    /** This is simply meant to refresh the observer when assigned any random value and the value set has no real use. */
     private val permissionCount = MutableLiveData<Int>()
 
     @SuppressLint("InlinedApi")
@@ -85,9 +90,8 @@ class PermissionsFragment : Fragment() {
                 intent.action == AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED
                 || intent.action == NotificationManager.ACTION_NOTIFICATION_POLICY_ACCESS_GRANTED_CHANGED
             ) {
-//                if (!Objects.isNull(viewModel.getCurrentPermission())) {
-//                    onPermissionGranted()
-//                }
+                // onPermissionGranted()
+                print("PERMMMMM granted")
             }
         }
     }
@@ -119,6 +123,30 @@ class PermissionsFragment : Fragment() {
         ) {
             AppPreferences.getInstance().hasAlarmPermission = true
             binding.layoutAlarm.root.isVisible = false
+            permissionCount.value = 0
+        }
+
+        if (context?.isIgnoringBatteryOptimizations() == true
+            && AppPreferences.getInstance().hasBatteryOptimisePermission.not()
+        ) {
+            AppPreferences.getInstance().hasBatteryOptimisePermission = true
+            binding.layoutBattery.root.isVisible = false
+            permissionCount.value = 0
+        }
+
+        if (context?.hasNotificationPolicyAccess() == true
+            && AppPreferences.getInstance().hasDndPermission.not()
+        ) {
+            AppPreferences.getInstance().hasDndPermission = true
+            binding.layoutDnd.root.isVisible = false
+            permissionCount.value = 0
+        }
+
+        if (activity?.hasFullStoragePermissionApi30() == true
+            && AppPreferences.getInstance().hasStoragePermission.not()
+        ) {
+            AppPreferences.getInstance().hasStoragePermission = true
+            binding.layoutStorage.root.isVisible = false
             permissionCount.value = 0
         }
 
@@ -197,7 +225,7 @@ class PermissionsFragment : Fragment() {
 
         layoutStorage.apply {
             btnGrant.onSafeClick {
-
+                requireActivity().askFullStoragePermissionApi30()
             }
             btnLater.onSafeClick {
                 layoutStorage.root.isVisible = false
@@ -228,9 +256,7 @@ class PermissionsFragment : Fragment() {
      * Requests the [Manifest.permission.SCHEDULE_EXACT_ALARM] permission.
      * Has to be checked via [AlarmManager.canScheduleExactAlarms].
      * Can only be requested via Settings.
-     * Broadcasts
-     * [AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED] when
-     * granted.
+     * Broadcasts [AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED] when granted.
      */
     private fun requestAlarmPermission() {
         val intent = Intent().apply {
@@ -250,17 +276,15 @@ class PermissionsFragment : Fragment() {
     }
 
     /**
-     * Requests the [Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS]
-     * permission.
+     * Requests the [Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS] permission.
      * Has to be checked via [PowerManager.isIgnoringBatteryOptimizations].
-     * Can only be requested via Settings. See docs of
-     * [Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS].
+     * Can only be requested via Settings. See docs of [Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS].
      */
     private fun requestIgnoreBatteryOptimisePermission() {
-        val intent = Intent().apply {
-            action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-//            setData(Uri.parse("package:${activity?.packageName}"))
-        }
+        val intent = Intent(
+            /* action = */ Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+//            /* uri = */ Uri.parse("package:${activity?.packageName}")
+        )
         try {
             startActivity(intent)
         } catch (ex: ActivityNotFoundException) {
@@ -272,19 +296,10 @@ class PermissionsFragment : Fragment() {
     }
 
     /**
-     * Requests the [Manifest.permission.ACCESS_NOTIFICATION_POLICY] permission
-     * (DND
-     * override permission).
-     *
-     * Has to be checked via
-     * [NotificationManager.isNotificationPolicyAccessGranted].
-     *
-     * Can only be asked via Settings. For details, see docs of
-     * [NotificationManager.isNotificationPolicyAccessGranted].
-     *
-     * Broadcasts
-     * [NotificationManager.ACTION_NOTIFICATION_POLICY_ACCESS_GRANTED_CHANGED] when
-     * granted.
+     * Requests the [Manifest.permission.ACCESS_NOTIFICATION_POLICY] permission (DND override permission).
+     * Has to be checked via [NotificationManager.isNotificationPolicyAccessGranted].
+     * Can only be asked via Settings. For details, see docs of [NotificationManager.isNotificationPolicyAccessGranted].
+     * Broadcasts [NotificationManager.ACTION_NOTIFICATION_POLICY_ACCESS_GRANTED_CHANGED] when granted.
      */
     private fun requestNotificationPolicyPermission() {
         val intent = Intent().apply {
