@@ -29,8 +29,6 @@ import com.singularitycoder.learnit.helpers.constants.IntentKey
 import com.singularitycoder.learnit.helpers.constants.globalLayoutAnimation
 import com.singularitycoder.learnit.helpers.currentTimeMillis
 import com.singularitycoder.learnit.helpers.layoutAnimationController
-import com.singularitycoder.learnit.helpers.nineDayTimeMillis
-import com.singularitycoder.learnit.helpers.nineteenDayTimeMillis
 import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.oneDayTimeMillis
 import com.singularitycoder.learnit.helpers.pendingIntentUpdateCurrentFlag
@@ -40,7 +38,6 @@ import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
 import com.singularitycoder.learnit.helpers.showScreen
 import com.singularitycoder.learnit.helpers.showSnackBar
 import com.singularitycoder.learnit.helpers.showToast
-import com.singularitycoder.learnit.helpers.sixDayTimeMillis
 import com.singularitycoder.learnit.helpers.sixteenDayTimeMillis
 import com.singularitycoder.learnit.helpers.thirtyFiveDayTimeMillis
 import com.singularitycoder.learnit.helpers.thirtySecondsTimeMillis
@@ -315,12 +312,16 @@ class TopicFragment : Fragment() {
             /* requestKey = */ FragmentResultKey.SHOW_KONFETTI,
             /* lifecycleOwner = */ viewLifecycleOwner
         ) { _, bundle: Bundle ->
-            (activity as? MainActivity)?.explode()
             val topic = if (AndroidVersions.isTiramisu()) {
                 bundle.getParcelable(FragmentResultBundleKey.TOPIC, Topic::class.java)
             } else {
                 bundle.getParcelable(FragmentResultBundleKey.TOPIC)
             } ?: return@setFragmentResultListener
+            if (topic.finishedSessions >= 5) {
+                (activity as? MainActivity)?.rain()
+            } else {
+                (activity as? MainActivity)?.explode()
+            }
             viewModel.updateTopic2(topic.copy(revisionCount = topic.revisionCount + 1))
         }
     }

@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.media.MediaPlayer
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -20,7 +21,6 @@ import com.singularitycoder.learnit.helpers.constants.IntentExtraKey
 import com.singularitycoder.learnit.helpers.constants.IntentKey
 import com.singularitycoder.learnit.helpers.konfetti.Presets
 import com.singularitycoder.learnit.helpers.konfetti.image.ImageUtil
-import com.singularitycoder.learnit.helpers.playSound
 import com.singularitycoder.learnit.helpers.setStatusBarColor
 import com.singularitycoder.learnit.helpers.showScreen
 import com.singularitycoder.learnit.permissions.PermissionsFragment
@@ -31,6 +31,9 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
+    private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var mediaPlayer2: MediaPlayer
 
     private val alarmReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -53,6 +56,9 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        mediaPlayer = MediaPlayer.create(this, R.raw.fireworks2)
+        mediaPlayer2 = MediaPlayer.create(this, R.raw.applause)
 
         when {
             AppPreferences.getInstance().hasCompletedTutorial && AppPreferences.getInstance().hasGrantedAllPermissions -> {
@@ -94,6 +100,8 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(alarmReceiver)
+        mediaPlayer.release()
+        mediaPlayer2.release()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -108,7 +116,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun explode() {
-        playSound(R.raw.fireworks2)
+        mediaPlayer.start()
         binding.konfettiView.start(Presets.explode())
     }
 
@@ -117,6 +125,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun rain() {
+        mediaPlayer2.start()
         binding.konfettiView.start(Presets.rain())
     }
 

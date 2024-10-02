@@ -130,11 +130,12 @@ enum class Tutorial(
     val title: String,
     @StringRes val subTitle: Int
 ) {
-    WELCOME(image = R.drawable.tut0, title = "Hello", subTitle = R.string.tut1),
-    HOME(image = R.drawable.tut1, title = "Subjects", subTitle = R.string.tut2),
-    TOPIC(image = R.drawable.tut2, title = "Topics", subTitle = R.string.tut3),
-    SUB_TOPIC(image = R.drawable.tut3, title = "Sub-Topics", subTitle = R.string.tut4),
-    ALARM(image = R.drawable.tut4, title = "Reminders", subTitle = R.string.tut5),
+    WELCOME(image = R.drawable.tut0, title = "Hello", subTitle = R.string.tut0),
+    QUOTE(image = R.drawable.tut1, title = "John von Neumann", subTitle = R.string.tut1),
+    HOME(image = R.drawable.tut2, title = "Subjects", subTitle = R.string.tut2),
+    TOPIC(image = R.drawable.tut3, title = "Topics", subTitle = R.string.tut3),
+    SUB_TOPIC(image = R.drawable.tut4, title = "Sub-Topics", subTitle = R.string.tut4),
+    ALARM(image = R.drawable.tut5, title = "Reminders", subTitle = R.string.tut5),
 }
 
 enum class Permission(

@@ -94,7 +94,7 @@ class TopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 if (timeLeftMillis < 0) {
                     tvNextSession.isVisible = false
                 }
-                if ((topic?.finishedSessions ?: 0) >= 5) {
+                if ((topic?.finishedSessions ?: 0) >= 5 && (topic?.revisionCount ?: 0) >= 5) {
                     topicMastered()
                 }
                 root.onSafeClick {

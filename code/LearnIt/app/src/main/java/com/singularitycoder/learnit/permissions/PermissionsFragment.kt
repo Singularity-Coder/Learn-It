@@ -21,7 +21,6 @@ import androidx.core.content.ContextCompat.registerReceiver
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.FragmentPermissionsBinding
@@ -165,7 +164,6 @@ class PermissionsFragment : Fragment() {
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun FragmentPermissionsBinding.setupUserActionListeners() {
         root.setOnClickListener {}
 
