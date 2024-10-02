@@ -113,48 +113,39 @@ class PermissionsFragment : Fragment() {
 
         if (AndroidVersions.isTiramisu()
             && activity?.hasNotificationsPermission() == true
-            && AppPreferences.getInstance().hasNotificationPermission.not()
         ) {
             doWhenNotificationPermissionGranted()
+        } else {
+            binding.layoutNotification.root.isVisible = true
         }
 
-        if (context?.canScheduleAlarms() == true
-            && AppPreferences.getInstance().hasAlarmPermission.not()
-        ) {
-            AppPreferences.getInstance().hasAlarmPermission = true
+        if (context?.canScheduleAlarms() == true) {
             binding.layoutAlarm.root.isVisible = false
             permissionCount.value = 0
+        } else {
+            binding.layoutAlarm.root.isVisible = true
         }
 
-        if (context?.isIgnoringBatteryOptimizations() == true
-            && AppPreferences.getInstance().hasBatteryOptimisePermission.not()
-        ) {
-            AppPreferences.getInstance().hasBatteryOptimisePermission = true
+        if (context?.isIgnoringBatteryOptimizations() == true) {
             binding.layoutBattery.root.isVisible = false
             permissionCount.value = 0
+        } else {
+            binding.layoutBattery.root.isVisible = true
         }
 
-        if (context?.hasNotificationPolicyAccess() == true
-            && AppPreferences.getInstance().hasDndPermission.not()
-        ) {
-            AppPreferences.getInstance().hasDndPermission = true
+        if (context?.hasNotificationPolicyAccess() == true) {
             binding.layoutDnd.root.isVisible = false
             permissionCount.value = 0
+        } else {
+            binding.layoutDnd.root.isVisible = true
         }
 
-        if (activity?.hasFullStoragePermissionApi30() == true
-            && AppPreferences.getInstance().hasStoragePermission.not()
-        ) {
-            AppPreferences.getInstance().hasStoragePermission = true
+        if (activity?.hasFullStoragePermissionApi30() == true) {
             binding.layoutStorage.root.isVisible = false
             permissionCount.value = 0
+        } else {
+            binding.layoutStorage.root.isVisible = true
         }
-
-        binding.layoutNotification.root.isVisible = AppPreferences.getInstance().hasNotificationPermission.not()
-        binding.layoutAlarm.root.isVisible = AppPreferences.getInstance().hasAlarmPermission.not()
-        binding.layoutBattery.root.isVisible = AppPreferences.getInstance().hasBatteryOptimisePermission.not()
-        binding.layoutDnd.root.isVisible = AppPreferences.getInstance().hasDndPermission.not()
-        binding.layoutStorage.root.isVisible = AppPreferences.getInstance().hasStoragePermission.not()
     }
 
     private fun FragmentPermissionsBinding.setupUI() {
@@ -169,7 +160,6 @@ class PermissionsFragment : Fragment() {
 
         if (AndroidVersions.isTiramisu().not()) {
             layoutNotification.root.isVisible = false
-            AppPreferences.getInstance().hasNotificationPermission = true
         }
 
         layoutNotification.btnLater.isVisible = false
@@ -315,7 +305,6 @@ class PermissionsFragment : Fragment() {
     }
 
     private fun doWhenNotificationPermissionGranted() {
-        AppPreferences.getInstance().hasNotificationPermission = true
         binding.layoutNotification.root.isVisible = false
         permissionCount.value = 0
     }

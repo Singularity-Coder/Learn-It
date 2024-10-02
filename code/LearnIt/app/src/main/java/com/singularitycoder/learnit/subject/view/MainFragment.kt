@@ -53,6 +53,7 @@ import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
 import com.singularitycoder.learnit.helpers.showScreen
 import com.singularitycoder.learnit.helpers.showSnackBar
 import com.singularitycoder.learnit.helpers.showToast
+import com.singularitycoder.learnit.permissions.PermissionsFragment
 import com.singularitycoder.learnit.subject.model.Subject
 import com.singularitycoder.learnit.subject.viewmodel.SubjectViewModel
 import com.singularitycoder.learnit.subject.worker.ExportDataWorker
@@ -98,32 +99,6 @@ class MainFragment : Fragment() {
         startImportExportDataWorker(isImportData = true, uri = uri)
     }
 
-    @SuppressLint("InlinedApi")
-    private val notificationPermissionResult = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean? ->
-        isGranted ?: return@registerForActivityResult
-
-        val isDeniedSoShowRationale = activity?.shouldShowRationaleFor(android.Manifest.permission.POST_NOTIFICATIONS) == true
-        if (isDeniedSoShowRationale) {
-            AppPreferences.getInstance().notifPermissionDeniedCount += 1
-            activity?.showNotificationPermissionRationalePopup {
-                askNotificationPermission()
-            }
-            return@registerForActivityResult
-        }
-
-        if (isGranted.not()) {
-            if (AppPreferences.getInstance().notifPermissionDeniedCount >= 1) {
-                activity?.showNotificationSettingsPopup()
-            } else {
-                askNotificationPermission()
-            }
-            return@registerForActivityResult
-        }
-
-        AppPreferences.getInstance().hasNotificationPermission = true
-        AppPreferences.getInstance().hasAlarmPermission = context?.canScheduleAlarms() == true
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentMainBinding.inflate(inflater, container, false)
         return binding.root
@@ -142,7 +117,6 @@ class MainFragment : Fragment() {
     }
 
     private fun FragmentMainBinding.setupUI() {
-        askPermissions()
         activity?.window?.navigationBarColor = requireContext().getColor(R.color.white)
         rvSubjects.apply {
             layoutAnimation = rvSubjects.context.layoutAnimationController(globalLayoutAnimation)
@@ -234,20 +208,15 @@ class MainFragment : Fragment() {
         subjectsAdapter.setOnItemClickListener { subject, position ->
             if (AndroidVersions.isTiramisu()) {
                 if (activity?.hasNotificationsPermission()?.not() == true) {
-                    AppPreferences.getInstance().hasNotificationPermission = false
-                    askNotificationPermission()
+                    showPermissionsScreen()
                     return@setOnItemClickListener
                 }
             }
 
             if (context?.canScheduleAlarms()?.not() == true) {
-                AppPreferences.getInstance().hasAlarmPermission = false
-                context?.askAlarmPermission()
+                showPermissionsScreen()
                 return@setOnItemClickListener
             }
-
-            AppPreferences.getInstance().hasNotificationPermission = true
-            AppPreferences.getInstance().hasAlarmPermission = true
 
             if (layoutAddItem.etItem.isFocused) {
                 layoutAddItem.etItem.hideKeyboard()
@@ -372,21 +341,12 @@ class MainFragment : Fragment() {
         )
     }
 
-    @SuppressLint("InlinedApi")
-    private fun askNotificationPermission() {
-        notificationPermissionResult.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-    }
-
-    private fun askPermissions() {
-        if (AndroidVersions.isTiramisu().not()) return
-        if (AppPreferences.getInstance().hasNotificationPermission && AppPreferences.getInstance().hasAlarmPermission) return
-        requireContext().showAlertDialog(
-            title = "Grant permissions",
-            message = "Please grant permission to \n* Show Notifications and \n* Schedule Alarms",
-            positiveBtnText = "Grant",
-            positiveAction = {
-                askNotificationPermission()
-            }
+    private fun showPermissionsScreen() {
+        (activity as MainActivity).showScreen(
+            fragment = PermissionsFragment.newInstance(),
+            tag = FragmentsTag.PERMISSIONS,
+            isAdd = true,
+            isAddToBackStack = false
         )
     }
 
