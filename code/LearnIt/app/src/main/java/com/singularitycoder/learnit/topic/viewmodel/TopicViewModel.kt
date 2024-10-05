@@ -3,6 +3,7 @@ package com.singularitycoder.learnit.topic.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.singularitycoder.learnit.subtopic.dao.SubTopicDao
+import com.singularitycoder.learnit.subtopic.model.SubTopic
 import com.singularitycoder.learnit.topic.dao.TopicDao
 import com.singularitycoder.learnit.topic.model.Topic
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +26,10 @@ class TopicViewModel @Inject constructor(
 
     fun updateTopic2(topic: Topic?) = viewModelScope.launch {
         topicDao.update(topic ?: return@launch)
+    }
+
+    fun updateAllTopics(list: List<Topic>) = viewModelScope.launch {
+        topicDao.updateAll(list)
     }
 
     fun getAllTopicBySubjectIdItemsFlow(subjectId: Long?): Flow<List<Topic>> {

@@ -30,6 +30,7 @@ Tutorial
 - upload routines from csv
 - Emoji on completion
 
+
 ________________________________________________________________________________________
 
 
@@ -51,6 +52,7 @@ Primary Reference for Lock Screen Alarm Views:
 
 
 ________________________________________________________________________________________
+
 
 Common spaced repetition system
 This system suggests reviewing material one day after the initial learning, then seven days later, 16 days later, and 35 days later.
@@ -98,3 +100,17 @@ ________________________________________________________________________________
 
 Notifications:
 https://developer.android.com/develop/ui/views/notifications/time-sensitive
+
+
+________________________________________________________________________________________
+
+
+Drag & Drop:
+https://github.com/ravizworldz/Recyclerview_row_Drag_And_Drop
+https://stackoverflow.com/questions/65804749/drag-dropping-the-first-item-of-the-recyclerview-moves-several-random-position
+https://www.youtube.com/watch?v=g6ySj807iTY&t=1098s&ab_channel=LearningWorldz
+https://yfujiki.medium.com/drag-and-reorder-recyclerview-items-in-a-user-friendly-manner-1282335141e9
+https://github.com/yfujiki/Android-DragReorderSample/blob/master/app/src/main/java/com/yfujiki/android_dragreordersample/MainActivity.kt
+Refer [ItemTouchHelper] class
+
+This has problem. u must assign id in db table to shifted item

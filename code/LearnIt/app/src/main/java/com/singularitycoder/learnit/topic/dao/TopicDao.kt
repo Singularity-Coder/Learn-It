@@ -1,7 +1,13 @@
 package com.singularitycoder.learnit.topic.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
 import com.singularitycoder.learnit.helpers.constants.DbTable
 import com.singularitycoder.learnit.topic.model.Topic
 import kotlinx.coroutines.flow.Flow
@@ -22,6 +28,9 @@ interface TopicDao {
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(topic: Topic)
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateAll(list: List<Topic>)
 
     @Query("SELECT EXISTS(SELECT 1 FROM ${DbTable.TOPIC})")
     suspend fun hasItems(): Boolean

@@ -25,11 +25,10 @@ import com.singularitycoder.learnit.subject.view.MainActivity
 import com.singularitycoder.learnit.subtopic.model.SubTopic
 import com.singularitycoder.learnit.subtopic.viewmodel.SubTopicViewModel
 import com.singularitycoder.learnit.topic.model.Topic
-import com.singularitycoder.learnit.topic.view.TopicFragment
-import com.singularitycoder.learnit.topic.view.TopicFragment.Companion
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.Collections
 
 @AndroidEntryPoint
 class AddSubTopicFragment : Fragment() {
@@ -59,35 +58,43 @@ class AddSubTopicFragment : Fragment() {
     private var topic: Topic? = null
     private var subject: Subject? = null
 
-    /** https://yfujiki.medium.com/drag-and-reorder-recyclerview-items-in-a-user-friendly-manner-1282335141e9
-     * https://github.com/yfujiki/Android-DragReorderSample/blob/master/app/src/main/java/com/yfujiki/android_dragreordersample/MainActivity.kt */
     private val itemTouchHelper by lazy {
-        // TODO fix dragging - its crashing
         val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
-            /* Drag Directions */ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.START or ItemTouchHelper.END,
+            /* Drag Directions */ItemTouchHelper.UP or ItemTouchHelper.DOWN /*or ItemTouchHelper.START or ItemTouchHelper.END*/,
             /* Swipe Directions */0
         ) {
+            var fromPos = 0
+            var toPos = 0
+
             override fun onMove(
                 recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
+                source: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder,
             ): Boolean {
                 val adapter = recyclerView.adapter as AddSubTopicsAdapter
-                val from = viewHolder.bindingAdapterPosition
-                val to = target.bindingAdapterPosition
+                fromPos = source.bindingAdapterPosition
+                toPos = target.bindingAdapterPosition
+
                 /** 2. Update the backing model. Custom implementation in AddSubTopicsAdapter. You need to implement reordering of the backing model inside the method. */
-                adapter.moveItem(from, to)
+                Collections.swap(adapter.subTopicList, fromPos, toPos)
+
                 /** 3. Tell adapter to render the model update. */
-                adapter.notifyItemMoved(from, to)
+                adapter.notifyItemMoved(fromPos, toPos)
                 return true
             }
 
+            /** 4. User has finished drag, save new item order to database */
+            override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+                super.clearView(recyclerView, viewHolder)
+                val adapter = recyclerView.adapter as AddSubTopicsAdapter
+                subTopicViewModel.updateAllSubTopics(adapter.subTopicList.filterNotNull())
+            }
+
+            /** 5. Code block for horizontal swipe. ItemTouchHelper handles horizontal swipe as well, but it is not relevant with reordering. Ignoring here. */
             override fun onSwiped(
                 viewHolder: RecyclerView.ViewHolder,
                 direction: Int,
-            ) {
-                /** 4. Code block for horizontal swipe. ItemTouchHelper handles horizontal swipe as well, but it is not relevant with reordering. Ignoring here. */
-            }
+            ) = Unit
         }
         ItemTouchHelper(itemTouchHelperCallback)
     }
@@ -115,6 +122,11 @@ class AddSubTopicFragment : Fragment() {
         binding.observeForData()
     }
 
+    override fun onPause() {
+        super.onPause()
+        addSubTopicsAdapter.removeHandlerCallback()
+    }
+
     private fun FragmentAddSubTopicBinding.setupUI() {
         layoutCustomToolbar.apply {
             ibBack.setImageDrawable(context?.drawable(R.drawable.ic_round_clear_24))
@@ -123,9 +135,9 @@ class AddSubTopicFragment : Fragment() {
         layoutAddItem.etItem.hint = "Add Sub-Topic"
         rvSubTopics.apply {
             // TODO fix dragging
-//            itemTouchHelper.attachToRecyclerView(this)
             layoutManager = LinearLayoutManager(context)
             adapter = addSubTopicsAdapter
+//            itemTouchHelper.attachToRecyclerView(this)
         }
     }
 

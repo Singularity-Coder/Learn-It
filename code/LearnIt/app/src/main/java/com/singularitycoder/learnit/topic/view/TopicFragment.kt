@@ -12,7 +12,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.ThisBroadcastReceiver
 import com.singularitycoder.learnit.databinding.FragmentTopicBinding
@@ -58,6 +60,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Collections
 
 
 @AndroidEntryPoint
@@ -87,6 +90,47 @@ class TopicFragment : Fragment() {
 
     private var subject: Subject? = null
 
+    private val itemTouchHelper by lazy {
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
+            /* Drag Directions */ItemTouchHelper.UP or ItemTouchHelper.DOWN /*or ItemTouchHelper.START or ItemTouchHelper.END*/,
+            /* Swipe Directions */0
+        ) {
+            var fromPos = 0
+            var toPos = 0
+
+            override fun onMove(
+                recyclerView: RecyclerView,
+                source: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder,
+            ): Boolean {
+                val adapter = recyclerView.adapter as TopicsAdapter
+                fromPos = source.bindingAdapterPosition
+                toPos = target.bindingAdapterPosition
+
+                /** 2. Update the backing model. Custom implementation in AddSubTopicsAdapter. You need to implement reordering of the backing model inside the method. */
+                Collections.swap(adapter.topicList, fromPos, toPos)
+
+                /** 3. Tell adapter to render the model update. */
+                adapter.notifyItemMoved(fromPos, toPos)
+                return true
+            }
+
+            /** 4. User has finished drag, save new item order to database */
+            override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+                super.clearView(recyclerView, viewHolder)
+                val adapter = recyclerView.adapter as TopicsAdapter
+                viewModel.updateAllTopics(adapter.topicList.filterNotNull())
+            }
+
+            /** 5. Code block for horizontal swipe. ItemTouchHelper handles horizontal swipe as well, but it is not relevant with reordering. Ignoring here. */
+            override fun onSwiped(
+                viewHolder: RecyclerView.ViewHolder,
+                direction: Int,
+            ) = Unit
+        }
+        ItemTouchHelper(itemTouchHelperCallback)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (AndroidVersions.isTiramisu()) {
@@ -115,6 +159,7 @@ class TopicFragment : Fragment() {
             layoutAnimation = rvTopics.context.layoutAnimationController(globalLayoutAnimation)
             layoutManager = LinearLayoutManager(context)
             adapter = topicsAdapter
+//            itemTouchHelper.attachToRecyclerView(this)
         }
     }
 

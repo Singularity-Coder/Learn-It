@@ -16,7 +16,9 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
@@ -26,8 +28,7 @@ import androidx.work.WorkManager
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.FragmentMainBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
-import com.singularitycoder.learnit.helpers.AppPreferences
-import com.singularitycoder.learnit.helpers.askAlarmPermission
+import com.singularitycoder.learnit.helpers.askFullStoragePermissionApi30
 import com.singularitycoder.learnit.helpers.canScheduleAlarms
 import com.singularitycoder.learnit.helpers.clipboard
 import com.singularitycoder.learnit.helpers.collectLatestLifecycleFlow
@@ -38,17 +39,13 @@ import com.singularitycoder.learnit.helpers.constants.WakeLockKey
 import com.singularitycoder.learnit.helpers.constants.WorkerData
 import com.singularitycoder.learnit.helpers.constants.WorkerTag
 import com.singularitycoder.learnit.helpers.constants.globalLayoutAnimation
-import com.singularitycoder.learnit.helpers.hasNotificationsPermission
 import com.singularitycoder.learnit.helpers.hasFullStoragePermissionApi30
+import com.singularitycoder.learnit.helpers.hasNotificationsPermission
 import com.singularitycoder.learnit.helpers.hideKeyboard
 import com.singularitycoder.learnit.helpers.layoutAnimationController
 import com.singularitycoder.learnit.helpers.onImeClick
 import com.singularitycoder.learnit.helpers.onSafeClick
-import com.singularitycoder.learnit.helpers.askFullStoragePermissionApi30
-import com.singularitycoder.learnit.helpers.shouldShowRationaleFor
 import com.singularitycoder.learnit.helpers.showAlertDialog
-import com.singularitycoder.learnit.helpers.showNotificationPermissionRationalePopup
-import com.singularitycoder.learnit.helpers.showNotificationSettingsPopup
 import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
 import com.singularitycoder.learnit.helpers.showScreen
 import com.singularitycoder.learnit.helpers.showSnackBar
@@ -63,6 +60,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Collections
 
 
 /**
@@ -87,6 +85,47 @@ class MainFragment : Fragment() {
     private var wakeLock: PowerManager.WakeLock? = null
 
     private val viewModel by viewModels<SubjectViewModel>()
+
+    private val itemTouchHelper by lazy {
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
+            /* Drag Directions */ItemTouchHelper.UP or ItemTouchHelper.DOWN /*or ItemTouchHelper.START or ItemTouchHelper.END*/,
+            /* Swipe Directions */0
+        ) {
+            var fromPos = 0
+            var toPos = 0
+
+            override fun onMove(
+                recyclerView: RecyclerView,
+                source: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder,
+            ): Boolean {
+                val adapter = recyclerView.adapter as SubjectsAdapter
+                fromPos = source.bindingAdapterPosition
+                toPos = target.bindingAdapterPosition
+
+                /** 2. Update the backing model. Custom implementation in AddSubTopicsAdapter. You need to implement reordering of the backing model inside the method. */
+                Collections.swap(adapter.subjectList, fromPos, toPos)
+
+                /** 3. Tell adapter to render the model update. */
+                adapter.notifyItemMoved(fromPos, toPos)
+                return true
+            }
+
+            /** 4. User has finished drag, save new item order to database */
+            override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+                super.clearView(recyclerView, viewHolder)
+                val adapter = recyclerView.adapter as SubjectsAdapter
+                viewModel.updateAllSubjects(adapter.subjectList.filterNotNull())
+            }
+
+            /** 5. Code block for horizontal swipe. ItemTouchHelper handles horizontal swipe as well, but it is not relevant with reordering. Ignoring here. */
+            override fun onSwiped(
+                viewHolder: RecyclerView.ViewHolder,
+                direction: Int,
+            ) = Unit
+        }
+        ItemTouchHelper(itemTouchHelperCallback)
+    }
 
     private var filePicker = registerForActivityResult<String, Uri>(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri ?: return@registerForActivityResult
@@ -114,6 +153,8 @@ class MainFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         releaseWakeLock()
+        subjectsAdapter.removeHandlerCallback()
+
     }
 
     private fun FragmentMainBinding.setupUI() {
@@ -122,6 +163,7 @@ class MainFragment : Fragment() {
             layoutAnimation = rvSubjects.context.layoutAnimationController(globalLayoutAnimation)
             layoutManager = LinearLayoutManager(context)
             adapter = subjectsAdapter
+//            itemTouchHelper.attachToRecyclerView(this)
         }
         layoutSearch.etSearch.hint = "Search subjects"
         layoutAddItem.etItem.hint = "Add subject"

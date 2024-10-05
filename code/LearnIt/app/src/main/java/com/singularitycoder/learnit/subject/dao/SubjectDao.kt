@@ -11,6 +11,7 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.singularitycoder.learnit.helpers.constants.DbTable
 import com.singularitycoder.learnit.subject.model.Subject
+import com.singularitycoder.learnit.subtopic.model.SubTopic
 import com.singularitycoder.learnit.topic.model.Topic
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -35,6 +36,9 @@ interface SubjectDao {
     @Transaction
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(subject: Subject)
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateAll(list: List<Subject>)
 
 //    @Query("UPDATE ${DbTable.SUBJECT} SET completedPageNum = :completedPageNum WHERE id LIKE :id")
 //    suspend fun updateCompletedPageWithId(completedPageNum: Int, id: String)

@@ -1,5 +1,7 @@
 package com.singularitycoder.learnit.subject.view
 
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +20,8 @@ class SubjectsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var itemClickListener: (subject: Subject?, position: Int) -> Unit = { _, _ -> }
     private var itemLongClickListener: (subject: Subject?, view: View?, position: Int) -> Unit = { _, _, _ -> }
     private var itemApproveUpdateClickListener: (subject: Subject?, position: Int) -> Unit = { _, _ -> }
+    private var handler = Handler(Looper.getMainLooper())
+    private var runnable = Runnable {  }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val itemBinding = ListItemSubjectBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -60,9 +64,16 @@ class SubjectsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             layoutUpdateItem.apply {
                 root.isVisible = true
                 etUpdateItem.setText(subjectList[adapterPosition]?.title)
-                etUpdateItem.showKeyboard()
+                runnable = Runnable {
+                    etUpdateItem.showKeyboard()
+                }
+                handler.postDelayed(runnable, /* 1 sec delay */1000)
             }
         }
+    }
+
+    fun removeHandlerCallback() {
+        handler.removeCallbacks(runnable)
     }
 
     inner class ThisViewHolder(

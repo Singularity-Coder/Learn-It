@@ -1,5 +1,7 @@
 package com.singularitycoder.learnit.subtopic.view
 
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +13,7 @@ import com.singularitycoder.learnit.helpers.onCustomLongClick
 import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.showKeyboard
 import com.singularitycoder.learnit.subtopic.model.SubTopic
+import kotlin.time.Duration.Companion.seconds
 
 class AddSubTopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -18,6 +21,8 @@ class AddSubTopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var itemClickListener: (subTopic: SubTopic?, position: Int) -> Unit = { _, _ -> }
     private var itemLongClickListener: (subTopic: SubTopic?, view: View?, position: Int) -> Unit = { _, _, _ -> }
     private var itemApproveUpdateClickListener: (subTopic: SubTopic?, position: Int) -> Unit = { _, _ -> }
+    private var handler = Handler(Looper.getMainLooper())
+    private var runnable = Runnable {  }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val itemBinding = ListItemAddSubTopicBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -31,17 +36,6 @@ class AddSubTopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun getItemCount(): Int = subTopicList.size
 
     override fun getItemViewType(position: Int): Int = position
-
-    fun moveItem(from: Int, to: Int) {
-        val fromItem = subTopicList[from]
-        subTopicList.removeAt(from)
-        subTopicList[to] = fromItem
-//        if (to < from) {
-//            subTopicList[to] = fromItem
-//        } else {
-//            subTopicList[to-1] = fromItem
-//        }
-    }
 
     fun setOnItemClickListener(listener: (subTopic: SubTopic?, position: Int) -> Unit) {
         itemClickListener = listener
@@ -71,9 +65,16 @@ class AddSubTopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             layoutUpdateItem.apply {
                 root.isVisible = true
                 etUpdateItem.setText(subTopicList[adapterPosition]?.title)
-                etUpdateItem.showKeyboard()
+                runnable = Runnable {
+                    etUpdateItem.showKeyboard()
+                }
+                handler.postDelayed(runnable, /* 1 sec delay */1000)
             }
         }
+    }
+
+    fun removeHandlerCallback() {
+        handler.removeCallbacks(runnable)
     }
 
     inner class ThisViewHolder(
@@ -90,7 +91,7 @@ class AddSubTopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     itemClickListener.invoke(subTopic, bindingAdapterPosition)
                 }
                 root.onCustomLongClick {
-                    itemLongClickListener.invoke(subTopic, it, bindingAdapterPosition)
+                    itemLongClickListener.invoke(subTopic, tvTitle, bindingAdapterPosition)
                 }
                 layoutUpdateItem.ibCancelUpdate.onSafeClick {
                     layoutUpdateItem.root.isVisible = false

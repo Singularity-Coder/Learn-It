@@ -25,6 +25,10 @@ class SubjectViewModel @Inject constructor(
         subjectDao.update(subject)
     }
 
+    fun updateAllSubjects(list: List<Subject>) = viewModelScope.launch {
+        subjectDao.updateAll(list)
+    }
+
     fun getAllSubjectItemsFlow() = subjectDao.getAllItemsStateFlow()
 
     suspend fun getAllSubjects() = subjectDao.getAll()

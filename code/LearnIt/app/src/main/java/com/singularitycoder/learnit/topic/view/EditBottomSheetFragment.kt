@@ -6,10 +6,18 @@ import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.FrameLayout
+import android.widget.SeekBar
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.viewModels
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.FragmentEditBottomSheetBinding
@@ -92,9 +100,17 @@ class EditBottomSheetFragment : BottomSheetDialogFragment() {
     private fun FragmentEditBottomSheetBinding.setupUI() {
         enableSoftInput()
         setTransparentBackground()
+        setBottomSheetExpanded()
 
         etEdit.hint = "Topic name"
         etEdit2.hint = "Study material"
+
+        layoutVolumeSlider.apply {
+            tvSliderTitle.text = "Volume: 5"
+            sliderCustom.min = 1
+            sliderCustom.max = 10
+            sliderCustom.progress = 5
+        }
 
         when (eventType) {
             EditEvent.ADD_TOPIC -> {
@@ -116,6 +132,15 @@ class EditBottomSheetFragment : BottomSheetDialogFragment() {
             isValidTopic = true
             isValidStudyMaterial = true
         }
+
+        etAlarmType.editText?.setText("Sound")
+        val imageQuantityAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, listOf("Sound", "Vibrate", "Sound & Vibrate"))
+        (etAlarmType.editText as? AutoCompleteTextView)?.setAdapter(imageQuantityAdapter)
+
+        etAlarmTone.editText?.setText("Default")
+        val imageSizeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, listOf("256x256", "512x512", "1024x1024"))
+        (etAlarmTone.editText as? AutoCompleteTextView)?.setAdapter(imageSizeAdapter)
+
         etEdit.editText?.showKeyboard()
     }
 
@@ -214,5 +239,34 @@ class EditBottomSheetFragment : BottomSheetDialogFragment() {
                 }
             }
         }
+
+        layoutVolumeSlider.apply {
+            ibReduce.onSafeClick {
+                sliderCustom.progress -= 1
+                tvSliderTitle.text = "Volume: ${sliderCustom.progress}"
+            }
+            ibIncrease.onSafeClick {
+                sliderCustom.progress += 1
+                tvSliderTitle.text = "Volume: ${sliderCustom.progress}"
+            }
+            sliderCustom.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                    tvSliderTitle.text = "Volume: ${seekBar.progress}"
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar) = Unit
+                override fun onStopTrackingTouch(seekBar: SeekBar) {
+                    println("seekbar progress: ${seekBar.progress}")
+                    tvSliderTitle.text = "Volume: ${seekBar.progress}"
+                }
+            })
+        }
+    }
+
+    private fun setBottomSheetExpanded() {
+        val bottomSheetDialog = dialog as BottomSheetDialog
+        val bottomSheet = bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as FrameLayout? ?: return
+        val behavior: BottomSheetBehavior<*> = BottomSheetBehavior.from(bottomSheet)
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 }
