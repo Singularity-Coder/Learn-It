@@ -26,6 +26,7 @@ import com.singularitycoder.learnit.databinding.ActivityLockScreenBinding
 import com.singularitycoder.learnit.helpers.color
 import com.singularitycoder.learnit.helpers.constants.IntentExtraKey
 import com.singularitycoder.learnit.helpers.constants.IntentKey
+import com.singularitycoder.learnit.helpers.constants.remindMeInList
 import com.singularitycoder.learnit.helpers.currentTimeMillis
 import com.singularitycoder.learnit.helpers.drawable
 import com.singularitycoder.learnit.helpers.getAlarmUri
@@ -109,21 +110,13 @@ class LockScreenActivity : AppCompatActivity() {
 
     private fun ActivityLockScreenBinding.setupUserActionListeners() {
         btnRemindMeIn.onSafeClick {
-            val items = listOf(
-                "30 Minutes",
-                "1 Hour",
-                "3 Hours",
-                "6 Hours",
-                "12 Hours",
-                "Tomorrow"
-            )
             showListPopupMenu2(
                 anchorView = it.first,
-                menuList = items
+                menuList = remindMeInList
             ) { position: Int ->
-                btnRemindMeIn.text = "Remind Me ${items[position]}"
+                btnRemindMeIn.text = "Remind Me ${remindMeInList[position]}"
                 lifecycleScope.launch {
-                    val nextSessionDate = when (items[position]) {
+                    val nextSessionDate = when (remindMeInList[position]) {
                         "30 Minutes" -> thirtyMinTimeMillis
                         "1 Hour" -> oneHourTimeMillis
                         "3 Hours" -> threeHourTimeMillis

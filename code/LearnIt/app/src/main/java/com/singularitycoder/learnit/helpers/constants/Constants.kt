@@ -99,6 +99,7 @@ object TtsTag {
 object BottomSheetTag {
     const val TAG_EDIT = "TAG_EDIT_BOTTOM_SHEET"
     const val TAG_SUB_TOPICS = "TAG_SUB_TOPICS_BOTTOM_SHEET"
+    const val TAG_SETTINGS = "TAG_SETTINGS_BOTTOM_SHEET"
 }
 
 object WorkerData {
@@ -175,3 +176,12 @@ enum class Permission(
         requirementType = R.string.optional
     )
 }
+
+val remindMeInList = listOf(
+    "30 Minutes",
+    "1 Hour",
+    "3 Hours",
+    "6 Hours",
+    "12 Hours",
+    "Tomorrow"
+)

@@ -32,6 +32,7 @@ import com.singularitycoder.learnit.helpers.askFullStoragePermissionApi30
 import com.singularitycoder.learnit.helpers.canScheduleAlarms
 import com.singularitycoder.learnit.helpers.clipboard
 import com.singularitycoder.learnit.helpers.collectLatestLifecycleFlow
+import com.singularitycoder.learnit.helpers.constants.BottomSheetTag
 import com.singularitycoder.learnit.helpers.constants.FragmentResultBundleKey
 import com.singularitycoder.learnit.helpers.constants.FragmentResultKey
 import com.singularitycoder.learnit.helpers.constants.FragmentsTag
@@ -54,6 +55,7 @@ import com.singularitycoder.learnit.permissions.PermissionsFragment
 import com.singularitycoder.learnit.subject.model.Subject
 import com.singularitycoder.learnit.subject.viewmodel.SubjectViewModel
 import com.singularitycoder.learnit.subject.worker.ExportDataWorker
+import com.singularitycoder.learnit.subtopic.view.SubTopicBottomSheetFragment
 import com.singularitycoder.learnit.topic.view.TopicFragment
 import com.singularitycoder.learnit.tutorial.TutorialFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -175,6 +177,7 @@ class MainFragment : Fragment() {
 
         ivHeaderMore.onSafeClick { pair: Pair<View?, Boolean> ->
             val optionsList = listOf(
+                Pair("Settings", R.drawable.outline_settings_24),
                 Pair("Show Tutorial", R.drawable.outline_help_outline_24),
                 Pair("Import Data", R.drawable.round_south_west_24),
                 Pair("Export Data", R.drawable.round_north_east_24),
@@ -188,6 +191,13 @@ class MainFragment : Fragment() {
             ) { it: MenuItem? ->
                 when (it?.title?.toString()?.trim()) {
                     optionsList[0].first -> {
+                        SettingsBottomSheetFragment.newInstance().show(
+                            parentFragmentManager,
+                            BottomSheetTag.TAG_SETTINGS
+                        )
+                    }
+
+                    optionsList[1].first -> {
                         (activity as MainActivity).showScreen(
                             fragment = TutorialFragment.newInstance(),
                             tag = FragmentsTag.TUTORIAL,
@@ -196,7 +206,7 @@ class MainFragment : Fragment() {
                         )
                     }
 
-                    optionsList[1].first -> {
+                    optionsList[2].first -> {
                         if (activity?.hasFullStoragePermissionApi30()?.not() == true) {
                             showStoragePermissionPopup()
                             return@showPopupMenuWithIcons
@@ -214,7 +224,7 @@ class MainFragment : Fragment() {
                         )
                     }
 
-                    optionsList[2].first -> {
+                    optionsList[3].first -> {
                         if (activity?.hasFullStoragePermissionApi30()?.not() == true) {
                             showStoragePermissionPopup()
                             return@showPopupMenuWithIcons
@@ -232,7 +242,7 @@ class MainFragment : Fragment() {
                         }
                     }
 
-                    optionsList[3].first -> {
+                    optionsList[4].first -> {
                         requireContext().showAlertDialog(
                             message = "Delete all Subjects, Topics and Sub-Topics? You cannot undo this action.",
                             positiveBtnText = "Delete",
