@@ -10,4 +10,4 @@ Master your memory using spaced repetition!
 ![alt text](https://github.com/Singularity-Coder/Instant-Script/blob/main/assets/sc5.png)
 ![alt text](https://github.com/Singularity-Coder/Instant-Script/blob/main/assets/sc6.png)
 ![alt text](https://github.com/Singularity-Coder/Instant-Script/blob/main/assets/sc7.png)
-![alt text](https://github.com/Singularity-Coder/Instant-Script/blob/main/assets/sc8.png)
+![alt text](https://github.com/Singularity-Coder/Instant-Script/blob/main/assets/sc9.png)

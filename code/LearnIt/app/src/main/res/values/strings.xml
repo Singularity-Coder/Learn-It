@@ -45,7 +45,7 @@
 
     <string name="shakeOp">If I \"shake\" the phone when an alarm rings,</string>
     <string name="powerBtnOp">If I press the \"power button\" when an alarm rings,</string>
-    <string name="testShake">Test shake sensitivity: Tap to enable the shake detector to choose the sensitivity that correctly suits you.</string>
+    <string name="testShake">Enable the shake detector to test the sensitivity that suits you.</string>
     <string name="settings_tone_switch">Automatically set new tones I select as default tones for new alarms</string>
 
 </resources>
