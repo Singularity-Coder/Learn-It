@@ -75,8 +75,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="48dp"
-                android:layout_marginEnd="16dp"
                 android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
                 android:text="@string/shakeOp"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:textColor="@color/title_color" />
@@ -87,20 +87,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="48dp"
-                android:layout_marginEnd="16dp"
                 android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
                 android:layout_weight="1"
                 android:hint="Remind Me in"
                 app:boxStrokeColor="@color/input_box_stroke_color"
                 app:boxStrokeErrorColor="@color/input_box_stroke_color"
+                app:hintTextColor="@color/purple_500"
                 app:shapeAppearance="@style/RoundSmall">
 
                 <AutoCompleteTextView
                     android:id="@+id/tv_on_shake"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="@color/white"
                     android:completionThreshold="1"
                     android:inputType="none"
+                    android:popupBackground="@color/white"
                     android:textColor="@color/title_color" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -109,8 +112,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="48dp"
-                android:layout_marginEnd="16dp"
                 android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
                 android:text="Shake Sensitivity: 1"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:textColor="@color/title_color" />
@@ -128,59 +131,59 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="48dp"
-                android:layout_marginEnd="16dp"
                 android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:gravity="top"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
-                android:gravity="top"
                 android:text="@string/testShake"
                 app:thumbTint="@color/switch_thumb_color"
                 app:trackDecorationTint="@color/switch_track_decor_color"
                 app:trackTint="@color/switch_track_color" />
 
-<!--            <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="16dp"-->
-<!--                android:orientation="horizontal">-->
+            <!--            <androidx.constraintlayout.widget.ConstraintLayout-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginTop="16dp"-->
+            <!--                android:orientation="horizontal">-->
 
-<!--                <com.google.android.material.textview.MaterialTextView-->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginHorizontal="16dp"-->
-<!--                    android:layout_marginStart="16dp"-->
-<!--                    android:text="@string/testShake"-->
-<!--                    android:layout_marginEnd="8dp"-->
-<!--                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"-->
-<!--                    android:textColor="@color/title_color"-->
-<!--                    app:layout_constraintEnd_toStartOf="@+id/btn_test_shake"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent" />-->
+            <!--                <com.google.android.material.textview.MaterialTextView-->
+            <!--                    android:layout_width="0dp"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_marginHorizontal="16dp"-->
+            <!--                    android:layout_marginStart="16dp"-->
+            <!--                    android:text="@string/testShake"-->
+            <!--                    android:layout_marginEnd="8dp"-->
+            <!--                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"-->
+            <!--                    android:textColor="@color/title_color"-->
+            <!--                    app:layout_constraintEnd_toStartOf="@+id/btn_test_shake"-->
+            <!--                    app:layout_constraintStart_toStartOf="parent"-->
+            <!--                    app:layout_constraintTop_toTopOf="parent" />-->
 
-<!--                <com.google.android.material.button.MaterialButton-->
-<!--                    android:id="@+id/btn_test_shake"-->
-<!--                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="32dp"-->
-<!--                    android:layout_marginStart="16dp"-->
-<!--                    android:layout_marginEnd="16dp"-->
-<!--                    android:layout_marginBottom="16dp"-->
-<!--                    android:elevation="0dp"-->
-<!--                    android:insetLeft="0dp"-->
-<!--                    android:insetTop="0dp"-->
-<!--                    android:insetRight="0dp"-->
-<!--                    android:insetBottom="0dp"-->
-<!--                    android:text="Test"-->
-<!--                    android:textAllCaps="false"-->
-<!--                    android:textColor="@color/purple_500"-->
-<!--                    android:textStyle="bold"-->
-<!--                    app:cornerRadius="24dp"-->
-<!--                    app:elevation="0dp"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent"-->
-<!--                    app:strokeColor="@color/purple_500" />-->
+            <!--                <com.google.android.material.button.MaterialButton-->
+            <!--                    android:id="@+id/btn_test_shake"-->
+            <!--                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="32dp"-->
+            <!--                    android:layout_marginStart="16dp"-->
+            <!--                    android:layout_marginEnd="16dp"-->
+            <!--                    android:layout_marginBottom="16dp"-->
+            <!--                    android:elevation="0dp"-->
+            <!--                    android:insetLeft="0dp"-->
+            <!--                    android:insetTop="0dp"-->
+            <!--                    android:insetRight="0dp"-->
+            <!--                    android:insetBottom="0dp"-->
+            <!--                    android:text="Test"-->
+            <!--                    android:textAllCaps="false"-->
+            <!--                    android:textColor="@color/purple_500"-->
+            <!--                    android:textStyle="bold"-->
+            <!--                    app:cornerRadius="24dp"-->
+            <!--                    app:elevation="0dp"-->
+            <!--                    app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                    app:layout_constraintTop_toTopOf="parent"-->
+            <!--                    app:strokeColor="@color/purple_500" />-->
 
-<!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
+            <!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
@@ -206,8 +209,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="48dp"
-                android:layout_marginEnd="16dp"
                 android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
                 android:text="@string/powerBtnOp"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:textColor="@color/title_color" />
@@ -218,20 +221,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="48dp"
-                android:layout_marginEnd="16dp"
                 android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
                 android:layout_weight="1"
                 android:hint="Remind Me in"
                 app:boxStrokeColor="@color/input_box_stroke_color"
                 app:boxStrokeErrorColor="@color/input_box_stroke_color"
+                app:hintTextColor="@color/purple_500"
                 app:shapeAppearance="@style/RoundSmall">
 
                 <AutoCompleteTextView
                     android:id="@+id/tv_power_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="@color/white"
                     android:completionThreshold="1"
                     android:inputType="none"
+                    android:popupBackground="@color/white"
                     android:textColor="@color/title_color" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -260,11 +266,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="48dp"
-                android:layout_marginEnd="16dp"
                 android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:gravity="top"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
-                android:gravity="top"
                 android:text="@string/settings_tone_switch"
                 app:thumbTint="@color/switch_thumb_color"
                 app:trackDecorationTint="@color/switch_track_decor_color"
@@ -295,8 +301,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="48dp"
-                android:layout_marginEnd="16dp"
                 android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
                 android:text="Volume: 5"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:textColor="@color/title_color" />
@@ -304,9 +310,9 @@
             <include
                 android:id="@+id/layout_volume_slider"
                 layout="@layout/layout_slider"
-                android:layout_marginStart="32dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
                 app:layout_constraintTop_toBottomOf="@+id/ll_alarm_options" />
 
             <View

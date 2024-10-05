@@ -172,14 +172,17 @@
             android:hint="Alarm Type"
             app:boxStrokeColor="@color/input_box_stroke_color"
             app:boxStrokeErrorColor="@color/input_box_stroke_color"
+            app:hintTextColor="@color/purple_500"
             app:shapeAppearance="@style/RoundedCornerStartSmall">
 
             <AutoCompleteTextView
                 android:id="@+id/tv_alarm_type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/white"
                 android:completionThreshold="1"
                 android:inputType="none"
+                android:popupBackground="@color/white"
                 android:textColor="@color/title_color" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -192,14 +195,17 @@
             android:hint="Alarm Tone"
             app:boxStrokeColor="@color/input_box_stroke_color"
             app:boxStrokeErrorColor="@color/input_box_stroke_color"
+            app:hintTextColor="@color/purple_500"
             app:shapeAppearance="@style/RoundedCornerEndSmall">
 
             <AutoCompleteTextView
                 android:id="@+id/tv_alarm_tone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/white"
                 android:completionThreshold="1"
                 android:inputType="none"
+                android:popupBackground="@color/white"
                 android:textColor="@color/title_color" />
         </com.google.android.material.textfield.TextInputLayout>
 
