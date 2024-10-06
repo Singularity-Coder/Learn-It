@@ -37,6 +37,11 @@
     to change Do Not Disturb settings is needed in Android Nougat and above. If not granted, the app will
     simply not set the volume before ringing the alarm.</string>
 
+    <string name="perm_title_read_media_audio">🎵 Read audio files</string>
+    <string name="perm_exp_media_audio">This permission is required if you want to
+    choose an alarm tone different from the default alarm tone of your device. Allows the app to read audio and music files
+    on your device.</string>
+
     <string name="perm_title_storage_access">💾 Storage Access</string>
     <string name="perm_exp_storage_access">To import and export all App data, App requires storage access to backup and restore data.</string>
     <string name="essential">Essential</string>
@@ -48,4 +53,7 @@
     <string name="testShake">Enable the shake detector to test the sensitivity that suits you.</string>
     <string name="settings_tone_switch">Automatically set new tones I select as default tones for new alarms</string>
 
+    <string name="perm_requested_twice">Seems you have already denied this permission twice.
+    Android will not allow this app to create the permission request dialog again. Would you
+    like to head to Settings and allow this permission?</string>
 </resources>

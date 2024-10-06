@@ -160,6 +160,12 @@ enum class Permission(
         subtitle = R.string.perm_expln_exact_alarms,
         requirementType = R.string.essential
     ),
+    READ_AUDIO_FILES(
+        permissionName = Manifest.permission.READ_MEDIA_AUDIO,
+        title = R.string.perm_title_read_media_audio,
+        subtitle = R.string.perm_exp_media_audio,
+        requirementType = R.string.essential
+    ),
     BATTERY(
         permissionName = Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
         title = R.string.perm_title_ign_bat_optim,

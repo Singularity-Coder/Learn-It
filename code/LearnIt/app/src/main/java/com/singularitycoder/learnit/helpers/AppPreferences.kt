@@ -41,8 +41,12 @@ class AppPreferences(context: Context) {
         set(value) = sharedPreferences.edit { putBoolean("GRANTED_ALL_PERMISSIONS", value) }
 
     var notifPermissionDeniedCount: Int
-        get() = sharedPreferences.getInt("NOTIF_PERMISSION_DENIED_COUNT_PREF", 0)
-        set(value) = sharedPreferences.edit { putInt("NOTIF_PERMISSION_DENIED_COUNT_PREF", value) }
+        get() = sharedPreferences.getInt("NOTIF_PERMISSION_DENIED_COUNT", 0)
+        set(value) = sharedPreferences.edit { putInt("NOTIF_PERMISSION_DENIED_COUNT", value) }
+
+    var readAudioFilesPermissionDeniedCount: Int
+        get() = sharedPreferences.getInt("READ_AUDIO_FILES_PERMISSION_DENIED_COUNT", 0)
+        set(value) = sharedPreferences.edit { putInt("READ_AUDIO_FILES_PERMISSION_DENIED_COUNT", value) }
 
     /** SETTINGS ------------------------------------------------------ */
 

@@ -48,6 +48,11 @@ fun Activity.hasAlarmPermission(): Boolean {
     return hasPermission(android.Manifest.permission.SCHEDULE_EXACT_ALARM)
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+fun Activity.hasReadAudioFilesPermission(): Boolean {
+    return hasPermission(android.Manifest.permission.READ_MEDIA_AUDIO)
+}
+
 fun Activity.showAppSettings() {
     val intent = Intent(
         /* action = */ Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
@@ -106,6 +111,30 @@ fun Activity.showNotificationSettingsPopup() {
         negativeBtnText = "Cancel",
         positiveAction = {
             showNotificationSettings()
+        }
+    )
+}
+
+fun Activity.showSettingsPermissionRationalePopup(callback: () -> Unit) {
+    showAlertDialog(
+        title = "Grant permission",
+        message = "You must grant this permission to use this App.",
+        positiveBtnText = "Grant",
+        negativeBtnText = "Cancel",
+        positiveAction = {
+            callback.invoke()
+        }
+    )
+}
+
+fun Activity.showSettingsPopup() {
+    showAlertDialog(
+        title = "Grant permission",
+        message = "You must grant this permission to use this App.",
+        positiveBtnText = "Settings",
+        negativeBtnText = "Cancel",
+        positiveAction = {
+            showAppSettings()
         }
     )
 }

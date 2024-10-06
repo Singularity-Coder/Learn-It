@@ -30,9 +30,10 @@ import com.singularitycoder.learnit.helpers.askFullStoragePermissionApi30
 import com.singularitycoder.learnit.helpers.canScheduleAlarms
 import com.singularitycoder.learnit.helpers.constants.FragmentsTag
 import com.singularitycoder.learnit.helpers.constants.Permission
+import com.singularitycoder.learnit.helpers.hasFullStoragePermissionApi30
 import com.singularitycoder.learnit.helpers.hasNotificationPolicyAccess
 import com.singularitycoder.learnit.helpers.hasNotificationsPermission
-import com.singularitycoder.learnit.helpers.hasFullStoragePermissionApi30
+import com.singularitycoder.learnit.helpers.hasReadAudioFilesPermission
 import com.singularitycoder.learnit.helpers.isIgnoringBatteryOptimizations
 import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.setNavigationBarColor
@@ -40,6 +41,8 @@ import com.singularitycoder.learnit.helpers.shouldShowRationaleFor
 import com.singularitycoder.learnit.helpers.showNotificationPermissionRationalePopup
 import com.singularitycoder.learnit.helpers.showNotificationSettingsPopup
 import com.singularitycoder.learnit.helpers.showScreen
+import com.singularitycoder.learnit.helpers.showSettingsPermissionRationalePopup
+import com.singularitycoder.learnit.helpers.showSettingsPopup
 import com.singularitycoder.learnit.subject.view.MainActivity
 import com.singularitycoder.learnit.subject.view.MainFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -84,6 +87,30 @@ class PermissionsFragment : Fragment() {
         doWhenNotificationPermissionGranted()
     }
 
+    private val readAudioFilesPermissionResult = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean? ->
+        isGranted ?: return@registerForActivityResult
+
+        val isDeniedSoShowRationale = activity?.shouldShowRationaleFor(android.Manifest.permission.READ_MEDIA_AUDIO) == true
+        if (isDeniedSoShowRationale) {
+            AppPreferences.getInstance().readAudioFilesPermissionDeniedCount += 1
+            activity?.showSettingsPermissionRationalePopup {
+                askReadMediaAudioPermission()
+            }
+            return@registerForActivityResult
+        }
+
+        if (isGranted.not()) {
+            if (AppPreferences.getInstance().readAudioFilesPermissionDeniedCount >= 1) {
+                activity?.showSettingsPopup()
+            } else {
+                askReadMediaAudioPermission()
+            }
+            return@registerForActivityResult
+        }
+
+        doWhenReadAudioFilesPermissionGranted()
+    }
+
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (
@@ -126,6 +153,14 @@ class PermissionsFragment : Fragment() {
             binding.layoutAlarm.root.isVisible = true
         }
 
+        if (AndroidVersions.isTiramisu()
+            && activity?.hasReadAudioFilesPermission() == true
+        ) {
+            doWhenReadAudioFilesPermissionGranted()
+        } else {
+            binding.layoutReadAudioFiles.root.isVisible = true
+        }
+
         if (context?.isIgnoringBatteryOptimizations() == true) {
             binding.layoutBattery.root.isVisible = false
             permissionCount.value = 0
@@ -160,14 +195,17 @@ class PermissionsFragment : Fragment() {
 
         if (AndroidVersions.isTiramisu().not()) {
             layoutNotification.root.isVisible = false
+            layoutReadAudioFiles.root.isVisible = false
         }
 
         layoutNotification.btnLater.isVisible = false
+        layoutReadAudioFiles.btnLater.isVisible = false
         layoutAlarm.btnLater.isVisible = false
 
         val layoutList = listOf(
             layoutNotification,
             layoutAlarm,
+            layoutReadAudioFiles,
             layoutBattery,
             layoutDnd,
             layoutStorage
@@ -191,6 +229,10 @@ class PermissionsFragment : Fragment() {
 
         layoutAlarm.btnGrant.onSafeClick {
             requestAlarmPermission()
+        }
+
+        layoutReadAudioFiles.btnGrant.onSafeClick {
+            askReadMediaAudioPermission()
         }
 
         layoutBattery.apply {
@@ -240,6 +282,10 @@ class PermissionsFragment : Fragment() {
 
     private fun askNotificationPermission() {
         notificationPermissionResult.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+    }
+
+    private fun askReadMediaAudioPermission() {
+        readAudioFilesPermissionResult.launch(android.Manifest.permission.READ_MEDIA_AUDIO)
     }
 
     /**
@@ -306,6 +352,11 @@ class PermissionsFragment : Fragment() {
 
     private fun doWhenNotificationPermissionGranted() {
         binding.layoutNotification.root.isVisible = false
+        permissionCount.value = 0
+    }
+
+    private fun doWhenReadAudioFilesPermissionGranted() {
+        binding.layoutReadAudioFiles.root.isVisible = false
         permissionCount.value = 0
     }
 }
