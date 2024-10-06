@@ -18,6 +18,9 @@ const val FILE_PROVIDER = "${BuildConfig.APPLICATION_ID}.fileprovider"
 const val TEXT_FILE_ITEM_DIVIDER = "--------iiiiiiii--------"
 const val TEXT_FILE_TABLE_DIVIDER = "--------tttttttt--------"
 
+/** The default sensitivity of the shake detector. */
+const val DEFAULT_SHAKE_SENSITIVITY: Float = 3.2f
+
 val globalLayoutAnimation = R.anim.layout_animation_fall_down
 val globalSlideToBottomAnimation = R.anim.layout_animation_fall_down
 val globalSlideToTopAnimation = R.anim.layout_animation_slide_from_bottom
