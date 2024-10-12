@@ -1,5 +1,5 @@
 ![alt text](https://github.com/Singularity-Coder/Instant-Script/blob/main/assets/logo192.png)
-# Learn It
+# Learn It (🚧 Work-In-Progress 🚧)
 Master your memory using spaced repetition!
 
 ## Concept
