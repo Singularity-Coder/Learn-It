@@ -235,8 +235,13 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/ll_alarm_options" />
 
-    <View
+    <Space
         android:layout_width="match_parent"
         android:layout_height="8dp"
         app:layout_constraintTop_toBottomOf="@+id/layout_volume_slider" />
+
+<!--    <View-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="8dp"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/layout_volume_slider" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>

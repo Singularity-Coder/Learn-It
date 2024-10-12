@@ -10,8 +10,6 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.FrameLayout
 import android.widget.SeekBar
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
@@ -44,9 +42,9 @@ import kotlinx.coroutines.withContext
 class EditBottomSheetFragment : BottomSheetDialogFragment() {
 
     companion object {
-        private const val ARG_PARAM_EDIT_EVENT_TYPE = "ARG_PARAM_EDIT_EVENT_TYPE"
-        private const val KEY_SUBJECT = "KEY_SUBJECT"
-        private const val KEY_TOPIC = "KEY_TOPIC"
+        private const val ARG_EDIT_EVENT_TYPE = "ARG_PARAM_EDIT_EVENT_TYPE"
+        private const val ARG_SUBJECT = "ARG_SUBJECT"
+        private const val ARG_TOPIC = "ARG_TOPIC"
 
         @JvmStatic
         fun newInstance(
@@ -55,9 +53,9 @@ class EditBottomSheetFragment : BottomSheetDialogFragment() {
             topic: Topic?
         ) = EditBottomSheetFragment().apply {
             arguments = Bundle().apply {
-                putParcelable(ARG_PARAM_EDIT_EVENT_TYPE, eventType)
-                putParcelable(KEY_SUBJECT, subject)
-                putParcelable(KEY_TOPIC, topic)
+                putParcelable(ARG_EDIT_EVENT_TYPE, eventType)
+                putParcelable(ARG_SUBJECT, subject)
+                putParcelable(ARG_TOPIC, topic)
             }
         }
     }
@@ -76,13 +74,13 @@ class EditBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (AndroidVersions.isTiramisu()) {
-            eventType = arguments?.getParcelable(ARG_PARAM_EDIT_EVENT_TYPE, EditEvent::class.java)
-            subject = arguments?.getParcelable(KEY_SUBJECT, Subject::class.java)
-            topic = arguments?.getParcelable(KEY_TOPIC, Topic::class.java)
+            eventType = arguments?.getParcelable(ARG_EDIT_EVENT_TYPE, EditEvent::class.java)
+            subject = arguments?.getParcelable(ARG_SUBJECT, Subject::class.java)
+            topic = arguments?.getParcelable(ARG_TOPIC, Topic::class.java)
         } else {
-            eventType = arguments?.getParcelable(ARG_PARAM_EDIT_EVENT_TYPE)
-            subject = arguments?.getParcelable(KEY_SUBJECT)
-            topic = arguments?.getParcelable(KEY_TOPIC)
+            eventType = arguments?.getParcelable(ARG_EDIT_EVENT_TYPE)
+            subject = arguments?.getParcelable(ARG_SUBJECT)
+            topic = arguments?.getParcelable(ARG_TOPIC)
         }
     }
 

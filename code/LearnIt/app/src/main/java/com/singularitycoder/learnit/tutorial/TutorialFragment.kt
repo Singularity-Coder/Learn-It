@@ -18,6 +18,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.FragmentTutorialBinding
 import com.singularitycoder.learnit.helpers.AppPreferences
+import com.singularitycoder.learnit.helpers.DepthPageTransformer
 import com.singularitycoder.learnit.helpers.color
 import com.singularitycoder.learnit.helpers.constants.FragmentsTag
 import com.singularitycoder.learnit.helpers.constants.Tutorial

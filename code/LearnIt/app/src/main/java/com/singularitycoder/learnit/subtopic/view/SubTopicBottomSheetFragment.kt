@@ -44,8 +44,8 @@ import kotlinx.coroutines.withContext
 class SubTopicBottomSheetFragment : BottomSheetDialogFragment() {
 
     companion object {
-        private const val KEY_TOPIC = "KEY_TOPIC"
-        private const val KEY_SUBJECT = "KEY_SUBJECT"
+        private const val ARG_TOPIC = "ARG_TOPIC"
+        private const val ARG_SUBJECT = "ARG_SUBJECT"
 
         @JvmStatic
         fun newInstance(
@@ -53,8 +53,8 @@ class SubTopicBottomSheetFragment : BottomSheetDialogFragment() {
             subject: Subject?
         ) = SubTopicBottomSheetFragment().apply {
             arguments = Bundle().apply {
-                putParcelable(KEY_TOPIC, topic)
-                putParcelable(KEY_SUBJECT, subject)
+                putParcelable(ARG_TOPIC, topic)
+                putParcelable(ARG_SUBJECT, subject)
             }
         }
     }
@@ -73,11 +73,11 @@ class SubTopicBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (AndroidVersions.isTiramisu()) {
-            topic = arguments?.getParcelable(KEY_TOPIC, Topic::class.java)
-            subject = arguments?.getParcelable(KEY_SUBJECT, Subject::class.java)
+            topic = arguments?.getParcelable(ARG_TOPIC, Topic::class.java)
+            subject = arguments?.getParcelable(ARG_SUBJECT, Subject::class.java)
         } else {
-            topic = arguments?.getParcelable(KEY_TOPIC)
-            subject = arguments?.getParcelable(KEY_SUBJECT)
+            topic = arguments?.getParcelable(ARG_TOPIC)
+            subject = arguments?.getParcelable(ARG_SUBJECT)
         }
     }
 

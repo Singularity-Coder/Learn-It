@@ -9,40 +9,44 @@
     <string name="give_permission">Give permission</string>
     <string name="refresh">Refresh</string>
 
-    <string name="tut0">Welcome to \"Learn It\" App. Master complex topics using spaced repetition.</string>
-    <string name="tut1">In mathematics, you don’t understand things, you just get used to them.</string>
+    <string name="tut0">Welcome to \"Learn It\" App. Master complex topics using spaced repetition. You cannot take your sweet time to understand a topic.
+        The world won\'t wait for you. The only way to keep up in such scenarios is to memorise the content.
+        Your brain will constantly try to find patterns and make sense of what you remembered. After several revisions you will eventually understand it.
+        This App will help you revise efficiently using spaced repetition technique which is scientifically tested.</string>
+    <string name="tut1">Young man, in mathematics, you don’t understand things, you just get used to them.\n\nSome people think this is a wrong statement but this is a fact.
+        Humans don\'t see recursion and iteration in their daily lives. These kinds of topics will only make sense when you get used to them.</string>
     <string name="tut2">Create a list of subjects you want to learn.</string>
     <string name="tut3">Create a list of topics you want to learn within that subject.</string>
     <string name="tut4">Create a list of sub-topics you want to recollect within that topic.</string>
     <string name="tut5">We will remind you to actively recall subject matter without using reference material.</string>
 
-    <string name="perm_title_post_notif">🔔 Post notifications</string>
+    <string name="perm_title_post_notif">Post notifications 🔔</string>
     <string name="perm_exp_post_notif">This permission allows the app to post notifications. Without this, you will
     not see the alarm screen when an alarm rings, nor be able to dismiss it later from the notification.</string>
 
-    <string name="perm_title_exact_alarms">⏰ Schedule Alarms</string>
+    <string name="perm_title_exact_alarms">Schedule Alarms ⏰</string>
     <string name="perm_expln_exact_alarms">Android versions S and above need a permission to
     schedule exact alarms. Without this, the app will not be able to schedule any alarms. </string>
 
-    <string name="perm_title_ign_bat_optim">🔋 Ignore Battery Optimizations</string>
+    <string name="perm_title_ign_bat_optim">Ignore Battery Optimizations 🔋</string>
     <string name="perm_exp_ign_bat_optim">The Android system, by default, sets all user installed apps
     to be optimized to save battery. While this is OK for many apps, this app is an alarm clock app, and often faces trouble
     if set to optimize battery. With this enabled, the Android system can kill the app at any time and/or cancel the alarms it has set, which
     will be detrimental to the working of the app. We recommend you to whitelist this app from battery optimizations.</string>
 
-    <string name="perm_title_notif_policy">🙅🏻 Change \"Do Not Disturb\" settings</string>
+    <string name="perm_title_notif_policy">Change \"Do Not Disturb\" settings 🙅🏻</string>
     <string name="perm_exp_notif_policy">The app allows you to set different ring volumes for each alarm.
     Before ringing the alarm, the app tries to change the volume of the system alarm stream to the volume you
     have set (and restores it to what it was initially). To change the volume, the permission
     to change Do Not Disturb settings is needed in Android Nougat and above. If not granted, the app will
     simply not set the volume before ringing the alarm.</string>
 
-    <string name="perm_title_read_media_audio">🎵 Read audio files</string>
+    <string name="perm_title_read_media_audio">Read audio files 🎵</string>
     <string name="perm_exp_media_audio">This permission is required if you want to
-    choose an alarm tone different from the default alarm tone of your device. Allows the app to read audio and music files
+    choose an alarm sound different from the default alarm sound of your device. Allows the app to read audio and music files
     on your device.</string>
 
-    <string name="perm_title_storage_access">💾 Storage Access</string>
+    <string name="perm_title_storage_access">Grant Storage Access 💾</string>
     <string name="perm_exp_storage_access">To import and export all App data, App requires storage access to backup and restore data.</string>
     <string name="essential">Essential</string>
     <string name="highly_recommended">Highly Recommended</string>
@@ -51,9 +55,10 @@
     <string name="shakeOp">If I \"shake\" the phone when an alarm rings,</string>
     <string name="powerBtnOp">If I press the \"power button\" when an alarm rings,</string>
     <string name="testShake">Enable the shake detector to test the sensitivity that suits you.</string>
-    <string name="settings_tone_switch">Automatically set new tones I select as default tones for new alarms</string>
+    <string name="settings_sound_switch">Automatically set new sounds I select as default sounds for new alarms</string>
 
     <string name="perm_requested_twice">Seems you have already denied this permission twice.
     Android will not allow this app to create the permission request dialog again. Would you
     like to head to Settings and allow this permission?</string>
+    <string name="default_ring_sound">Set a default alarm sound for all your reminders.</string>
 </resources>

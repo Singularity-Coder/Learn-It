@@ -1,4 +1,4 @@
-package com.singularitycoder.learnit.tutorial
+package com.singularitycoder.learnit.helpers
 
 import android.view.View
 import androidx.viewpager2.widget.ViewPager2

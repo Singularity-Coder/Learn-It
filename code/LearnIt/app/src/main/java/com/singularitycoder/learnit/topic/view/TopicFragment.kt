@@ -67,12 +67,12 @@ import java.util.Collections
 class TopicFragment : Fragment() {
 
     companion object {
-        private const val KEY_SUBJECT = "KEY_SUBJECT"
+        private const val ARG_SUBJECT = "ARG_SUBJECT"
 
         @JvmStatic
         fun newInstance(subject: Subject?) = TopicFragment().apply {
             arguments = Bundle().apply {
-                putParcelable(KEY_SUBJECT, subject)
+                putParcelable(ARG_SUBJECT, subject)
             }
         }
     }
@@ -134,9 +134,9 @@ class TopicFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (AndroidVersions.isTiramisu()) {
-            subject = arguments?.getParcelable(KEY_SUBJECT, Subject::class.java)
+            subject = arguments?.getParcelable(ARG_SUBJECT, Subject::class.java)
         } else {
-            subject = arguments?.getParcelable(KEY_SUBJECT)
+            subject = arguments?.getParcelable(ARG_SUBJECT)
         }
     }
 
