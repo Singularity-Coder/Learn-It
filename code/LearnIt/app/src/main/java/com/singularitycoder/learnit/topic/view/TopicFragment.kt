@@ -272,7 +272,7 @@ class TopicFragment : Fragment() {
                     }
 
                     optionsList[2].first -> {
-                        EditBottomSheetFragment.newInstance(
+                        EditTopicBottomSheetFragment.newInstance(
                             eventType = EditEvent.UPDATE_TOPIC,
                             subject = subject,
                             topic = topic
@@ -326,7 +326,7 @@ class TopicFragment : Fragment() {
         }
 
         fabAdd.onSafeClick {
-            EditBottomSheetFragment.newInstance(
+            EditTopicBottomSheetFragment.newInstance(
                 eventType = EditEvent.ADD_TOPIC,
                 subject = subject,
                 topic = null

@@ -21,6 +21,7 @@ import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.FragmentEditBottomSheetBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
 import com.singularitycoder.learnit.helpers.color
+import com.singularitycoder.learnit.helpers.constants.BottomSheetTag
 import com.singularitycoder.learnit.helpers.constants.EditEvent
 import com.singularitycoder.learnit.helpers.constants.FragmentResultBundleKey
 import com.singularitycoder.learnit.helpers.constants.FragmentResultKey
@@ -30,6 +31,7 @@ import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.setTransparentBackground
 import com.singularitycoder.learnit.helpers.showKeyboard
 import com.singularitycoder.learnit.subject.model.Subject
+import com.singularitycoder.learnit.subject.view.RingTonePickerBottomSheetFragment
 import com.singularitycoder.learnit.topic.model.Topic
 import com.singularitycoder.learnit.topic.viewmodel.TopicViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,10 +41,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
-class EditBottomSheetFragment : BottomSheetDialogFragment() {
+class EditTopicBottomSheetFragment : BottomSheetDialogFragment() {
 
     companion object {
-        private const val ARG_EDIT_EVENT_TYPE = "ARG_PARAM_EDIT_EVENT_TYPE"
+        private const val ARG_EDIT_TOPIC_EVENT_TYPE = "ARG_EDIT_TOPIC_EVENT_TYPE"
         private const val ARG_SUBJECT = "ARG_SUBJECT"
         private const val ARG_TOPIC = "ARG_TOPIC"
 
@@ -51,9 +53,9 @@ class EditBottomSheetFragment : BottomSheetDialogFragment() {
             eventType: EditEvent,
             subject: Subject?,
             topic: Topic?
-        ) = EditBottomSheetFragment().apply {
+        ) = EditTopicBottomSheetFragment().apply {
             arguments = Bundle().apply {
-                putParcelable(ARG_EDIT_EVENT_TYPE, eventType)
+                putParcelable(ARG_EDIT_TOPIC_EVENT_TYPE, eventType)
                 putParcelable(ARG_SUBJECT, subject)
                 putParcelable(ARG_TOPIC, topic)
             }
@@ -74,11 +76,11 @@ class EditBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (AndroidVersions.isTiramisu()) {
-            eventType = arguments?.getParcelable(ARG_EDIT_EVENT_TYPE, EditEvent::class.java)
+            eventType = arguments?.getParcelable(ARG_EDIT_TOPIC_EVENT_TYPE, EditEvent::class.java)
             subject = arguments?.getParcelable(ARG_SUBJECT, Subject::class.java)
             topic = arguments?.getParcelable(ARG_TOPIC, Topic::class.java)
         } else {
-            eventType = arguments?.getParcelable(ARG_EDIT_EVENT_TYPE)
+            eventType = arguments?.getParcelable(ARG_EDIT_TOPIC_EVENT_TYPE)
             subject = arguments?.getParcelable(ARG_SUBJECT)
             topic = arguments?.getParcelable(ARG_TOPIC)
         }
@@ -135,9 +137,7 @@ class EditBottomSheetFragment : BottomSheetDialogFragment() {
         val imageQuantityAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, listOf("Sound", "Vibrate", "Sound & Vibrate"))
         (etAlarmType.editText as? AutoCompleteTextView)?.setAdapter(imageQuantityAdapter)
 
-        etAlarmTone.editText?.setText("Default")
-        val imageSizeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, listOf("256x256", "512x512", "1024x1024"))
-        (etAlarmTone.editText as? AutoCompleteTextView)?.setAdapter(imageSizeAdapter)
+        etAlarmSound.editText?.setText("Default")
 
         etEdit.editText?.showKeyboard()
     }
@@ -258,6 +258,13 @@ class EditBottomSheetFragment : BottomSheetDialogFragment() {
                     tvSliderTitle.text = "Volume: ${seekBar.progress}"
                 }
             })
+        }
+
+        tvAlarmSound.onSafeClick {
+            RingTonePickerBottomSheetFragment.newInstance(EditTopicBottomSheetFragment::class.java.simpleName).show(
+                parentFragmentManager,
+                BottomSheetTag.TAG_RINGTONE_PICKER
+            )
         }
     }
 

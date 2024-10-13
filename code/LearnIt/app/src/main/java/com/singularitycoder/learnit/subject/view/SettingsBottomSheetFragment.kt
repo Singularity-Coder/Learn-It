@@ -25,9 +25,11 @@ import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.singularitycoder.learnit.databinding.FragmentSettingsBottomSheetBinding
 import com.singularitycoder.learnit.helpers.AppPreferences
+import com.singularitycoder.learnit.helpers.constants.BottomSheetTag
 import com.singularitycoder.learnit.helpers.constants.remindMeInList
 import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.setTransparentBackground
+import com.singularitycoder.learnit.topic.view.EditTopicBottomSheetFragment
 import dagger.hilt.android.AndroidEntryPoint
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -141,6 +143,8 @@ class SettingsBottomSheetFragment : BottomSheetDialogFragment() {
         val powerBtnAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, remindMeInList)
         (etPowerBtn.editText as? AutoCompleteTextView)?.setAdapter(powerBtnAdapter)
 
+        etAlarmSound.editText?.setText("Default")
+
         switchDefaultAlarmTone.isChecked = AppPreferences.getInstance().settingDefaultAlarmTone
 
         setToneTextView(getCurrentToneUri())
@@ -210,6 +214,13 @@ class SettingsBottomSheetFragment : BottomSheetDialogFragment() {
                     tvVolume.text = "Volume: ${seekBar.progress}"
                 }
             })
+        }
+
+        tvAlarmSound.onSafeClick {
+            RingTonePickerBottomSheetFragment.newInstance(EditTopicBottomSheetFragment::class.java.simpleName).show(
+                parentFragmentManager,
+                BottomSheetTag.TAG_RINGTONE_PICKER
+            )
         }
     }
 

@@ -12,7 +12,6 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.singularitycoder.learnit.databinding.FragmentRingTonePickerBottomSheetBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
-import com.singularitycoder.learnit.helpers.constants.EditEvent
 import com.singularitycoder.learnit.helpers.constants.globalSlideToBottomAnimation
 import com.singularitycoder.learnit.helpers.enableSoftInput
 import com.singularitycoder.learnit.helpers.hideKeyboard
@@ -30,12 +29,12 @@ import dagger.hilt.android.AndroidEntryPoint
 class RingTonePickerBottomSheetFragment : BottomSheetDialogFragment() {
 
     companion object {
-        private const val ARG_EDIT_EVENT_TYPE = "ARG_EDIT_EVENT_TYPE"
+        private const val ARG_FROM_SCREEN = "ARG_FROM_SCREEN"
 
         @JvmStatic
-        fun newInstance(eventType: EditEvent) = RingTonePickerBottomSheetFragment().apply {
+        fun newInstance(fromScreen: String) = RingTonePickerBottomSheetFragment().apply {
             arguments = Bundle().apply {
-                putParcelable(ARG_EDIT_EVENT_TYPE, eventType)
+                putString(ARG_FROM_SCREEN, fromScreen)
             }
         }
     }
@@ -48,14 +47,14 @@ class RingTonePickerBottomSheetFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentRingTonePickerBottomSheetBinding
 
-    private var eventType: EditEvent? = null
+    private var fromScreen: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (AndroidVersions.isTiramisu()) {
-            eventType = arguments?.getParcelable(ARG_EDIT_EVENT_TYPE, EditEvent::class.java)
+            fromScreen = arguments?.getString(ARG_FROM_SCREEN, "")
         } else {
-            eventType = arguments?.getParcelable(ARG_EDIT_EVENT_TYPE)
+            fromScreen = arguments?.getString(ARG_FROM_SCREEN)
         }
     }
 

@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:paddingBottom="16dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-    tools:context="topic.view.EditBottomSheetFragment">
+    tools:context="topic.view.EditTopicBottomSheetFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_header"
@@ -187,7 +187,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/et_alarm_tone"
+            android:id="@+id/et_alarm_sound"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -199,7 +199,7 @@
             app:shapeAppearance="@style/RoundedCornerEndSmall">
 
             <AutoCompleteTextView
-                android:id="@+id/tv_alarm_tone"
+                android:id="@+id/tv_alarm_sound"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/white"

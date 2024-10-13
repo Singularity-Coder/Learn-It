@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.singularitycoder.learnit.databinding.ListItemAddSubTopicBinding
+import com.singularitycoder.learnit.helpers.constants.DELAY_500_MILLIS
 import com.singularitycoder.learnit.helpers.hideKeyboard
 import com.singularitycoder.learnit.helpers.onCustomLongClick
 import com.singularitycoder.learnit.helpers.onSafeClick
@@ -68,7 +69,7 @@ class AddSubTopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 runnable = Runnable {
                     etUpdateItem.showKeyboard()
                 }
-                handler.postDelayed(runnable, /* 1 sec delay */1000)
+                handler.postDelayed(runnable, DELAY_500_MILLIS)
             }
         }
     }

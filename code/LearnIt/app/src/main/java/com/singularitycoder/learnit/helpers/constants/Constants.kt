@@ -17,6 +17,7 @@ import kotlinx.parcelize.Parcelize
 const val FILE_PROVIDER = "${BuildConfig.APPLICATION_ID}.fileprovider"
 const val TEXT_FILE_ITEM_DIVIDER = "--------iiiiiiii--------"
 const val TEXT_FILE_TABLE_DIVIDER = "--------tttttttt--------"
+const val DELAY_500_MILLIS = 500L
 
 /** The default sensitivity of the shake detector. */
 const val DEFAULT_SHAKE_SENSITIVITY: Float = 3.2f
@@ -103,6 +104,7 @@ object BottomSheetTag {
     const val TAG_EDIT = "TAG_EDIT_BOTTOM_SHEET"
     const val TAG_SUB_TOPICS = "TAG_SUB_TOPICS_BOTTOM_SHEET"
     const val TAG_SETTINGS = "TAG_SETTINGS_BOTTOM_SHEET"
+    const val TAG_RINGTONE_PICKER = "TAG_RINGTONE_PICKER_BOTTOM_SHEET"
 }
 
 object WorkerData {

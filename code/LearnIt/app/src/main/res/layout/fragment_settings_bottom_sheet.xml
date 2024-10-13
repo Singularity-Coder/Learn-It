@@ -228,7 +228,7 @@
                 android:textColor="@color/title_color" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/et_ring_tone"
+                android:id="@+id/et_alarm_sound"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -243,7 +243,7 @@
                 app:shapeAppearance="@style/RoundSmall">
 
                 <AutoCompleteTextView
-                    android:id="@+id/tv_ring_tone"
+                    android:id="@+id/tv_alarm_sound"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/white"
