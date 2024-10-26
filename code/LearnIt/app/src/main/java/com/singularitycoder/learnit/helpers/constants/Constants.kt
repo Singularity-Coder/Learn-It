@@ -41,6 +41,8 @@ object FragmentResultBundleKey {
 object WakeLockKey {
     const val IMPORT_EXPORT_DATA = "${BuildConfig.APPLICATION_ID}:EXPORT_DATA"
     const val IMPORT_DATA = "${BuildConfig.APPLICATION_ID}:IMPORT_DATA"
+    const val ALARM_RING_SERVICE = "${BuildConfig.APPLICATION_ID}:ALARM_RING_SERVICE"
+    const val ALARM_UPDATE_SERVICE = "${BuildConfig.APPLICATION_ID}:ALARM_UPDATE_SERVICE"
 }
 
 enum class NotificationAction {
@@ -56,7 +58,9 @@ object IntentKey {
     const val NOTIF_BTN_CLICK_BROADCAST_2 = "NOTIF_BTN_CLICK_BROADCAST_2"
     const val MAIN_BROADCAST_FROM_SERVICE = "MAIN_BROADCAST_FROM_SERVICE"
     const val ALARM_SETTINGS_BROADCAST = "ALARM_SETTINGS_BROADCAST"
-    const val REVISION_ALARM = "${BuildConfig.APPLICATION_ID}.revision_alarm"
+    const val REVISION_ALARM = "${BuildConfig.APPLICATION_ID}.REVISION_ALARM"
+    const val DELIVER_ALARM = "${BuildConfig.APPLICATION_ID}.DELIVER_ALARM"
+    const val ALARM_DETAILS = "${BuildConfig.APPLICATION_ID}.ALARM_DETAILS"
 }
 
 object IntentExtraKey {

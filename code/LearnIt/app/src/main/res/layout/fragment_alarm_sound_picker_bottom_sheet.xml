@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/bg_top_rounded"
     android:orientation="vertical"
-    tools:context=".subject.view.RingTonePickerBottomSheetFragment">
+    tools:context=".subject.view.AlarmSoundPickerBottomSheetFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_header"

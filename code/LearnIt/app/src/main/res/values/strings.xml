@@ -61,4 +61,9 @@
     Android will not allow this app to create the permission request dialog again. Would you
     like to head to Settings and allow this permission?</string>
     <string name="default_ring_sound">Set a default alarm sound for all your reminders.</string>
+
+    <string name="defaultTone">Default</string>
+    <string name="silentTone">Silent</string>
+    <string name="ringtonePicker_defaultTitle">Select tone:</string>
+
 </resources>

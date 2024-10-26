@@ -4,9 +4,12 @@ import android.app.AlarmManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.PowerManager
+import androidx.core.content.ContextCompat
 import com.singularitycoder.learnit.helpers.canScheduleAlarms
 import com.singularitycoder.learnit.helpers.constants.IntentExtraKey
 import com.singularitycoder.learnit.helpers.constants.IntentKey
+import com.singularitycoder.learnit.helpers.constants.WakeLockKey
 import com.singularitycoder.learnit.lockscreen.LockScreenActivity
 import com.singularitycoder.learnit.subject.view.MainActivity
 
@@ -43,6 +46,35 @@ class ThisBroadcastReceiver : BroadcastReceiver() {
                 context.startActivity(alarmIntent)
                 /** Data sent to [MainActivity] */
 //                    LocalBroadcastManager.getInstance(context).sendBroadcast(alarmIntent)
+            }
+
+            IntentKey.DELIVER_ALARM -> {
+                val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+                val wakeLock = powerManager.newWakeLock(
+                    PowerManager.PARTIAL_WAKE_LOCK,
+                    WakeLockKey.ALARM_RING_SERVICE
+                )
+                wakeLock.acquire(60_000)
+
+                val intent1 = Intent(context, RingAlarmService::class.java)
+                    .putExtra(
+                        IntentKey.ALARM_DETAILS,
+                        intent.extras?.getBundle(IntentKey.ALARM_DETAILS)
+                    )
+                ContextCompat.startForegroundService(context, intent1)
+            }
+
+            Intent.ACTION_BOOT_COMPLETED,
+            Intent.ACTION_LOCKED_BOOT_COMPLETED -> {
+                val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+                val wakeLock = powerManager.newWakeLock(
+                    PowerManager.PARTIAL_WAKE_LOCK,
+                    WakeLockKey.ALARM_UPDATE_SERVICE
+                )
+                wakeLock.acquire(60_000)
+
+                val intent1 = Intent(context, SetAlarmPostBootService::class.java)
+                ContextCompat.startForegroundService(context, intent1)
             }
 
             else -> Unit

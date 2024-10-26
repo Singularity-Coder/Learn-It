@@ -13,10 +13,10 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <!--For Android 12 or higher we need this permission-->
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
 
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" /> <!--DND-->
@@ -44,12 +44,15 @@
 
         <activity
             android:name=".lockscreen.LockScreenActivity"
-            android:exported="false"
-            android:showOnLockScreen="true"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
+            android:enabled="true"
             android:excludeFromRecents="true"
+            android:exported="false"
             android:launchMode="singleInstance"
-            android:taskAffinity=""/>
+            android:noHistory="true"
+            android:screenOrientation="sensorPortrait"
+            android:showOnLockScreen="true"
+            android:taskAffinity="" />
 
         <!-- windowSoftInputMode: https://stackoverflow.com/a/40506771/6802949 -->
         <activity
@@ -68,8 +71,31 @@
         -->
         <receiver
             android:name=".ThisBroadcastReceiver"
+            android:directBootAware="true"
             android:enabled="true"
-            android:exported="true" />
-    </application>
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.singularitycoder.learnit.DELIVER_ALARM" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
+        <service
+            android:name=".RingAlarmService"
+            android:enabled="true"
+            android:exported="false"
+            android:directBootAware="true"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Invoked when an alarm rings; controls the ringing alarm sound, and the ability to
+                dismiss the alarm by shaking (which is the main feature of the app)." />
+        </service>
+
+    </application>
 </manifest>

@@ -217,7 +217,7 @@ class SettingsBottomSheetFragment : BottomSheetDialogFragment() {
         }
 
         tvAlarmSound.onSafeClick {
-            RingTonePickerBottomSheetFragment.newInstance(EditTopicBottomSheetFragment::class.java.simpleName).show(
+            AlarmSoundPickerBottomSheetFragment.newInstance(EditTopicBottomSheetFragment::class.java.simpleName).show(
                 parentFragmentManager,
                 BottomSheetTag.TAG_RINGTONE_PICKER
             )

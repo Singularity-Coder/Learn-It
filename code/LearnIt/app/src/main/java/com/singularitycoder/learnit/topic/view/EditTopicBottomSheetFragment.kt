@@ -31,7 +31,7 @@ import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.setTransparentBackground
 import com.singularitycoder.learnit.helpers.showKeyboard
 import com.singularitycoder.learnit.subject.model.Subject
-import com.singularitycoder.learnit.subject.view.RingTonePickerBottomSheetFragment
+import com.singularitycoder.learnit.subject.view.AlarmSoundPickerBottomSheetFragment
 import com.singularitycoder.learnit.topic.model.Topic
 import com.singularitycoder.learnit.topic.viewmodel.TopicViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -261,7 +261,7 @@ class EditTopicBottomSheetFragment : BottomSheetDialogFragment() {
         }
 
         tvAlarmSound.onSafeClick {
-            RingTonePickerBottomSheetFragment.newInstance(EditTopicBottomSheetFragment::class.java.simpleName).show(
+            AlarmSoundPickerBottomSheetFragment.newInstance(EditTopicBottomSheetFragment::class.java.simpleName).show(
                 parentFragmentManager,
                 BottomSheetTag.TAG_RINGTONE_PICKER
             )
