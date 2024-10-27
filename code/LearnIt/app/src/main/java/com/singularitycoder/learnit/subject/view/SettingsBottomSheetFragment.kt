@@ -26,7 +26,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.singularitycoder.learnit.databinding.FragmentSettingsBottomSheetBinding
 import com.singularitycoder.learnit.helpers.AppPreferences
 import com.singularitycoder.learnit.helpers.constants.BottomSheetTag
-import com.singularitycoder.learnit.helpers.constants.remindMeInList
+import com.singularitycoder.learnit.helpers.constants.SettingRemindMeIn
 import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.setTransparentBackground
 import com.singularitycoder.learnit.topic.view.EditTopicBottomSheetFragment
@@ -135,12 +135,15 @@ class SettingsBottomSheetFragment : BottomSheetDialogFragment() {
             sliderCustom.progress = AppPreferences.getInstance().settingDefaultAlarmVolume
         }
 
-        etOnShake.editText?.setText(remindMeInList.get(AppPreferences.getInstance().settingRemindMeOnShakePos))
-        val onShakeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, remindMeInList)
+        val settingRemindMeInList = SettingRemindMeIn.entries.map { it.value }
+        val shakeText = SettingRemindMeIn.entries.get(AppPreferences.getInstance().settingRemindMeOnShakePos).value
+        etOnShake.editText?.setText(shakeText)
+        val onShakeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, settingRemindMeInList)
         (etOnShake.editText as? AutoCompleteTextView)?.setAdapter(onShakeAdapter)
 
-        etPowerBtn.editText?.setText(remindMeInList.get(AppPreferences.getInstance().settingRemindMeOnPowerBtnPressPos))
-        val powerBtnAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, remindMeInList)
+        val powerBtnText = SettingRemindMeIn.entries.get(AppPreferences.getInstance().settingRemindMeOnPowerBtnPressPos).value
+        etPowerBtn.editText?.setText(powerBtnText)
+        val powerBtnAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, settingRemindMeInList)
         (etPowerBtn.editText as? AutoCompleteTextView)?.setAdapter(powerBtnAdapter)
 
         etAlarmSound.editText?.setText("Default")

@@ -193,12 +193,20 @@ enum class Permission(
     )
 }
 
-val remindMeInList = listOf(
-    "Do Nothing",
-    "30 Minutes",
-    "1 Hour",
-    "3 Hours",
-    "6 Hours",
-    "12 Hours",
-    "Tomorrow"
-)
+enum class SettingRemindMeIn(val value: String) {
+    DO_NOTHING(value = "Do Nothing"),
+    _30_MINUTES(value = "30 Minutes"),
+    _1_HOUR(value = "1 Hour"),
+    _3_HOURS(value = "3 Hours"),
+    _6_HOURS(value = "6 Hours"),
+    _12_HOURS(value = "12 Hours"),
+    TOMORROW(value = "Tomorrow"),
+}
+
+enum class AlarmType(val value: String) {
+    SOUND_VIBRATE(value = "Sound & Vibrate"),
+    SOUND(value = "Sound"),
+    VIBRATE(value = "Vibrate")
+}
+
+

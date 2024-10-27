@@ -33,6 +33,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import com.singularitycoder.learnit.helpers.AppPreferences
 import com.singularitycoder.learnit.helpers.NotificationsHelper
+import com.singularitycoder.learnit.helpers.constants.AlarmType
 import com.singularitycoder.learnit.helpers.constants.IntentKey
 import com.singularitycoder.learnit.lockscreen.LockScreenActivity
 import com.singularitycoder.learnit.topic.model.Topic
@@ -380,7 +381,7 @@ class RingAlarmService : Service() {
         notificationManager.notify(notifID, buildRingNotification())
         initShakeSensor()
 
-        if (topic?.alarmType != 1 /* Vibrate */) {
+        if (topic?.alarmType != AlarmType.VIBRATE.ordinal) {
             mediaPlayer = MediaPlayer()
             val attributes = AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_ALARM)
@@ -403,7 +404,7 @@ class RingAlarmService : Service() {
             } catch (ignored: IOException) {
             }
 
-            if (topic?.alarmType == 2 /* Sound & Vibrate */) {
+            if (topic?.alarmType == AlarmType.SOUND_VIBRATE.ordinal) {
                 alarmVibration()
             }
             mediaPlayer!!.start()
@@ -523,7 +524,7 @@ class RingAlarmService : Service() {
         try {
             ringTimer!!.cancel()
 
-            if ((topic?.alarmType == 1 /* Vibrate */) || (topic?.alarmType == 2 /* Sound & Vibrate */)) {
+            if ((topic?.alarmType == AlarmType.VIBRATE.ordinal) || (topic?.alarmType == AlarmType.SOUND_VIBRATE.ordinal)) {
                 vibrator.cancel()
             }
             if (mediaPlayer != null) {

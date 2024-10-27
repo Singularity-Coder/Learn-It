@@ -21,6 +21,7 @@ import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.FragmentEditBottomSheetBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
 import com.singularitycoder.learnit.helpers.color
+import com.singularitycoder.learnit.helpers.constants.AlarmType
 import com.singularitycoder.learnit.helpers.constants.BottomSheetTag
 import com.singularitycoder.learnit.helpers.constants.EditEvent
 import com.singularitycoder.learnit.helpers.constants.FragmentResultBundleKey
@@ -133,8 +134,8 @@ class EditTopicBottomSheetFragment : BottomSheetDialogFragment() {
             isValidStudyMaterial = true
         }
 
-        etAlarmType.editText?.setText("Sound")
-        val imageQuantityAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, listOf("Sound", "Vibrate", "Sound & Vibrate"))
+        etAlarmType.editText?.setText(AlarmType.SOUND_VIBRATE.value)
+        val imageQuantityAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, AlarmType.entries.map { it.value })
         (etAlarmType.editText as? AutoCompleteTextView)?.setAdapter(imageQuantityAdapter)
 
         etAlarmSound.editText?.setText("Default")

@@ -26,7 +26,7 @@ import com.singularitycoder.learnit.databinding.ActivityLockScreenBinding
 import com.singularitycoder.learnit.helpers.color
 import com.singularitycoder.learnit.helpers.constants.IntentExtraKey
 import com.singularitycoder.learnit.helpers.constants.IntentKey
-import com.singularitycoder.learnit.helpers.constants.remindMeInList
+import com.singularitycoder.learnit.helpers.constants.SettingRemindMeIn
 import com.singularitycoder.learnit.helpers.currentTimeMillis
 import com.singularitycoder.learnit.helpers.drawable
 import com.singularitycoder.learnit.helpers.getAlarmUri
@@ -112,17 +112,17 @@ class LockScreenActivity : AppCompatActivity() {
         btnRemindMeIn.onSafeClick {
             showListPopupMenu2(
                 anchorView = it.first,
-                menuList = remindMeInList
+                menuList = SettingRemindMeIn.entries.map { it.value }
             ) { position: Int ->
-                btnRemindMeIn.text = "Remind Me ${remindMeInList[position]}"
+                btnRemindMeIn.text = "Remind Me ${SettingRemindMeIn.entries[position]}"
                 lifecycleScope.launch {
-                    val nextSessionDate = when (remindMeInList[position]) {
-                        "30 Minutes" -> thirtyMinTimeMillis
-                        "1 Hour" -> oneHourTimeMillis
-                        "3 Hours" -> threeHourTimeMillis
-                        "6 Hours" -> sixHourTimeMillis
-                        "12 Hours" -> twelveHourTimeMillis
-                        "Tomorrow" -> oneDayTimeMillis
+                    val nextSessionDate = when (SettingRemindMeIn.entries[position]) {
+                        SettingRemindMeIn._30_MINUTES -> thirtyMinTimeMillis
+                        SettingRemindMeIn._1_HOUR -> oneHourTimeMillis
+                        SettingRemindMeIn._3_HOURS -> threeHourTimeMillis
+                        SettingRemindMeIn._6_HOURS -> sixHourTimeMillis
+                        SettingRemindMeIn._12_HOURS -> twelveHourTimeMillis
+                        SettingRemindMeIn.TOMORROW -> oneDayTimeMillis
                         else -> 0
                     } + currentTimeMillis
                     topicsViewModel.updateTopic(
