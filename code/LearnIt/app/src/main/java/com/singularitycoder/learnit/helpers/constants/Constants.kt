@@ -116,6 +116,7 @@ object WorkerData {
     const val URI = "URI"
     const val FILE_NAME = "FILE_NAME"
     const val IS_EXPORT = "IS_EXPORT"
+    const val TOPIC_ID = "TOPIC_ID"
 }
 
 object WorkerTag {
@@ -193,6 +194,7 @@ enum class Permission(
 }
 
 val remindMeInList = listOf(
+    "Do Nothing",
     "30 Minutes",
     "1 Hour",
     "3 Hours",

@@ -16,5 +16,8 @@ data class Topic(
     var dateStarted: Long = 0L,
     var nextSessionDate: Long = 0L,
     var finishedSessions: Int = 0, // 1 to 8
-    var revisionCount: Int = 0
+    var revisionCount: Int = 0,
+    var alarmType: Int = 0,
+    var alarmTone: String = "",
+    var alarmVolume: Int = 0
 ) : Parcelable

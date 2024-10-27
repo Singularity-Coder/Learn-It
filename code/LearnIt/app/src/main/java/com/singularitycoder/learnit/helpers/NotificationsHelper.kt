@@ -5,12 +5,13 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.singularitycoder.learnit.R
 
 internal object NotificationsHelper {
 
-    private const val NOTIFICATION_CHANNEL_ID = "learn_it_notification_channel"
+    const val NOTIFICATION_CHANNEL_ID = "learn_it_notification_channel"
     private const val IMPORT_EXPORT_NOTIFICATION_ID: Int = 1
 
     fun createNotificationChannel(context: Context) {

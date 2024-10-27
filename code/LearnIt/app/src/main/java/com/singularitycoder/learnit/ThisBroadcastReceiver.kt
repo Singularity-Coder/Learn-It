@@ -59,7 +59,7 @@ class ThisBroadcastReceiver : BroadcastReceiver() {
                 val intent1 = Intent(context, RingAlarmService::class.java)
                     .putExtra(
                         IntentKey.ALARM_DETAILS,
-                        intent.extras?.getBundle(IntentKey.ALARM_DETAILS)
+                        intent.extras?.getLong(IntentKey.ALARM_DETAILS)
                     )
                 ContextCompat.startForegroundService(context, intent1)
             }

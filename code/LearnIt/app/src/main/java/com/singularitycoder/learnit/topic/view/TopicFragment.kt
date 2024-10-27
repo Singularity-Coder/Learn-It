@@ -244,7 +244,6 @@ class TopicFragment : Fragment() {
         topicsAdapter.setOnItemLongClickListener { topic, view, position ->
             val optionsList = listOf(
                 Pair("Reset", R.drawable.round_settings_backup_restore_24),
-                Pair("Stop Alarm", R.drawable.outline_alarm_off_24),
                 Pair("Edit", R.drawable.outline_edit_24),
                 Pair("Delete", R.drawable.outline_delete_24)
             )
@@ -268,10 +267,6 @@ class TopicFragment : Fragment() {
                     }
 
                     optionsList[1].first -> {
-                        stopAlarm()
-                    }
-
-                    optionsList[2].first -> {
                         EditTopicBottomSheetFragment.newInstance(
                             eventType = EditEvent.UPDATE_TOPIC,
                             subject = subject,
@@ -279,7 +274,7 @@ class TopicFragment : Fragment() {
                         ).show(parentFragmentManager, BottomSheetTag.TAG_EDIT)
                     }
 
-                    optionsList[3].first -> {
+                    optionsList[2].first -> {
                         requireContext().showAlertDialog(
                             title = "Delete item",
                             message = "Topic \"${topic?.title}\" along with its Sub-Topics will be deleted permanently.",

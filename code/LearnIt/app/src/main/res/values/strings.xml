@@ -10,7 +10,7 @@
     <string name="refresh">Refresh</string>
 
     <string name="tut0">Welcome to \"Learn It\" App. Master complex topics using spaced repetition. You cannot take your sweet time to understand a topic.
-        The world won\'t wait for you. The only way to keep up in such scenarios is to memorise the content.
+        The world won\'t wait for you. The only way to keep up in such a world is to memorise the content.
         Your brain will constantly try to find patterns and make sense of what you remembered. After several revisions you will eventually understand it.
         This App will help you revise efficiently using spaced repetition technique which is scientifically tested.</string>
     <string name="tut1">Young man, in mathematics, you don’t understand things, you just get used to them.\n\nSome people think this is a wrong statement but this is a fact.
@@ -65,5 +65,7 @@
     <string name="defaultTone">Default</string>
     <string name="silentTone">Silent</string>
     <string name="ringtonePicker_defaultTitle">Select tone:</string>
+
+    <string name="notifContent_ring">Alarm ringing. Tap to launch alarm screen.</string>
 
 </resources>
