@@ -2,10 +2,13 @@ package com.singularitycoder.learnit.topic.view
 
 import android.annotation.SuppressLint
 import android.app.AlarmManager
+import android.app.AlarmManager.AlarmClockInfo
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.UserManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -15,7 +18,15 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.Configuration
+import androidx.work.Constraints
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkManager
 import com.singularitycoder.learnit.R
+import com.singularitycoder.learnit.SetAlarmWorker
 import com.singularitycoder.learnit.ThisBroadcastReceiver
 import com.singularitycoder.learnit.databinding.FragmentTopicBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
@@ -28,12 +39,14 @@ import com.singularitycoder.learnit.helpers.constants.FragmentResultKey
 import com.singularitycoder.learnit.helpers.constants.FragmentsTag
 import com.singularitycoder.learnit.helpers.constants.IntentExtraKey
 import com.singularitycoder.learnit.helpers.constants.IntentKey
+import com.singularitycoder.learnit.helpers.constants.WorkerTag
 import com.singularitycoder.learnit.helpers.constants.globalLayoutAnimation
 import com.singularitycoder.learnit.helpers.currentTimeMillis
 import com.singularitycoder.learnit.helpers.layoutAnimationController
 import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.oneDayTimeMillis
 import com.singularitycoder.learnit.helpers.pendingIntentUpdateCurrentFlag
+import com.singularitycoder.learnit.helpers.runLayoutAnimation
 import com.singularitycoder.learnit.helpers.sevenDayTimeMillis
 import com.singularitycoder.learnit.helpers.showAlertDialog
 import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
@@ -78,6 +91,8 @@ class TopicFragment : Fragment() {
     }
 
     private lateinit var binding: FragmentTopicBinding
+
+    private var isNewInstance: Boolean = true
 
     private val topicsAdapter: TopicsAdapter by lazy { TopicsAdapter() }
 
@@ -167,20 +182,26 @@ class TopicFragment : Fragment() {
         root.setOnClickListener { }
 
         topicsAdapter.setOnStartClickListener { topic, position ->
+            if (topic == null) {
+                root.showSnackBar("Something went wrong. Try again.")
+                return@setOnStartClickListener
+            }
+
             if (context?.canScheduleAlarms()?.not() == true) {
                 binding.root.showSnackBar("You did not grant alarm permission")
                 return@setOnStartClickListener
             }
 
             viewModel.updateTopic2(
-                topic = topic?.copy(
+                topic = topic.copy(
                     dateStarted = currentTimeMillis,
                     nextSessionDate = currentTimeMillis + oneDayTimeMillis,
                     finishedSessions = 1
                 )
             )
-
-            startAlarm(topic)
+            setAlarm(topic)
+//            startAlarm(topic)
+//            initSetAlarmWorker()
         }
 
         topicsAdapter.setOnDayClickListener { topic, day, view ->
@@ -366,6 +387,59 @@ class TopicFragment : Fragment() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    private fun observeForData() {
+        (activity as? MainActivity)?.collectLatestLifecycleFlow(
+            flow = viewModel.getAllTopicBySubjectIdItemsFlow(subject?.id)
+        ) { list: List<Topic?> ->
+            topicList = list
+            topicsAdapter.topicList = topicList
+            topicsAdapter.notifyDataSetChanged()
+            if (isNewInstance) {
+                binding.rvTopics.runLayoutAnimation(globalLayoutAnimation)
+                isNewInstance = false
+            }
+            binding.layoutCustomToolbar.tvCount.text =
+                "${list.size} Topics   |   ${list.filter { it?.finishedSessions == 5 }.size} Mastered"
+            if (list.isEmpty()) {
+                if (this.isVisible.not()) return@collectLatestLifecycleFlow
+                binding.fabAdd.performClick()
+            }
+        }
+    }
+
+    private fun initSetAlarmWorker() {
+        val userManager = requireContext().getSystemService(Context.USER_SERVICE) as UserManager
+
+        if (userManager.isUserUnlocked) {
+            try {
+                WorkManager.initialize(
+                    /* context = */ requireContext(),
+                    /* configuration = */ Configuration.Builder()
+                        .setMinimumLoggingLevel(Log.DEBUG)
+                        .build()
+                )
+            } catch (_: Exception) {
+            }
+
+            val constraints = Constraints.Builder()
+                .setRequiresBatteryNotLow(true)
+                .build()
+
+            val data = Data.Builder()
+//                .putBoolean(WorkerData.IS_IMPORT_DATA, isImportData)
+//                .putString(WorkerData.URI, uri.toString())
+                .build()
+
+            val workRequest = OneTimeWorkRequestBuilder<SetAlarmWorker>()
+                .setConstraints(constraints)
+                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                .setInputData(data)
+                .build()
+            WorkManager.getInstance(requireContext()).enqueueUniqueWork(WorkerTag.SET_ALARM, ExistingWorkPolicy.REPLACE, workRequest)
+        }
+    }
+
     private fun startAlarm(topic: Topic?) {
         context?.showToast("ALARM ON")
 
@@ -415,20 +489,38 @@ class TopicFragment : Fragment() {
         context?.showToast("ALARM OFF")
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun observeForData() {
-        (activity as? MainActivity)?.collectLatestLifecycleFlow(
-            flow = viewModel.getAllTopicBySubjectIdItemsFlow(subject?.id)
-        ) { list: List<Topic?> ->
-            topicList = list
-            topicsAdapter.topicList = topicList
-            topicsAdapter.notifyDataSetChanged()
-            binding.layoutCustomToolbar.tvCount.text =
-                "${list.size} Topics   |   ${list.filter { it?.finishedSessions == 5 }.size} Mastered"
-            if (list.isEmpty()) {
-                if (this.isVisible.not()) return@collectLatestLifecycleFlow
-                binding.fabAdd.performClick()
-            }
+    /**
+     * Check permissions before worker starts
+     *
+     * Activates the alarms that are ON, but inactive because [AlarmManager] has
+     * cancelled them for no reason.
+     */
+    private fun setAlarm(topic: Topic) {
+        val intent = Intent(
+            context?.applicationContext,
+            ThisBroadcastReceiver::class.java
+        ).apply {
+            action = IntentKey.DELIVER_ALARM
+            flags = Intent.FLAG_RECEIVER_FOREGROUND
+            putExtra(IntentKey.ALARM_DETAILS, topic.id)
         }
+
+        val flags = PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+        val pendingIntent = PendingIntent.getBroadcast(
+            /* context = */ context?.applicationContext,
+            /* requestCode = */ topic.id.toInt(),
+            /* intent = */ intent,
+            /* flags = */ flags
+        )
+
+        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmClockInfo = AlarmClockInfo(
+            topic.nextSessionDate,
+            pendingIntent
+        )
+        alarmManager.setAlarmClock(
+            alarmClockInfo,
+            pendingIntent
+        )
     }
 }

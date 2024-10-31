@@ -27,6 +27,7 @@ import com.singularitycoder.learnit.helpers.hideKeyboard
 import com.singularitycoder.learnit.helpers.layoutAnimationController
 import com.singularitycoder.learnit.helpers.onImeClick
 import com.singularitycoder.learnit.helpers.onSafeClick
+import com.singularitycoder.learnit.helpers.runLayoutAnimation
 import com.singularitycoder.learnit.helpers.setTransparentBackground
 import com.singularitycoder.learnit.helpers.showKeyboard
 import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
@@ -97,8 +98,8 @@ class SubTopicBottomSheetFragment : BottomSheetDialogFragment() {
         enableSoftInput()
         setTransparentBackground()
         tvHeader.text = "Recall ${topic?.title}"
-        rvCollections.apply {
-            layoutAnimation = rvCollections.context.layoutAnimationController(globalLayoutAnimation)
+        rvSubTopics.apply {
+            layoutAnimation = rvSubTopics.context.layoutAnimationController(globalLayoutAnimation)
             layoutManager = LinearLayoutManager(context)
             adapter = subTopicsAdapter
         }
@@ -189,6 +190,7 @@ class SubTopicBottomSheetFragment : BottomSheetDialogFragment() {
             subTopicList = list
             subTopicsAdapter.subTopicList = subTopicList
             subTopicsAdapter.notifyDataSetChanged()
+            binding.rvSubTopics.runLayoutAnimation(globalLayoutAnimation)
             binding.tvCount.text =
                 "${list.size} Sub-Topics   |   ${list.filter { it.isCorrectRecall }.size} Recalled   |   ${topic?.revisionCount} Revisions"
             if (subTopicList.all { it?.isCorrectRecall == true }) {

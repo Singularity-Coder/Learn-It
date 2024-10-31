@@ -15,8 +15,11 @@ import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.FragmentAddSubTopicBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
 import com.singularitycoder.learnit.helpers.collectLatestLifecycleFlow
+import com.singularitycoder.learnit.helpers.constants.globalLayoutAnimation
 import com.singularitycoder.learnit.helpers.drawable
+import com.singularitycoder.learnit.helpers.layoutAnimationController
 import com.singularitycoder.learnit.helpers.onSafeClick
+import com.singularitycoder.learnit.helpers.runLayoutAnimation
 import com.singularitycoder.learnit.helpers.showAlertDialog
 import com.singularitycoder.learnit.helpers.showKeyboard
 import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
@@ -135,6 +138,7 @@ class AddSubTopicFragment : Fragment() {
         layoutAddItem.etItem.hint = "Add Sub-Topic"
         rvSubTopics.apply {
             // TODO fix dragging
+            layoutAnimation = rvSubTopics.context.layoutAnimationController(globalLayoutAnimation)
             layoutManager = LinearLayoutManager(context)
             adapter = addSubTopicsAdapter
 //            itemTouchHelper.attachToRecyclerView(this)
@@ -239,6 +243,7 @@ class AddSubTopicFragment : Fragment() {
             }
             addSubTopicsAdapter.subTopicList = list.toMutableList()
             addSubTopicsAdapter.notifyDataSetChanged()
+            binding.rvSubTopics.runLayoutAnimation(globalLayoutAnimation)
             layoutAddItem.etItem.setText("")
             binding.layoutCustomToolbar.tvCount.text = "${list.size} Topics"
         }

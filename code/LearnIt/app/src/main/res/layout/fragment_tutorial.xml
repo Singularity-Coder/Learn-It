@@ -43,15 +43,15 @@
         android:layout_height="30dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:gravity="center"
+        android:gravity="start"
         android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="@+id/btn_next" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_next"
         style="@style/Widget.App.Button.IconOnly"
-        android:layout_width="52dp"
-        android:layout_height="52dp"
+        android:layout_width="60dp"
+        android:layout_height="34dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
@@ -64,15 +64,18 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_previous"
         style="@style/Widget.App.Button.IconOnly"
-        android:layout_width="52dp"
-        android:layout_height="52dp"
+        android:layout_width="60dp"
+        android:layout_height="34dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="16dp"
-        android:backgroundTint="@color/purple_500"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="@color/white"
         app:icon="@drawable/round_arrow_back_24"
-        app:iconTint="@color/white"
+        app:iconTint="@color/purple_500"
+        app:strokeColor="@color/purple_500"
+        app:strokeWidth="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/btn_next" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

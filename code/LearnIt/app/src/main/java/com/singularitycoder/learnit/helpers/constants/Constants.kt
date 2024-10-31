@@ -121,6 +121,7 @@ object WorkerData {
 
 object WorkerTag {
     const val IMPORT_EXPORT_DATA = "EXPORT_DATA"
+    const val SET_ALARM = "SET_ALARM"
 }
 
 @Parcelize

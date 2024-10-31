@@ -46,6 +46,7 @@ import com.singularitycoder.learnit.helpers.hideKeyboard
 import com.singularitycoder.learnit.helpers.layoutAnimationController
 import com.singularitycoder.learnit.helpers.onImeClick
 import com.singularitycoder.learnit.helpers.onSafeClick
+import com.singularitycoder.learnit.helpers.runLayoutAnimation
 import com.singularitycoder.learnit.helpers.showAlertDialog
 import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
 import com.singularitycoder.learnit.helpers.showScreen
@@ -378,6 +379,7 @@ class MainFragment : Fragment() {
             this.subjectList = list
             subjectsAdapter.subjectList = subjectList
             subjectsAdapter.notifyDataSetChanged()
+            binding.rvSubjects.runLayoutAnimation(globalLayoutAnimation)
         }
     }
 

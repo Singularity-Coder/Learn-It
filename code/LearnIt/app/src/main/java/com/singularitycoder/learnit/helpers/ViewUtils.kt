@@ -30,6 +30,7 @@ import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.singularitycoder.learnit.subject.view.MainActivity
@@ -373,6 +374,12 @@ fun menuIconWithText(
 
 fun Context.layoutAnimationController(@AnimRes animationRes: Int): LayoutAnimationController {
     return AnimationUtils.loadLayoutAnimation(this, animationRes)
+}
+
+// To reanimate list if necessary
+fun RecyclerView.runLayoutAnimation(@AnimRes animationRes: Int) {
+    layoutAnimation = context.layoutAnimationController(animationRes)
+    scheduleLayoutAnimation()
 }
 
 fun View.setMargins(
