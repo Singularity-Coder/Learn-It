@@ -49,6 +49,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+// TODO Add TTS as alarm sound. TTS reads the topic name outloud as an alarm
 
 @AndroidEntryPoint
 class LockScreenActivity : AppCompatActivity() {

@@ -38,17 +38,15 @@ class ThisBroadcastReceiver : BroadcastReceiver() {
             }
 
             IntentKey.REVISION_ALARM -> {
-                val alarmIntent = Intent(context, LockScreenActivity::class.java).apply {
-                    action = IntentKey.ALARM_SETTINGS_BROADCAST
-                    putExtra(IntentExtraKey.TOPIC_ID_2, intent.getLongExtra(IntentExtraKey.TOPIC_ID, 0L))
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-                context.startActivity(alarmIntent)
+//                val alarmIntent = Intent(context, LockScreenActivity::class.java).apply {
+//                    action = IntentKey.ALARM_SETTINGS_BROADCAST
+//                    putExtra(IntentExtraKey.TOPIC_ID_2, intent.getLongExtra(IntentExtraKey.TOPIC_ID, 0L))
+//                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//                }
+//                context.startActivity(alarmIntent)
                 /** Data sent to [MainActivity] */
 //                    LocalBroadcastManager.getInstance(context).sendBroadcast(alarmIntent)
-            }
 
-            IntentKey.DELIVER_ALARM -> {
                 val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
                 val wakeLock = powerManager.newWakeLock(
                     PowerManager.PARTIAL_WAKE_LOCK,
@@ -62,6 +60,22 @@ class ThisBroadcastReceiver : BroadcastReceiver() {
                         intent.extras?.getLong(IntentKey.ALARM_DETAILS)
                     )
                 ContextCompat.startForegroundService(context, intent1)
+            }
+
+            IntentKey.DELIVER_ALARM -> {
+//                val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+//                val wakeLock = powerManager.newWakeLock(
+//                    PowerManager.PARTIAL_WAKE_LOCK,
+//                    WakeLockKey.ALARM_RING_SERVICE
+//                )
+//                wakeLock.acquire(60_000)
+//
+//                val intent1 = Intent(context, RingAlarmService::class.java)
+//                    .putExtra(
+//                        IntentKey.ALARM_DETAILS,
+//                        intent.extras?.getLong(IntentKey.ALARM_DETAILS)
+//                    )
+//                ContextCompat.startForegroundService(context, intent1)
             }
 
             Intent.ACTION_BOOT_COMPLETED,

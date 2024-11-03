@@ -441,17 +441,23 @@ class TopicFragment : Fragment() {
         }
     }
 
-    private fun startAlarm(topic: Topic?) {
+    private fun startAlarm(topic: Topic) {
         context?.showToast("ALARM ON")
 
         /** we call broadcast using pendingIntent */
-        val intent = Intent(context, ThisBroadcastReceiver::class.java).apply {
+        val intent = Intent(
+            context?.applicationContext,
+            ThisBroadcastReceiver::class.java
+        ).apply {
             action = IntentKey.REVISION_ALARM
-            putExtra(IntentExtraKey.TOPIC_ID, topic?.id)
+//            flags = Intent.FLAG_RECEIVER_FOREGROUND
+            putExtra(IntentExtraKey.TOPIC_ID, topic.id)
+            putExtra(IntentKey.ALARM_DETAILS, topic.id) // delete this
         }
+        val flags = PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
         pendingIntent = PendingIntent.getBroadcast(
-            /* context = */ context,
-            /* requestCode = */ 0,
+            /* context = */ context?.applicationContext,
+            /* requestCode = */ topic.id.toInt(),
             /* intent = */ intent,
             /* flags = */ pendingIntentUpdateCurrentFlag()
         )
@@ -463,7 +469,7 @@ class TopicFragment : Fragment() {
          * the user to cancel or reschedule this alarm. */
         val intent2 = Intent(context, LockScreenActivity::class.java).apply {
             action = IntentKey.ALARM_SETTINGS_BROADCAST
-            putExtra(IntentExtraKey.TOPIC_ID_2, topic?.id)
+            putExtra(IntentExtraKey.TOPIC_ID_2, topic.id)
         }
         val pendingIntent2 = PendingIntent.getActivity(
             /* context = */ context,
@@ -520,7 +526,7 @@ class TopicFragment : Fragment() {
 //            pendingIntent
 //        )
         val alarmClockInfo = AlarmClockInfo(
-            java.util.concurrent.TimeUnit.SECONDS.toMillis(30),
+            currentTimeMillis + thirtySecondsTimeMillis,
             pendingIntent
         )
         alarmManager.setAlarmClock(
