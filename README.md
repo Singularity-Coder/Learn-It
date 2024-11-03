@@ -8,7 +8,7 @@ Welcome to "Learn It" App. Master complex topics using spaced repetition. You ca
 As Jon Von Neumann says, "In mathematics, you don't understand things, you just get used to them." Some people think this is a wrong statement but this is a fact. Humans don't see recursion and iteration in their daily lives. These kind of topics will only make sense when you get used to them.
 
 ## Screenshots
-![alt text](https://github.com/Singularity-Coder/Instant-Script/blob/main/assets/sc1.png)
+![alt text](https://github.com/Singularity-Coder/Instant-Script/blob/main/assets/sc1.5.png)
 ![alt text](https://github.com/Singularity-Coder/Instant-Script/blob/main/assets/sc2.png)
 ![alt text](https://github.com/Singularity-Coder/Instant-Script/blob/main/assets/sc3.png)
 ![alt text](https://github.com/Singularity-Coder/Instant-Script/blob/main/assets/sc4.png)
