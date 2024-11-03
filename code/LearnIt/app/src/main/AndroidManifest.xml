@@ -30,6 +30,10 @@
         android:name="android.hardware.audio.output"
         android:required="true" />
 
+    <uses-feature
+        android:name="android.hardware.sensor.accelerometer"
+        android:required="true" />
+
     <application
         android:name=".ThisApp"
         android:allowBackup="true"

@@ -6,6 +6,7 @@ import android.app.AlarmManager.AlarmClockInfo
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.icu.util.TimeUnit
 import android.os.Bundle
 import android.os.UserManager
 import android.util.Log
@@ -199,8 +200,8 @@ class TopicFragment : Fragment() {
                     finishedSessions = 1
                 )
             )
-            setAlarm(topic)
-//            startAlarm(topic)
+//            setAlarm(topic)
+            startAlarm(topic)
 //            initSetAlarmWorker()
         }
 
@@ -514,8 +515,12 @@ class TopicFragment : Fragment() {
         )
 
         val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+//        val alarmClockInfo = AlarmClockInfo(
+//            topic.nextSessionDate,
+//            pendingIntent
+//        )
         val alarmClockInfo = AlarmClockInfo(
-            topic.nextSessionDate,
+            java.util.concurrent.TimeUnit.SECONDS.toMillis(30),
             pendingIntent
         )
         alarmManager.setAlarmClock(

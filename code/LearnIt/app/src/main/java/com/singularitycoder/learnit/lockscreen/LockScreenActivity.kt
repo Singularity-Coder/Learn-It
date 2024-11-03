@@ -167,6 +167,7 @@ class LockScreenActivity : AppCompatActivity() {
                     } else {
                         // TODO set next alarm with nextSessionDate
                     }
+                    // If phone locked then navigate to app, else just dismiss activity
                     onBackPressedDispatcher.onBackPressed()
                 }
             }
