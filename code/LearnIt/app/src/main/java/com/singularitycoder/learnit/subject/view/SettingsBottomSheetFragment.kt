@@ -135,7 +135,9 @@ class SettingsBottomSheetFragment : BottomSheetDialogFragment() {
             sliderCustom.progress = AppPreferences.getInstance().settingDefaultAlarmVolume
         }
 
-        val settingRemindMeInList = SettingRemindMeIn.entries.map { it.value }
+        val settingRemindMeInList = mutableListOf("Do Nothing").apply {
+            addAll(SettingRemindMeIn.entries.map { it.value })
+        }.toList()
         val shakeText = SettingRemindMeIn.entries.get(AppPreferences.getInstance().settingRemindMeOnShakePos).value
         etOnShake.editText?.setText(shakeText)
         val onShakeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, settingRemindMeInList)

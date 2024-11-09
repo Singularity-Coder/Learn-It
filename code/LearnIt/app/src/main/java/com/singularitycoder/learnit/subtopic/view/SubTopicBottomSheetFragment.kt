@@ -68,6 +68,8 @@ class SubTopicBottomSheetFragment : BottomSheetDialogFragment() {
 
     private val subTopicsAdapter: SubTopicsAdapter by lazy { SubTopicsAdapter() }
 
+    private var isNewInstance: Boolean = true
+
     private var topic: Topic? = null
     private var subject: Subject? = null
 
@@ -190,7 +192,10 @@ class SubTopicBottomSheetFragment : BottomSheetDialogFragment() {
             subTopicList = list
             subTopicsAdapter.subTopicList = subTopicList
             subTopicsAdapter.notifyDataSetChanged()
-            binding.rvSubTopics.runLayoutAnimation(globalLayoutAnimation)
+            if (isNewInstance) {
+                binding.rvSubTopics.runLayoutAnimation(globalLayoutAnimation)
+                isNewInstance = false
+            }
             binding.tvCount.text =
                 "${list.size} Sub-Topics   |   ${list.filter { it.isCorrectRecall }.size} Recalled   |   ${topic?.revisionCount} Revisions"
             if (subTopicList.all { it?.isCorrectRecall == true }) {

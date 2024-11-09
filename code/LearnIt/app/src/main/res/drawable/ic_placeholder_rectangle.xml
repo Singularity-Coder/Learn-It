@@ -18,7 +18,7 @@
         android:width="24dp"
         android:height="24dp"
         android:bottom="24dp"
-        android:drawable="@drawable/ic_launcher_foreground"
+        android:drawable="@drawable/ic_app_icon_back"
         android:end="24dp"
         android:gravity="center"
         android:start="24dp"

@@ -53,10 +53,10 @@ import com.singularitycoder.learnit.helpers.showScreen
 import com.singularitycoder.learnit.helpers.showSnackBar
 import com.singularitycoder.learnit.helpers.showToast
 import com.singularitycoder.learnit.permissions.PermissionsFragment
+import com.singularitycoder.learnit.shuffle.ShuffleFragment
 import com.singularitycoder.learnit.subject.model.Subject
 import com.singularitycoder.learnit.subject.viewmodel.SubjectViewModel
 import com.singularitycoder.learnit.subject.worker.ExportDataWorker
-import com.singularitycoder.learnit.subtopic.view.SubTopicBottomSheetFragment
 import com.singularitycoder.learnit.topic.view.TopicFragment
 import com.singularitycoder.learnit.tutorial.TutorialFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -178,6 +178,7 @@ class MainFragment : Fragment() {
 
         ivHeaderMore.onSafeClick { pair: Pair<View?, Boolean> ->
             val optionsList = listOf(
+                Pair("Shuffle Subjects", R.drawable.round_shuffle_24),
                 Pair("Settings", R.drawable.outline_settings_24),
                 Pair("Show Tutorial", R.drawable.outline_help_outline_24),
                 Pair("Import Data", R.drawable.round_south_west_24),
@@ -192,13 +193,25 @@ class MainFragment : Fragment() {
             ) { it: MenuItem? ->
                 when (it?.title?.toString()?.trim()) {
                     optionsList[0].first -> {
+                        (requireActivity() as MainActivity).showScreen(
+                            fragment = ShuffleFragment.newInstance(null, null),
+                            tag = FragmentsTag.ADD_SUB_TOPIC,
+                            isAdd = true,
+                            enterAnim = R.anim.slide_to_top,
+                            exitAnim = R.anim.slide_to_bottom,
+                            popEnterAnim = R.anim.slide_to_top,
+                            popExitAnim = R.anim.slide_to_bottom,
+                        )
+                    }
+
+                    optionsList[1].first -> {
                         SettingsBottomSheetFragment.newInstance().show(
                             parentFragmentManager,
                             BottomSheetTag.TAG_SETTINGS
                         )
                     }
 
-                    optionsList[1].first -> {
+                    optionsList[2].first -> {
                         (activity as MainActivity).showScreen(
                             fragment = TutorialFragment.newInstance(),
                             tag = FragmentsTag.TUTORIAL,
@@ -207,7 +220,7 @@ class MainFragment : Fragment() {
                         )
                     }
 
-                    optionsList[2].first -> {
+                    optionsList[3].first -> {
                         if (activity?.hasFullStoragePermissionApi30()?.not() == true) {
                             showStoragePermissionPopup()
                             return@showPopupMenuWithIcons
@@ -225,7 +238,7 @@ class MainFragment : Fragment() {
                         )
                     }
 
-                    optionsList[3].first -> {
+                    optionsList[4].first -> {
                         if (activity?.hasFullStoragePermissionApi30()?.not() == true) {
                             showStoragePermissionPopup()
                             return@showPopupMenuWithIcons
@@ -243,7 +256,7 @@ class MainFragment : Fragment() {
                         }
                     }
 
-                    optionsList[4].first -> {
+                    optionsList[5].first -> {
                         requireContext().showAlertDialog(
                             message = "Delete all Subjects, Topics and Sub-Topics? You cannot undo this action.",
                             positiveBtnText = "Delete",

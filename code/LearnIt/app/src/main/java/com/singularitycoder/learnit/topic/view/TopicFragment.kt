@@ -2,14 +2,10 @@ package com.singularitycoder.learnit.topic.view
 
 import android.annotation.SuppressLint
 import android.app.AlarmManager
-import android.app.AlarmManager.AlarmClockInfo
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.icu.util.TimeUnit
 import android.os.Bundle
-import android.os.UserManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -19,15 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.work.Configuration
-import androidx.work.Constraints
-import androidx.work.Data
-import androidx.work.ExistingWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.OutOfQuotaPolicy
-import androidx.work.WorkManager
 import com.singularitycoder.learnit.R
-import com.singularitycoder.learnit.SetAlarmWorker
 import com.singularitycoder.learnit.ThisBroadcastReceiver
 import com.singularitycoder.learnit.databinding.FragmentTopicBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
@@ -40,7 +28,6 @@ import com.singularitycoder.learnit.helpers.constants.FragmentResultKey
 import com.singularitycoder.learnit.helpers.constants.FragmentsTag
 import com.singularitycoder.learnit.helpers.constants.IntentExtraKey
 import com.singularitycoder.learnit.helpers.constants.IntentKey
-import com.singularitycoder.learnit.helpers.constants.WorkerTag
 import com.singularitycoder.learnit.helpers.constants.globalLayoutAnimation
 import com.singularitycoder.learnit.helpers.currentTimeMillis
 import com.singularitycoder.learnit.helpers.layoutAnimationController
@@ -59,6 +46,7 @@ import com.singularitycoder.learnit.helpers.thirtyFiveDayTimeMillis
 import com.singularitycoder.learnit.helpers.thirtySecondsTimeMillis
 import com.singularitycoder.learnit.helpers.toDateTime
 import com.singularitycoder.learnit.lockscreen.LockScreenActivity
+import com.singularitycoder.learnit.shuffle.ShuffleFragment
 import com.singularitycoder.learnit.subject.model.Subject
 import com.singularitycoder.learnit.subject.view.MainActivity
 import com.singularitycoder.learnit.subtopic.view.AddSubTopicFragment
@@ -318,6 +306,7 @@ class TopicFragment : Fragment() {
 
         layoutCustomToolbar.ivMore.onSafeClick { pair: Pair<View?, Boolean> ->
             val optionsList = listOf(
+                Pair("Shuffle Topics", R.drawable.round_shuffle_24),
                 Pair("Delete All", R.drawable.outline_delete_24),
             )
             requireContext().showPopupMenuWithIcons(
@@ -328,6 +317,18 @@ class TopicFragment : Fragment() {
             ) { it: MenuItem? ->
                 when (it?.title?.toString()?.trim()) {
                     optionsList[0].first -> {
+                        (requireActivity() as MainActivity).showScreen(
+                            fragment = ShuffleFragment.newInstance(null, subject),
+                            tag = FragmentsTag.ADD_SUB_TOPIC,
+                            isAdd = true,
+                            enterAnim = R.anim.slide_to_top,
+                            exitAnim = R.anim.slide_to_bottom,
+                            popEnterAnim = R.anim.slide_to_top,
+                            popExitAnim = R.anim.slide_to_bottom,
+                        )
+                    }
+
+                    optionsList[1].first -> {
                         requireContext().showAlertDialog(
                             message = "Delete all items from \"${subject?.title}\" subject? You cannot undo this action.",
                             positiveBtnText = "Delete",
@@ -409,37 +410,37 @@ class TopicFragment : Fragment() {
         }
     }
 
-    private fun initSetAlarmWorker() {
-        val userManager = requireContext().getSystemService(Context.USER_SERVICE) as UserManager
-
-        if (userManager.isUserUnlocked) {
-            try {
-                WorkManager.initialize(
-                    /* context = */ requireContext(),
-                    /* configuration = */ Configuration.Builder()
-                        .setMinimumLoggingLevel(Log.DEBUG)
-                        .build()
-                )
-            } catch (_: Exception) {
-            }
-
-            val constraints = Constraints.Builder()
-                .setRequiresBatteryNotLow(true)
-                .build()
-
-            val data = Data.Builder()
-//                .putBoolean(WorkerData.IS_IMPORT_DATA, isImportData)
-//                .putString(WorkerData.URI, uri.toString())
-                .build()
-
-            val workRequest = OneTimeWorkRequestBuilder<SetAlarmWorker>()
-                .setConstraints(constraints)
-                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                .setInputData(data)
-                .build()
-            WorkManager.getInstance(requireContext()).enqueueUniqueWork(WorkerTag.SET_ALARM, ExistingWorkPolicy.REPLACE, workRequest)
-        }
-    }
+//    private fun initSetAlarmWorker() {
+//        val userManager = requireContext().getSystemService(Context.USER_SERVICE) as UserManager
+//
+//        if (userManager.isUserUnlocked) {
+//            try {
+//                WorkManager.initialize(
+//                    /* context = */ requireContext(),
+//                    /* configuration = */ Configuration.Builder()
+//                        .setMinimumLoggingLevel(Log.DEBUG)
+//                        .build()
+//                )
+//            } catch (_: Exception) {
+//            }
+//
+//            val constraints = Constraints.Builder()
+//                .setRequiresBatteryNotLow(true)
+//                .build()
+//
+//            val data = Data.Builder()
+////                .putBoolean(WorkerData.IS_IMPORT_DATA, isImportData)
+////                .putString(WorkerData.URI, uri.toString())
+//                .build()
+//
+//            val workRequest = OneTimeWorkRequestBuilder<SetAlarmWorker>()
+//                .setConstraints(constraints)
+//                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+//                .setInputData(data)
+//                .build()
+//            WorkManager.getInstance(requireContext()).enqueueUniqueWork(WorkerTag.SET_ALARM, ExistingWorkPolicy.REPLACE, workRequest)
+//        }
+//    }
 
     private fun startAlarm(topic: Topic) {
         context?.showToast("ALARM ON")
@@ -502,36 +503,36 @@ class TopicFragment : Fragment() {
      * Activates the alarms that are ON, but inactive because [AlarmManager] has
      * cancelled them for no reason.
      */
-    private fun setAlarm(topic: Topic) {
-        val intent = Intent(
-            context?.applicationContext,
-            ThisBroadcastReceiver::class.java
-        ).apply {
-            action = IntentKey.DELIVER_ALARM
-            flags = Intent.FLAG_RECEIVER_FOREGROUND
-            putExtra(IntentKey.ALARM_DETAILS, topic.id)
-        }
-
-        val flags = PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
-        val pendingIntent = PendingIntent.getBroadcast(
-            /* context = */ context?.applicationContext,
-            /* requestCode = */ topic.id.toInt(),
-            /* intent = */ intent,
-            /* flags = */ flags
-        )
-
-        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+//    private fun setAlarm(topic: Topic) {
+//        val intent = Intent(
+//            context?.applicationContext,
+//            ThisBroadcastReceiver::class.java
+//        ).apply {
+//            action = IntentKey.DELIVER_ALARM
+//            flags = Intent.FLAG_RECEIVER_FOREGROUND
+//            putExtra(IntentKey.ALARM_DETAILS, topic.id)
+//        }
+//
+//        val flags = PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+//        val pendingIntent = PendingIntent.getBroadcast(
+//            /* context = */ context?.applicationContext,
+//            /* requestCode = */ topic.id.toInt(),
+//            /* intent = */ intent,
+//            /* flags = */ flags
+//        )
+//
+//        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+////        val alarmClockInfo = AlarmClockInfo(
+////            topic.nextSessionDate,
+////            pendingIntent
+////        )
 //        val alarmClockInfo = AlarmClockInfo(
-//            topic.nextSessionDate,
+//            currentTimeMillis + thirtySecondsTimeMillis,
 //            pendingIntent
 //        )
-        val alarmClockInfo = AlarmClockInfo(
-            currentTimeMillis + thirtySecondsTimeMillis,
-            pendingIntent
-        )
-        alarmManager.setAlarmClock(
-            alarmClockInfo,
-            pendingIntent
-        )
-    }
+//        alarmManager.setAlarmClock(
+//            alarmClockInfo,
+//            pendingIntent
+//        )
+//    }
 }

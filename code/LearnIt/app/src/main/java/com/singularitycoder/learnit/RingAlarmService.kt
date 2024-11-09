@@ -34,6 +34,7 @@ import androidx.core.os.bundleOf
 import com.singularitycoder.learnit.helpers.AppPreferences
 import com.singularitycoder.learnit.helpers.NotificationsHelper
 import com.singularitycoder.learnit.helpers.constants.AlarmType
+import com.singularitycoder.learnit.helpers.constants.IntentExtraKey
 import com.singularitycoder.learnit.helpers.constants.IntentKey
 import com.singularitycoder.learnit.lockscreen.LockScreenActivity
 import com.singularitycoder.learnit.topic.model.Topic
@@ -71,7 +72,7 @@ class RingAlarmService : Service() {
 
     }
 
-    private var topicId: Bundle? = null
+    private var topicId: Long? = null
     private var topic: Topic? = null
 
     private var mediaPlayer: MediaPlayer? = null
@@ -179,9 +180,10 @@ class RingAlarmService : Service() {
         notifID = getUniqueNotifID()
 
         // Do NOT move this!!!!
-        topicId = intent.extras?.getBundle("BUNDLE_KEY_ALARM_DETAILS") ?: bundleOf()
+        topicId = intent.extras?.getLong(IntentKey.ALARM_DETAILS, 0L) ?: 0L
         topic = Topic() // get from db
 
+        // TODO check if screen is on, show activity else show notif
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             startForeground(
                 notifID, buildRingNotification(),
@@ -337,7 +339,9 @@ class RingAlarmService : Service() {
             .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             .addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-            .putExtras(topicId!!)
+            .setAction(IntentKey.ALARM_SETTINGS_BROADCAST)
+            .putExtra(IntentExtraKey.TOPIC_ID_2, topicId)
+//            .putExtras(topicId!!) // unnecessary. either remove above or this one
 
         val flags = PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
 
@@ -405,18 +409,18 @@ class RingAlarmService : Service() {
             }
 
             if (topic?.alarmType == AlarmType.SOUND_VIBRATE.ordinal) {
-                alarmVibration()
+                vibrateOnAlarmRing()
             }
             mediaPlayer!!.start()
         } else {
-            alarmVibration()
+            vibrateOnAlarmRing()
         }
 
         ringTimer!!.start()
     }
 
 
-    private fun alarmVibration() {
+    private fun vibrateOnAlarmRing() {
         val vibrationPattern = longArrayOf(0, 600, 200, 600, 200, 800, 200, 1000)
         val vibrationAmplitudes = intArrayOf(0, 255, 0, 255, 0, 255, 0, 255)
 

@@ -195,7 +195,7 @@ enum class Permission(
 }
 
 enum class SettingRemindMeIn(val value: String) {
-    DO_NOTHING(value = "Do Nothing"),
+//    DO_NOTHING(value = "Do Nothing"),
     _30_MINUTES(value = "30 Minutes"),
     _1_HOUR(value = "1 Hour"),
     _3_HOURS(value = "3 Hours"),
@@ -208,6 +208,11 @@ enum class AlarmType(val value: String) {
     SOUND_VIBRATE(value = "Sound & Vibrate"),
     SOUND(value = "Sound"),
     VIBRATE(value = "Vibrate")
+}
+
+object ShuffleType {
+    const val ALL_SUBJECTS = "ALL_SUBJECTS"
+    const val ALL_TOPICS = "ALL_TOPICS"
 }
 
 
