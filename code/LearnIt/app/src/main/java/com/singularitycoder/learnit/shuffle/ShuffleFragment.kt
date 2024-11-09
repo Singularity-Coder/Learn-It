@@ -19,9 +19,9 @@ import com.singularitycoder.learnit.helpers.drawable
 import com.singularitycoder.learnit.helpers.layoutAnimationController
 import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.runLayoutAnimation
+import com.singularitycoder.learnit.helpers.showAlertDialog
 import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
 import com.singularitycoder.learnit.subject.model.Subject
-import com.singularitycoder.learnit.subtopic.model.SubTopic
 import com.singularitycoder.learnit.subtopic.view.SubTopicsAdapter
 import com.singularitycoder.learnit.subtopic.viewmodel.SubTopicViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -96,6 +96,7 @@ class ShuffleFragment : Fragment() {
             layoutManager = LinearLayoutManager(context)
             adapter = subTopicsAdapter
         }
+        subTopicsAdapter.isVisibleHint = true
         if (shuffleType == ShuffleType.ALL_SUBJECTS) {
             lifecycleScope.launch(Dispatchers.IO) {
                 val list = subTopicViewModel.getAllSubTopics()
@@ -126,6 +127,26 @@ class ShuffleFragment : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     private fun FragmentShuffleBinding.setupUserActionListeners() {
         subTopicsAdapter.setOnItemClickListener { subTopic, position ->
+        }
+
+        subTopicsAdapter.setOnHintClickListener { subTopic, position ->
+            subTopic ?: return@setOnHintClickListener
+            lifecycleScope.launch(Dispatchers.IO) {
+                val subject = subTopicViewModel.getSubjectById(subTopic.subjectId)
+                val topic = subTopicViewModel.getTopicById(subTopic.topicId)
+                withContext(Dispatchers.Main) {
+                    requireContext().showAlertDialog(
+                        title = "Hint",
+                        message = """
+                             Sub-Topic: ${subTopic.title} 
+                             Topic: ${topic.title}
+                             Subject: ${subject.title}
+                         """.trimIndent(),
+                        positiveBtnText = "OK",
+                        positiveBtnColor = R.color.purple_500
+                    )
+                }
+            }
         }
 
         subTopicsAdapter.setOnApproveUpdateClickListener { subTopic, position ->

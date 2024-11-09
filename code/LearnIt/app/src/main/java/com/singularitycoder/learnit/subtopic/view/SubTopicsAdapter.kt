@@ -12,6 +12,7 @@ import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.ListItemSubTopicBinding
@@ -23,9 +24,11 @@ import com.singularitycoder.learnit.subtopic.model.SubTopic
 class SubTopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var subTopicList = emptyList<SubTopic?>()
+    var isVisibleHint = false
     private var itemClickListener: (subTopic: SubTopic?, position: Int) -> Unit = { _, _ -> }
     private var itemLongClickListener: (subTopic: SubTopic?, view: View?, position: Int) -> Unit = { _, _, _ -> }
     private var itemApproveUpdateClickListener: (subTopic: SubTopic?, position: Int) -> Unit = { _, _ -> }
+    private var itemHintClickListener: (subTopic: SubTopic?, position: Int) -> Unit = { _, _ -> }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val itemBinding = ListItemSubTopicBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -56,6 +59,10 @@ class SubTopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     fun setOnApproveUpdateClickListener(listener: (subTopic: SubTopic?, position: Int) -> Unit) {
         itemApproveUpdateClickListener = listener
+    }
+
+    fun setOnHintClickListener(listener: (subTopic: SubTopic?, position: Int) -> Unit) {
+        itemHintClickListener = listener
     }
 
     fun checkMarkItem(
@@ -89,6 +96,7 @@ class SubTopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         fun setData(subTopic: SubTopic?) {
             itemBinding.apply {
                 tvTitle.text = subTopic?.title
+                btnHint.isVisible = isVisibleHint
                 root.onSafeClick {
                     itemClickListener.invoke(subTopic, bindingAdapterPosition)
                 }
@@ -111,6 +119,12 @@ class SubTopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 )
                 ibCheck.onSafeClick {
                     itemApproveUpdateClickListener.invoke(
+                        subTopic?.copy(isCorrectRecall = subTopic.isCorrectRecall.not()),
+                        bindingAdapterPosition
+                    )
+                }
+                btnHint.onSafeClick {
+                    itemHintClickListener.invoke(
                         subTopic?.copy(isCorrectRecall = subTopic.isCorrectRecall.not()),
                         bindingAdapterPosition
                     )

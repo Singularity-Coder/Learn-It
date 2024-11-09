@@ -44,7 +44,7 @@ interface SubjectDao {
 //    suspend fun updateCompletedPageWithId(completedPageNum: Int, id: String)
 
     @Query("SELECT * FROM ${DbTable.SUBJECT} WHERE id LIKE :id LIMIT 1")
-    suspend fun getItemById(id: String): Subject
+    suspend fun getItemById(id: Long): Subject
 
     @Query("SELECT * FROM ${DbTable.SUBJECT}")
     fun getAllItemsLiveData(): LiveData<List<Subject>>

@@ -2,8 +2,11 @@ package com.singularitycoder.learnit.subtopic.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.singularitycoder.learnit.subject.dao.SubjectDao
 import com.singularitycoder.learnit.subtopic.dao.SubTopicDao
 import com.singularitycoder.learnit.subtopic.model.SubTopic
+import com.singularitycoder.learnit.topic.dao.TopicDao
+import com.singularitycoder.learnit.topic.model.Topic
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -12,6 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SubTopicViewModel @Inject constructor(
+    private val subjectDao: SubjectDao,
+    private val topicDao: TopicDao,
     private val subTopicDao: SubTopicDao,
 ) : ViewModel() {
 
@@ -77,4 +82,8 @@ class SubTopicViewModel @Inject constructor(
         topicId ?: return@launch
         subTopicDao.deleteAllByTopicId(topicId)
     }
+
+    suspend fun getTopicById(id: Long): Topic = topicDao.getItemById(id)
+
+    suspend fun getSubjectById(id: Long) = subjectDao.getItemById(id)
 }
