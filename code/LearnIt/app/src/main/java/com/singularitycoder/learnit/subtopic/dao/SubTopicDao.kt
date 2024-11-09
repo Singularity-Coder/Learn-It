@@ -50,6 +50,9 @@ interface SubTopicDao {
     @Query("SELECT * FROM ${DbTable.SUB_TOPIC} WHERE topicId = :topicId")
     fun getAllItemsByTopicIdStateFlow(topicId: Long): Flow<List<SubTopic>>
 
+    @Query("SELECT * FROM ${DbTable.SUB_TOPIC} WHERE subjectId = :subjectId")
+    fun getAllItemsBySubjectIdStateFlow(subjectId: Long): Flow<List<SubTopic>>
+
 //    @Query("SELECT * FROM ${Table.BOOK_DATA} WHERE website = :website")
 //    fun getAllItemsByWebsiteStateFlow(website: String?): Flow<List<BookData>>
 //
@@ -61,6 +64,9 @@ interface SubTopicDao {
 
     @Query("SELECT * FROM ${DbTable.SUB_TOPIC}")
     suspend fun getAll(): List<SubTopic>
+
+    @Query("SELECT * FROM ${DbTable.SUB_TOPIC} WHERE subjectId = :subjectId")
+    suspend fun getAllItemsBy(subjectId: Long): List<SubTopic>
 
 
     @Delete

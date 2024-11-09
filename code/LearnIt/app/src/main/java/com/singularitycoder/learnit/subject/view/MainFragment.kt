@@ -36,6 +36,7 @@ import com.singularitycoder.learnit.helpers.constants.BottomSheetTag
 import com.singularitycoder.learnit.helpers.constants.FragmentResultBundleKey
 import com.singularitycoder.learnit.helpers.constants.FragmentResultKey
 import com.singularitycoder.learnit.helpers.constants.FragmentsTag
+import com.singularitycoder.learnit.helpers.constants.ShuffleType
 import com.singularitycoder.learnit.helpers.constants.WakeLockKey
 import com.singularitycoder.learnit.helpers.constants.WorkerData
 import com.singularitycoder.learnit.helpers.constants.WorkerTag
@@ -86,6 +87,8 @@ class MainFragment : Fragment() {
     private var subjectList = listOf<Subject?>()
 
     private var wakeLock: PowerManager.WakeLock? = null
+
+    private var isNewInstance: Boolean = true
 
     private val viewModel by viewModels<SubjectViewModel>()
 
@@ -194,7 +197,10 @@ class MainFragment : Fragment() {
                 when (it?.title?.toString()?.trim()) {
                     optionsList[0].first -> {
                         (requireActivity() as MainActivity).showScreen(
-                            fragment = ShuffleFragment.newInstance(null, null),
+                            fragment = ShuffleFragment.newInstance(
+                                shuffleType = ShuffleType.ALL_SUBJECTS,
+                                subject = null
+                            ),
                             tag = FragmentsTag.ADD_SUB_TOPIC,
                             isAdd = true,
                             enterAnim = R.anim.slide_to_top,
@@ -392,7 +398,10 @@ class MainFragment : Fragment() {
             this.subjectList = list
             subjectsAdapter.subjectList = subjectList
             subjectsAdapter.notifyDataSetChanged()
-            binding.rvSubjects.runLayoutAnimation(globalLayoutAnimation)
+            if (isNewInstance) {
+                binding.rvSubjects.runLayoutAnimation(globalLayoutAnimation)
+                isNewInstance = false
+            }
         }
     }
 

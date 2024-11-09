@@ -1,7 +1,14 @@
 package com.singularitycoder.learnit.subtopic.view
 
 import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.Icon
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.BackgroundColorSpan
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,9 +58,33 @@ class SubTopicsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         itemApproveUpdateClickListener = listener
     }
 
+    fun checkMarkItem(
+        recyclerView: RecyclerView,
+        adapterPosition: Int,
+        isChecked: Boolean
+    ) {
+        subTopicList.get(adapterPosition)?.isCorrectRecall = isChecked
+        val viewHolder = (recyclerView.findViewHolderForAdapterPosition(adapterPosition) as? ThisViewHolder) ?: return
+        viewHolder.getView().ibCheck.setImageIcon(
+            if (isChecked) {
+                Icon.createWithResource(viewHolder.getView().root.context, R.drawable.round_check_white_24)
+            } else {
+                Icon.createWithResource(viewHolder.getView().root.context, R.drawable.round_check_purple_24)
+            }
+        )
+        viewHolder.getView().ibCheck.backgroundTintList = ColorStateList.valueOf(
+            if (isChecked) {
+                viewHolder.getView().root.context.color(R.color.purple_500)
+            } else {
+                viewHolder.getView().root.context.color(R.color.purple_50)
+            }
+        )
+    }
+
     inner class ThisViewHolder(
         private val itemBinding: ListItemSubTopicBinding,
     ) : RecyclerView.ViewHolder(itemBinding.root) {
+        fun getView() = itemBinding
 
         fun setData(subTopic: SubTopic?) {
             itemBinding.apply {

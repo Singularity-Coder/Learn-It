@@ -28,6 +28,7 @@ import com.singularitycoder.learnit.helpers.constants.FragmentResultKey
 import com.singularitycoder.learnit.helpers.constants.FragmentsTag
 import com.singularitycoder.learnit.helpers.constants.IntentExtraKey
 import com.singularitycoder.learnit.helpers.constants.IntentKey
+import com.singularitycoder.learnit.helpers.constants.ShuffleType
 import com.singularitycoder.learnit.helpers.constants.globalLayoutAnimation
 import com.singularitycoder.learnit.helpers.currentTimeMillis
 import com.singularitycoder.learnit.helpers.layoutAnimationController
@@ -318,7 +319,10 @@ class TopicFragment : Fragment() {
                 when (it?.title?.toString()?.trim()) {
                     optionsList[0].first -> {
                         (requireActivity() as MainActivity).showScreen(
-                            fragment = ShuffleFragment.newInstance(null, subject),
+                            fragment = ShuffleFragment.newInstance(
+                                shuffleType = ShuffleType.ALL_TOPICS,
+                                subject = subject
+                            ),
                             tag = FragmentsTag.ADD_SUB_TOPIC,
                             isAdd = true,
                             enterAnim = R.anim.slide_to_top,

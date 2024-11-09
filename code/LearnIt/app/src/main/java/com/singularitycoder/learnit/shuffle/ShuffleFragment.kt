@@ -8,46 +8,41 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.FragmentShuffleBinding
 import com.singularitycoder.learnit.helpers.AndroidVersions
-import com.singularitycoder.learnit.helpers.collectLatestLifecycleFlow
+import com.singularitycoder.learnit.helpers.constants.ShuffleType
 import com.singularitycoder.learnit.helpers.constants.globalLayoutAnimation
 import com.singularitycoder.learnit.helpers.drawable
 import com.singularitycoder.learnit.helpers.layoutAnimationController
 import com.singularitycoder.learnit.helpers.onSafeClick
 import com.singularitycoder.learnit.helpers.runLayoutAnimation
-import com.singularitycoder.learnit.helpers.showAlertDialog
-import com.singularitycoder.learnit.helpers.showKeyboard
 import com.singularitycoder.learnit.helpers.showPopupMenuWithIcons
 import com.singularitycoder.learnit.subject.model.Subject
-import com.singularitycoder.learnit.subject.view.MainActivity
 import com.singularitycoder.learnit.subtopic.model.SubTopic
-import com.singularitycoder.learnit.subtopic.view.AddSubTopicsAdapter
+import com.singularitycoder.learnit.subtopic.view.SubTopicsAdapter
 import com.singularitycoder.learnit.subtopic.viewmodel.SubTopicViewModel
-import com.singularitycoder.learnit.topic.model.Topic
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.Collections
 
 @AndroidEntryPoint
 class ShuffleFragment : Fragment() {
 
     companion object {
-        private const val ARG_TOPIC = "ARG_TOPIC"
+        private const val ARG_SHUFFLE_TYPE = "ARG_SHUFFLE_TYPE"
         private const val ARG_SUBJECT = "ARG_SUBJECT"
 
         @JvmStatic
         fun newInstance(
-            topic: Topic?,
+            shuffleType: String,
             subject: Subject?
         ) = ShuffleFragment().apply {
             arguments = Bundle().apply {
-                putParcelable(ARG_TOPIC, topic)
+                putString(ARG_SHUFFLE_TYPE, shuffleType)
                 putParcelable(ARG_SUBJECT, subject)
             }
         }
@@ -55,61 +50,22 @@ class ShuffleFragment : Fragment() {
 
     private lateinit var binding: FragmentShuffleBinding
 
-    private val addSubTopicsAdapter: AddSubTopicsAdapter by lazy { AddSubTopicsAdapter() }
+    private val subTopicsAdapter: SubTopicsAdapter by lazy { SubTopicsAdapter() }
 
     private val subTopicViewModel by activityViewModels<SubTopicViewModel>()
 
-    private var topic: Topic? = null
+    private var isNewInstance: Boolean = true
+
+    private var shuffleType: String? = null
     private var subject: Subject? = null
-
-    private val itemTouchHelper by lazy {
-        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
-            /* Drag Directions */ItemTouchHelper.UP or ItemTouchHelper.DOWN /*or ItemTouchHelper.START or ItemTouchHelper.END*/,
-            /* Swipe Directions */0
-        ) {
-            var fromPos = 0
-            var toPos = 0
-
-            override fun onMove(
-                recyclerView: RecyclerView,
-                source: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder,
-            ): Boolean {
-                val adapter = recyclerView.adapter as AddSubTopicsAdapter
-                fromPos = source.bindingAdapterPosition
-                toPos = target.bindingAdapterPosition
-
-                /** 2. Update the backing model. Custom implementation in AddSubTopicsAdapter. You need to implement reordering of the backing model inside the method. */
-                Collections.swap(adapter.subTopicList, fromPos, toPos)
-
-                /** 3. Tell adapter to render the model update. */
-                adapter.notifyItemMoved(fromPos, toPos)
-                return true
-            }
-
-            /** 4. User has finished drag, save new item order to database */
-            override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
-                super.clearView(recyclerView, viewHolder)
-                val adapter = recyclerView.adapter as AddSubTopicsAdapter
-                subTopicViewModel.updateAllSubTopics(adapter.subTopicList.filterNotNull())
-            }
-
-            /** 5. Code block for horizontal swipe. ItemTouchHelper handles horizontal swipe as well, but it is not relevant with reordering. Ignoring here. */
-            override fun onSwiped(
-                viewHolder: RecyclerView.ViewHolder,
-                direction: Int,
-            ) = Unit
-        }
-        ItemTouchHelper(itemTouchHelperCallback)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (AndroidVersions.isTiramisu()) {
-            topic = arguments?.getParcelable(ARG_TOPIC, Topic::class.java)
+            shuffleType = arguments?.getString(ARG_SHUFFLE_TYPE)
             subject = arguments?.getParcelable(ARG_SUBJECT, Subject::class.java)
         } else {
-            topic = arguments?.getParcelable(ARG_TOPIC)
+            shuffleType = arguments?.getString(ARG_SHUFFLE_TYPE)
             subject = arguments?.getParcelable(ARG_SUBJECT)
         }
     }
@@ -123,130 +79,90 @@ class ShuffleFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.setupUI()
         binding.setupUserActionListeners()
-        binding.observeForData()
     }
 
-    override fun onPause() {
-        super.onPause()
-        addSubTopicsAdapter.removeHandlerCallback()
-    }
-
+    @SuppressLint("NotifyDataSetChanged")
     private fun FragmentShuffleBinding.setupUI() {
         layoutCustomToolbar.apply {
             ibBack.setImageDrawable(context?.drawable(R.drawable.ic_round_clear_24))
-            tvTitle.text = "${topic?.title ?: ""} Sub-Topics"
-        }
-        layoutAddItem.etItem.hint = "Add Sub-Topic"
-        rvSubTopics.apply {
-            // TODO fix dragging
-            layoutAnimation = rvSubTopics.context.layoutAnimationController(globalLayoutAnimation)
-            layoutManager = LinearLayoutManager(context)
-            adapter = addSubTopicsAdapter
-//            itemTouchHelper.attachToRecyclerView(this)
-        }
-    }
-
-    private fun FragmentShuffleBinding.setupUserActionListeners() {
-        layoutAddItem.ibAddItem.setOnClickListener {
-            if (layoutAddItem.etItem.text.isNullOrBlank()) return@setOnClickListener
-            val subTopic = SubTopic(
-                topicId = topic?.id ?: return@setOnClickListener,
-                subjectId = subject?.id ?: return@setOnClickListener,
-                title = layoutAddItem.etItem.text.toString(),
-            )
-            subTopicViewModel.addSubTopicItem(subTopic)
-        }
-
-        addSubTopicsAdapter.setOnItemClickListener { subTopic, position ->
-        }
-
-        addSubTopicsAdapter.setOnItemLongClickListener { subTopic, view, position ->
-            val optionsList = listOf(
-                Pair("Edit", R.drawable.outline_edit_24),
-                Pair("Delete", R.drawable.outline_delete_24),
-            )
-            requireContext().showPopupMenuWithIcons(
-                view = view,
-                menuList = optionsList,
-                customColor = R.color.md_red_700,
-                customColorItemText = optionsList.last().first
-            ) { it: MenuItem? ->
-                when (it?.title?.toString()?.trim()) {
-                    optionsList[0].first -> {
-                        addSubTopicsAdapter.showEditView(
-                            recyclerView = rvSubTopics,
-                            adapterPosition = position
-                        )
-                    }
-
-                    optionsList[1].first -> {
-                        requireContext().showAlertDialog(
-                            title = "Delete Item",
-                            message = "\"${subTopic?.title}\" will be deleted.",
-                            positiveBtnText = "Delete",
-                            negativeBtnText = "Cancel",
-                            positiveBtnColor = R.color.md_red_700,
-                            positiveAction = {
-                                subTopicViewModel.deleteSubTopic(subTopic)
-                            }
-                        )
-                    }
-                }
+            tvTitle.text = if (shuffleType == ShuffleType.ALL_TOPICS) {
+                "Shuffle ${subject?.title} Sub-Topics"
+            } else {
+                "Shuffle All Sub-Topics"
             }
         }
-
-        addSubTopicsAdapter.setOnApproveUpdateClickListener { subTopic, position ->
-            subTopicViewModel.updateSubTopic(subTopic)
+        rvSubTopics.apply {
+            layoutAnimation = rvSubTopics.context.layoutAnimationController(globalLayoutAnimation)
+            layoutManager = LinearLayoutManager(context)
+            adapter = subTopicsAdapter
         }
-
-        layoutCustomToolbar.ibBack.onSafeClick {
-            /** Updating all items to remember the reorder position. Uncomment when u fix drag to reposition */
-//            subTopicViewModel.updateAllSubTopics(addSubTopicsAdapter.subTopicList.filterNotNull())
-            parentFragmentManager.popBackStackImmediate()
-        }
-
-        layoutCustomToolbar.ivMore.onSafeClick { pair: Pair<View?, Boolean> ->
-            val optionsList = listOf(
-                Pair("Delete All", R.drawable.outline_delete_24),
-            )
-            requireContext().showPopupMenuWithIcons(
-                view = pair.first,
-                menuList = optionsList,
-                customColor = R.color.md_red_700,
-                customColorItemText = optionsList.last().first
-            ) { it: MenuItem? ->
-                when (it?.title?.toString()?.trim()) {
-                    optionsList[0].first -> {
-                        requireContext().showAlertDialog(
-                            message = "Delete all items from \"${topic?.title}\" topic? You cannot undo this action.",
-                            positiveBtnText = "Delete",
-                            negativeBtnText = "Cancel",
-                            positiveBtnColor = R.color.md_red_700,
-                            positiveAction = {
-                                subTopicViewModel.deleteAllSubTopicsBy(topic?.id)
-                            }
-                        )
-                    }
+        if (shuffleType == ShuffleType.ALL_SUBJECTS) {
+            lifecycleScope.launch(Dispatchers.IO) {
+                val list = subTopicViewModel.getAllSubTopics()
+                subTopicsAdapter.subTopicList = list.toMutableList().shuffled()
+                subTopicsAdapter.notifyDataSetChanged()
+                if (isNewInstance) {
+                    binding.rvSubTopics.runLayoutAnimation(globalLayoutAnimation)
+                    isNewInstance = false
                 }
+                layoutCustomToolbar.tvCount.text =
+                    "${list.size} Sub-Topics   |   ${list.filter { it.isCorrectRecall }.size} Recalled"
+            }
+        } else {
+            lifecycleScope.launch(Dispatchers.IO) {
+                val list = subTopicViewModel.getAllSubTopicsBy(subject?.id)
+                subTopicsAdapter.subTopicList = list.toMutableList().shuffled()
+                subTopicsAdapter.notifyDataSetChanged()
+                if (isNewInstance) {
+                    binding.rvSubTopics.runLayoutAnimation(globalLayoutAnimation)
+                    isNewInstance = false
+                }
+                layoutCustomToolbar.tvCount.text =
+                    "${list.size} Sub-Topics   |   ${list.filter { it.isCorrectRecall }.size} Recalled"
             }
         }
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun FragmentShuffleBinding.observeForData() {
-        (activity as? MainActivity)?.collectLatestLifecycleFlow(
-            flow = subTopicViewModel.getAllTopicByTopicIdItemsFlow(topic?.id)
-        ) { list: List<SubTopic> ->
-            withContext(Dispatchers.Main) {
-                if (list.isEmpty()) {
-                    binding.layoutAddItem.etItem.showKeyboard()
+    private fun FragmentShuffleBinding.setupUserActionListeners() {
+        subTopicsAdapter.setOnItemClickListener { subTopic, position ->
+        }
+
+        subTopicsAdapter.setOnApproveUpdateClickListener { subTopic, position ->
+            subTopicViewModel.updateSubTopic(subTopic)
+            subTopicsAdapter.checkMarkItem(
+                recyclerView = rvSubTopics,
+                adapterPosition = position,
+                isChecked = subTopicsAdapter.subTopicList.get(position)?.isCorrectRecall?.not() ?: false
+            )
+            layoutCustomToolbar.tvCount.text =
+                "${subTopicsAdapter.subTopicList.size} Sub-Topics   |   ${subTopicsAdapter.subTopicList.filter { it?.isCorrectRecall == true }.size} Recalled"
+        }
+
+        layoutCustomToolbar.ibBack.onSafeClick {
+            parentFragmentManager.popBackStackImmediate()
+        }
+
+        layoutCustomToolbar.ivMore.onSafeClick { pair: Pair<View?, Boolean> ->
+            val optionsList = listOf(
+                Pair("Reset", R.drawable.round_settings_backup_restore_24)
+            )
+            requireContext().showPopupMenuWithIcons(
+                view = pair.first,
+                menuList = optionsList
+            ) { it: MenuItem? ->
+                when (it?.title?.toString()?.trim()) {
+                    optionsList[0].first -> {
+                        subTopicViewModel.updateAllSubTopics(
+                            subTopicsAdapter.subTopicList.map { it?.copy(isCorrectRecall = false) }.filterNotNull()
+                        )
+                        subTopicsAdapter.subTopicList = subTopicsAdapter.subTopicList.map { it?.copy(isCorrectRecall = false) }
+                        subTopicsAdapter.notifyDataSetChanged()
+                        layoutCustomToolbar.tvCount.text =
+                            "${subTopicsAdapter.subTopicList.size} Sub-Topics   |   ${subTopicsAdapter.subTopicList.filter { it?.isCorrectRecall == true }.size} Recalled"
+                    }
                 }
             }
-            addSubTopicsAdapter.subTopicList = list.toMutableList()
-            addSubTopicsAdapter.notifyDataSetChanged()
-            binding.rvSubTopics.runLayoutAnimation(globalLayoutAnimation)
-            layoutAddItem.etItem.setText("")
-            binding.layoutCustomToolbar.tvCount.text = "${list.size} Topics"
         }
     }
 }

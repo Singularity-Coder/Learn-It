@@ -2,10 +2,8 @@ package com.singularitycoder.learnit.subtopic.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.singularitycoder.learnit.subject.model.Subject
 import com.singularitycoder.learnit.subtopic.dao.SubTopicDao
 import com.singularitycoder.learnit.subtopic.model.SubTopic
-import com.singularitycoder.learnit.topic.model.Topic
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -35,9 +33,19 @@ class SubTopicViewModel @Inject constructor(
         return subTopicDao.getAllItemsByTopicIdStateFlow(topicId)
     }
 
+    fun getAllItemsBySubjectIdStateFlow(subjectId: Long?): Flow<List<SubTopic>> {
+        subjectId ?: return emptyFlow()
+        return subTopicDao.getAllItemsBySubjectIdStateFlow(subjectId)
+    }
+
     fun getAllSubTopicItemsFlow() = subTopicDao.getAllItemsStateFlow()
 
-    suspend fun getAllBookItems() = subTopicDao.getAll()
+    suspend fun getAllSubTopics() = subTopicDao.getAll()
+
+    suspend fun getAllSubTopicsBy(subjectId: Long?): List<SubTopic> {
+        subjectId ?: return emptyList()
+        return subTopicDao.getAllItemsBy(subjectId)
+    }
 
 //    suspend fun hasBooks() = subTopicDao.hasItems()
 

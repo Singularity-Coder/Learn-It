@@ -58,6 +58,8 @@ class AddSubTopicFragment : Fragment() {
 
     private val subTopicViewModel by activityViewModels<SubTopicViewModel>()
 
+    private var isNewInstance: Boolean = true
+
     private var topic: Topic? = null
     private var subject: Subject? = null
 
@@ -243,7 +245,10 @@ class AddSubTopicFragment : Fragment() {
             }
             addSubTopicsAdapter.subTopicList = list.toMutableList()
             addSubTopicsAdapter.notifyDataSetChanged()
-            binding.rvSubTopics.runLayoutAnimation(globalLayoutAnimation)
+            if (isNewInstance) {
+                binding.rvSubTopics.runLayoutAnimation(globalLayoutAnimation)
+                isNewInstance = false
+            }
             layoutAddItem.etItem.setText("")
             binding.layoutCustomToolbar.tvCount.text = "${list.size} Topics"
         }

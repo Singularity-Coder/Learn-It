@@ -56,6 +56,7 @@
             android:text="0 Topics   |   0 Mastered"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="@android:color/darker_gray"
+            app:layout_constraintEnd_toStartOf="@+id/iv_more"
             app:layout_constraintStart_toStartOf="@+id/tv_title"
             app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
