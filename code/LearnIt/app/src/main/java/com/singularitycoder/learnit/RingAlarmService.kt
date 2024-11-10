@@ -20,7 +20,6 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
-import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.IBinder
@@ -30,12 +29,12 @@ import android.os.Vibrator
 import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import com.singularitycoder.learnit.helpers.AppPreferences
 import com.singularitycoder.learnit.helpers.NotificationsHelper
 import com.singularitycoder.learnit.helpers.constants.AlarmType
 import com.singularitycoder.learnit.helpers.constants.IntentExtraKey
 import com.singularitycoder.learnit.helpers.constants.IntentKey
+import com.singularitycoder.learnit.helpers.isScreenOn
 import com.singularitycoder.learnit.lockscreen.LockScreenActivity
 import com.singularitycoder.learnit.topic.model.Topic
 import `in`.basulabs.audiofocuscontroller.AudioFocusController
@@ -57,19 +56,6 @@ class RingAlarmService : Service() {
          */
         val EXTRA_NO_OF_TIMES_SNOOZED = "${BuildConfig.APPLICATION_ID}NO_OF_TIMES_SNOOZED"
         private val MINIMUM_MILLIS_BETWEEN_SHAKES: Int = 600
-
-        /**
-         * Get a unique notification ID.
-         *
-         *
-         * [Courtesy](https://stackoverflow.com/questions/12978184/android-get-unique-id-of-notification#comment51322954_28251192)
-         *
-         * @return A unique notification ID.
-         */
-        fun getUniqueNotifID(): Int {
-            return ((Date().time / 1000L) % Int.MAX_VALUE).toInt()
-        }
-
     }
 
     private var topicId: Long? = null
@@ -120,7 +106,7 @@ class RingAlarmService : Service() {
      */
     private var alarmRingingStarted = false
 
-    private var notifID = 0
+//    private var notifID = 0
 
     private var powerBtnAction = 0
 
@@ -177,21 +163,30 @@ class RingAlarmService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        notifID = getUniqueNotifID()
+//        notifID = NotificationsHelper.getUniqueNotifID()
 
         // Do NOT move this!!!!
         topicId = intent.extras?.getLong(IntentKey.ALARM_DETAILS, 0L) ?: 0L
         topic = Topic() // get from db
 
-        // TODO check if screen is on, show activity else show notif
+        if (isScreenOn()) {
+            val alarmIntent = Intent(this, LockScreenActivity::class.java).apply {
+                action = IntentKey.ALARM_SETTINGS_BROADCAST
+                putExtra(IntentExtraKey.TOPIC_ID_2, topicId)
+                this.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            startActivity(alarmIntent)
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             startForeground(
-                notifID, buildRingNotification(),
+                NotificationsHelper.ALARM_NOTIFICATION_ID, /** this can cause problems if not unique for evert alarm [notifID] */
+                buildRingNotification(),
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
             )
         } else {
             startForeground(
-                notifID, buildRingNotification(),
+                NotificationsHelper.ALARM_NOTIFICATION_ID,
+                buildRingNotification(),
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_NONE
             )
         }
@@ -382,7 +377,7 @@ class RingAlarmService : Service() {
      * Initialises the [MediaPlayer], and starts ringing the alarm.
      */
     private fun ringAlarm() {
-        notificationManager.notify(notifID, buildRingNotification())
+        notificationManager.notify(NotificationsHelper.ALARM_NOTIFICATION_ID, buildRingNotification())
         initShakeSensor()
 
         if (topic?.alarmType != AlarmType.VIBRATE.ordinal) {

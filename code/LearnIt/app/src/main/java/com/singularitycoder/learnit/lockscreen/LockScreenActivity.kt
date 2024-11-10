@@ -23,6 +23,7 @@ import coil.load
 import coil.request.ImageRequest
 import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.ActivityLockScreenBinding
+import com.singularitycoder.learnit.helpers.NotificationsHelper
 import com.singularitycoder.learnit.helpers.color
 import com.singularitycoder.learnit.helpers.constants.IntentExtraKey
 import com.singularitycoder.learnit.helpers.constants.IntentKey
@@ -82,6 +83,11 @@ class LockScreenActivity : AppCompatActivity() {
         observeForData()
     }
 
+    override fun onResume() {
+        super.onResume()
+        NotificationsHelper.clearNotification(this, NotificationsHelper.ALARM_NOTIFICATION_ID)
+    }
+
     override fun onStop() {
         super.onStop()
         stopRingtone()
@@ -130,6 +136,7 @@ class LockScreenActivity : AppCompatActivity() {
                         topic = topic?.copy(nextSessionDate = nextSessionDate)
                     )
                     withContext(Dispatchers.Main) {
+                        NotificationsHelper.clearNotification(this@LockScreenActivity, NotificationsHelper.ALARM_NOTIFICATION_ID)
                         onBackPressedDispatcher.onBackPressed()
                         stopRingtone()
                         // TODO start alarm for next session
@@ -168,6 +175,7 @@ class LockScreenActivity : AppCompatActivity() {
                     } else {
                         // TODO set next alarm with nextSessionDate
                     }
+                    NotificationsHelper.clearNotification(this@LockScreenActivity, NotificationsHelper.ALARM_NOTIFICATION_ID)
                     // If phone locked then navigate to app, else just dismiss activity
                     onBackPressedDispatcher.onBackPressed()
                 }

@@ -212,3 +212,8 @@ inline fun <reified T : Any> stringToObject(string: String?): T? {
     string ?: return null
     return gson.fromJson(string, T::class.java)
 }
+
+fun Context.isScreenOn(): Boolean {
+    val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+    return powerManager.isInteractive
+}

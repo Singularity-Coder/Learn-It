@@ -54,8 +54,6 @@ class ShuffleFragment : Fragment() {
 
     private val subTopicViewModel by activityViewModels<SubTopicViewModel>()
 
-    private var isNewInstance: Boolean = true
-
     private var shuffleType: String? = null
     private var subject: Subject? = null
 
@@ -102,10 +100,7 @@ class ShuffleFragment : Fragment() {
                 val list = subTopicViewModel.getAllSubTopics()
                 subTopicsAdapter.subTopicList = list.toMutableList().shuffled()
                 subTopicsAdapter.notifyDataSetChanged()
-                if (isNewInstance) {
-                    binding.rvSubTopics.runLayoutAnimation(globalLayoutAnimation)
-                    isNewInstance = false
-                }
+                binding.rvSubTopics.runLayoutAnimation(globalLayoutAnimation)
                 layoutCustomToolbar.tvCount.text =
                     "${list.size} Sub-Topics   |   ${list.filter { it.isCorrectRecall }.size} Recalled"
             }
@@ -114,10 +109,7 @@ class ShuffleFragment : Fragment() {
                 val list = subTopicViewModel.getAllSubTopicsBy(subject?.id)
                 subTopicsAdapter.subTopicList = list.toMutableList().shuffled()
                 subTopicsAdapter.notifyDataSetChanged()
-                if (isNewInstance) {
-                    binding.rvSubTopics.runLayoutAnimation(globalLayoutAnimation)
-                    isNewInstance = false
-                }
+                binding.rvSubTopics.runLayoutAnimation(globalLayoutAnimation)
                 layoutCustomToolbar.tvCount.text =
                     "${list.size} Sub-Topics   |   ${list.filter { it.isCorrectRecall }.size} Recalled"
             }

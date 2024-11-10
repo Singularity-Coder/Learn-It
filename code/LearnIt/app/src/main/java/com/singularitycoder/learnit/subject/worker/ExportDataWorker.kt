@@ -56,7 +56,11 @@ class ExportDataWorker(val context: Context, workerParams: WorkerParameters) : C
 
             try {
                 if (isImportData) {
-                    NotificationsHelper.updateNotification(context = context, title = "Importing data")
+                    NotificationsHelper.updateNotification(
+                        context = context,
+                        title = "Importing data",
+                        notifId = NotificationsHelper.IMPORT_EXPORT_NOTIFICATION_ID
+                    )
                     val outputFile = File("${context.cacheDir}/learn_it_import_data.txt")
                     try {
                         context.contentResolver?.openInputStream(Uri.parse(uri)).use { inputStream ->
@@ -75,10 +79,18 @@ class ExportDataWorker(val context: Context, workerParams: WorkerParameters) : C
                     subjectDao.insertAll(subjects)
                     topicDao.insertAll(topics)
                     subTopicDao.insertAll(subTopics)
-                    NotificationsHelper.updateNotification(context = context, title = "Finished Importing data")
+                    NotificationsHelper.updateNotification(
+                        context = context,
+                        title = "Finished Importing data",
+                        notifId = NotificationsHelper.IMPORT_EXPORT_NOTIFICATION_ID
+                    )
                     successData.putBoolean(WorkerData.IS_EXPORT, false)
                 } else {
-                    NotificationsHelper.updateNotification(context = context, title = "Exporting data")
+                    NotificationsHelper.updateNotification(
+                        context = context,
+                        title = "Exporting data",
+                        notifId = NotificationsHelper.IMPORT_EXPORT_NOTIFICATION_ID
+                    )
                     val subjects = listToString(ArrayList(subjectDao.getAll()))
                     val topics = listToString(ArrayList(topicDao.getAll()))
                     val subTopics = listToString(ArrayList(subTopicDao.getAll()))
@@ -91,7 +103,8 @@ class ExportDataWorker(val context: Context, workerParams: WorkerParameters) : C
                     )
                     NotificationsHelper.updateNotification(
                         context = context,
-                        title = "Exported data to \"Downloads\" folder.\n\nFile name: $fileNameWithExtension"
+                        title = "Exported data to \"Downloads\" folder.\n\nFile name: $fileNameWithExtension",
+                        notifId = NotificationsHelper.IMPORT_EXPORT_NOTIFICATION_ID
                     )
                     successData
                         .putBoolean(WorkerData.IS_EXPORT, true)

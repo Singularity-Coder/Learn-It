@@ -384,7 +384,7 @@ class TopicFragment : Fragment() {
             } else {
                 bundle.getParcelable(FragmentResultBundleKey.TOPIC)
             } ?: return@setFragmentResultListener
-            if (topic.finishedSessions >= 5) {
+            if (topic.finishedSessions >= 5 && topic.revisionCount >= 4) {
                 (activity as? MainActivity)?.rain()
             } else {
                 (activity as? MainActivity)?.explode()
