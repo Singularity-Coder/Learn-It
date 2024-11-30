@@ -18,6 +18,8 @@ import android.hardware.SensorManager
 import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
+import android.media.Ringtone
+import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.CountDownTimer
@@ -34,6 +36,7 @@ import com.singularitycoder.learnit.helpers.NotificationsHelper
 import com.singularitycoder.learnit.helpers.constants.AlarmType
 import com.singularitycoder.learnit.helpers.constants.IntentExtraKey
 import com.singularitycoder.learnit.helpers.constants.IntentKey
+import com.singularitycoder.learnit.helpers.getAlarmUri
 import com.singularitycoder.learnit.helpers.isScreenOn
 import com.singularitycoder.learnit.lockscreen.LockScreenActivity
 import com.singularitycoder.learnit.topic.model.Topic
@@ -67,6 +70,7 @@ class RingAlarmService : Service() {
 
     private lateinit var snsMgr: SensorManager
     private lateinit var vibrator: Vibrator
+    private lateinit var ringtone: Ringtone
     private lateinit var audioManager: AudioManager
     private lateinit var notificationManager: NotificationManager
 
@@ -246,10 +250,12 @@ class RingAlarmService : Service() {
             }
         }
 
-        snsMgr = getSystemService(SENSOR_SERVICE) as SensorManager
-        vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
-        audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
-        notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        /** Since its repeating alarm u should stop previous ringtone to avoid multiple tracks playing simultaneously */
+        snsMgr = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        ringtone = RingtoneManager.getRingtone(this, getAlarmUri())
+        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         initialAlarmStreamVolume = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
 
@@ -621,5 +627,15 @@ class RingAlarmService : Service() {
             )
             SystemClock.sleep(200)
         }
+    }
+
+    private fun startRingtone() {
+        vibrator.vibrate(4000)
+        ringtone.play()
+    }
+
+    private fun stopRingtone() {
+        vibrator.cancel()
+        ringtone.stop()
     }
 }

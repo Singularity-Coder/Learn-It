@@ -79,6 +79,11 @@ class ShuffleFragment : Fragment() {
         binding.setupUserActionListeners()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.reset()
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     private fun FragmentShuffleBinding.setupUI() {
         layoutCustomToolbar.apply {
@@ -166,16 +171,20 @@ class ShuffleFragment : Fragment() {
             ) { it: MenuItem? ->
                 when (it?.title?.toString()?.trim()) {
                     optionsList[0].first -> {
-                        subTopicViewModel.updateAllSubTopics(
-                            subTopicsAdapter.subTopicList.map { it?.copy(isCorrectRecall = false) }.filterNotNull()
-                        )
-                        subTopicsAdapter.subTopicList = subTopicsAdapter.subTopicList.map { it?.copy(isCorrectRecall = false) }
-                        subTopicsAdapter.notifyDataSetChanged()
-                        layoutCustomToolbar.tvCount.text =
-                            "${subTopicsAdapter.subTopicList.size} Sub-Topics   |   ${subTopicsAdapter.subTopicList.filter { it?.isCorrectRecall == true }.size} Recalled"
+                        reset()
                     }
                 }
             }
         }
+    }
+
+    private fun FragmentShuffleBinding.reset() {
+        subTopicViewModel.updateAllSubTopics(
+            subTopicsAdapter.subTopicList.map { it?.copy(isCorrectRecall = false) }.filterNotNull()
+        )
+        subTopicsAdapter.subTopicList = subTopicsAdapter.subTopicList.map { it?.copy(isCorrectRecall = false) }
+        subTopicsAdapter.notifyDataSetChanged()
+        layoutCustomToolbar.tvCount.text =
+            "${subTopicsAdapter.subTopicList.size} Sub-Topics   |   ${subTopicsAdapter.subTopicList.filter { it?.isCorrectRecall == true }.size} Recalled"
     }
 }

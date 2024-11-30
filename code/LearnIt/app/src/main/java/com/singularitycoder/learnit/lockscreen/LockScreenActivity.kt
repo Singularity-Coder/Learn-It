@@ -13,7 +13,6 @@ import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
@@ -51,6 +50,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 // TODO Add TTS as alarm sound. TTS reads the topic name outloud as an alarm
+// TODO Alarm ring n cancel should happen in service since u have shake and power btn cancel
+// TODO Send broadcasts to service to cancel or start revision
+// TODO get all alarm dates from db, sort them by date descending, remove all dates less than current date - start service
+
 
 @AndroidEntryPoint
 class LockScreenActivity : AppCompatActivity() {
@@ -62,10 +65,6 @@ class LockScreenActivity : AppCompatActivity() {
     private var topic: Topic? = null
 
     private lateinit var alarmManager: AlarmManager
-
-    private lateinit var ringtone: Ringtone
-
-    private lateinit var vibrator: Vibrator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,17 +79,11 @@ class LockScreenActivity : AppCompatActivity() {
         }
         setupUI()
         binding.setupUserActionListeners()
-        observeForData()
     }
 
     override fun onResume() {
         super.onResume()
         NotificationsHelper.clearNotification(this, NotificationsHelper.ALARM_NOTIFICATION_ID)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        stopRingtone()
     }
 
     @SuppressLint("MissingSuperCall")
@@ -105,14 +98,10 @@ class LockScreenActivity : AppCompatActivity() {
 
     private fun setupUI() {
         turnScreenOn()
-        /** Since its repeating alarm u should stop previous ringtone to avoid multiple tracks playing simultaneously */
-        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        ringtone = RingtoneManager.getRingtone(this@LockScreenActivity, getAlarmUri())
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 //        val topicId = intent.getLongExtra(IntentExtraKey.TOPIC_ID_3, 0L)
 //        loadTopicData(topicId)
         doOnIntentReceived(intent)
-        startRingtone()
     }
 
     private fun ActivityLockScreenBinding.setupUserActionListeners() {
@@ -138,7 +127,7 @@ class LockScreenActivity : AppCompatActivity() {
                     withContext(Dispatchers.Main) {
                         NotificationsHelper.clearNotification(this@LockScreenActivity, NotificationsHelper.ALARM_NOTIFICATION_ID)
                         onBackPressedDispatcher.onBackPressed()
-                        stopRingtone()
+                            // stopRingtone
                         // TODO start alarm for next session
                     }
                 }
@@ -161,7 +150,7 @@ class LockScreenActivity : AppCompatActivity() {
                     )
                 )
                 withContext(Dispatchers.Main) {
-                    stopRingtone()
+                    // stopRingtone
                     val pendingIntent = PendingIntent.getBroadcast(
                         /* context = */ this@LockScreenActivity,
                         /* requestCode = */ 0,
@@ -181,9 +170,6 @@ class LockScreenActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    private fun observeForData() {
     }
 
     private fun loadTopicData(topicId: Long) {
@@ -221,16 +207,6 @@ class LockScreenActivity : AppCompatActivity() {
                 binding.tvTopicTitle.text = "Day $session: Time to recollect ${topic?.title}"
             }
         }
-    }
-
-    private fun startRingtone() {
-        vibrator.vibrate(4000)
-        ringtone.play()
-    }
-
-    private fun stopRingtone() {
-        vibrator.cancel()
-        ringtone.stop()
     }
 
     private fun doOnIntentReceived(intent: Intent) {

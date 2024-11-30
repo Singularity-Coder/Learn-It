@@ -131,10 +131,10 @@ enum class EditEvent : Parcelable {
 }
 
 val gifList = listOf(
-    R.drawable.gif1,
     R.drawable.gif2,
-    R.drawable.gif3,
-    R.drawable.gif4
+    R.drawable.gif1,
+    R.drawable.gif4,
+    R.drawable.gif3
 )
 
 enum class Tutorial(

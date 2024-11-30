@@ -16,4 +16,4 @@ As Jon Von Neumann says, "In mathematics, you don't understand things, you just 
 ![alt text](https://github.com/Singularity-Coder/Instant-Script/blob/main/assets/sc6.5.png)
 ![alt text](https://github.com/Singularity-Coder/Instant-Script/blob/main/assets/sc7.png)
 ![alt text](https://github.com/Singularity-Coder/Instant-Script/blob/main/assets/sc8.5.png)
-![alt text](https://github.com/Singularity-Coder/Instant-Script/blob/main/assets/sc9.png)
+![alt text](https://github.com/Singularity-Coder/Instant-Script/blob/main/assets/sc9.5.png)
