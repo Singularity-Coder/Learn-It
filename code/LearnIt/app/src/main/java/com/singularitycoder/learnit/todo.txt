@@ -131,3 +131,7 @@ android.permission.WAKE_LOCK` , `android.permission.DISABLE_KEYGUARD` and `andro
 android.permission.FOREGROUND_SERVICE` | Enables the app to create foreground services that will ring the alarm and keep it snoozed. Permission automatically granted by the system; can't be revoked by user.
 android.permission.FOREGROUND_SERVICE_SPECIAL_USE` | Conveys to the system the type of foreground Service that the app uses. Cannot be revoked by the user.
 android.permission.RECEIVE_BOOT_COMPLETED` | When your device restarts, all alarms set in the system are lost. This permission enables the app to receive a message from the system once the system has rebooted and you have unlocked your device the first time. When this message is received, the app creates a service to set all the active alarms in the system.
+
+________________________________________________________________________________________
+
+It looks like u cannot access db from lockscreen - security reasons

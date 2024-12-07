@@ -14,6 +14,15 @@ val currentTimeMillis: Long
 val thirtySecondsTimeMillis: Long
     get() = TimeUnit.SECONDS.toMillis(30)
 
+val fiveMinTimeMillis: Long
+    get() = TimeUnit.MINUTES.toMillis(5)
+
+val tenMinTimeMillis: Long
+    get() = TimeUnit.MINUTES.toMillis(10)
+
+val fifteenMinTimeMillis: Long
+    get() = TimeUnit.MINUTES.toMillis(15)
+
 val thirtyMinTimeMillis: Long
     get() = TimeUnit.MINUTES.toMillis(30)
 

@@ -10,6 +10,7 @@ import android.media.RingtoneManager
 import android.os.Bundle
 import android.os.Vibrator
 import android.util.Log
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -24,11 +25,14 @@ import com.singularitycoder.learnit.R
 import com.singularitycoder.learnit.databinding.ActivityLockScreenBinding
 import com.singularitycoder.learnit.helpers.NotificationsHelper
 import com.singularitycoder.learnit.helpers.color
+import com.singularitycoder.learnit.helpers.constants.BottomSheetTag
 import com.singularitycoder.learnit.helpers.constants.IntentExtraKey
 import com.singularitycoder.learnit.helpers.constants.IntentKey
 import com.singularitycoder.learnit.helpers.constants.SettingRemindMeIn
 import com.singularitycoder.learnit.helpers.currentTimeMillis
 import com.singularitycoder.learnit.helpers.drawable
+import com.singularitycoder.learnit.helpers.fifteenMinTimeMillis
+import com.singularitycoder.learnit.helpers.fiveMinTimeMillis
 import com.singularitycoder.learnit.helpers.getAlarmUri
 import com.singularitycoder.learnit.helpers.nineDayTimeMillis
 import com.singularitycoder.learnit.helpers.nineteenDayTimeMillis
@@ -38,10 +42,12 @@ import com.singularitycoder.learnit.helpers.oneHourTimeMillis
 import com.singularitycoder.learnit.helpers.showListPopupMenu2
 import com.singularitycoder.learnit.helpers.sixDayTimeMillis
 import com.singularitycoder.learnit.helpers.sixHourTimeMillis
+import com.singularitycoder.learnit.helpers.tenMinTimeMillis
 import com.singularitycoder.learnit.helpers.thirtyMinTimeMillis
 import com.singularitycoder.learnit.helpers.threeHourTimeMillis
 import com.singularitycoder.learnit.helpers.turnScreenOn
 import com.singularitycoder.learnit.helpers.twelveHourTimeMillis
+import com.singularitycoder.learnit.subtopic.view.SubTopicBottomSheetFragment
 import com.singularitycoder.learnit.topic.model.Topic
 import com.singularitycoder.learnit.topic.viewmodel.TopicViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,6 +59,8 @@ import kotlinx.coroutines.withContext
 // TODO Alarm ring n cancel should happen in service since u have shake and power btn cancel
 // TODO Send broadcasts to service to cancel or start revision
 // TODO get all alarm dates from db, sort them by date descending, remove all dates less than current date - start service
+// TODO if user opts out of notifs or ignore silent notifs on lock screen this wont work
+// TODO permissions screen nav in settings
 
 
 @AndroidEntryPoint
@@ -89,6 +97,7 @@ class LockScreenActivity : AppCompatActivity() {
     @SuppressLint("MissingSuperCall")
     override fun onBackPressed() {
         binding.btnStartRevision.performClick()
+        // TODO set remind me tmorrow
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -106,67 +115,82 @@ class LockScreenActivity : AppCompatActivity() {
 
     private fun ActivityLockScreenBinding.setupUserActionListeners() {
         btnRemindMeIn.onSafeClick {
-            showListPopupMenu2(
-                anchorView = it.first,
-                menuList = SettingRemindMeIn.entries.map { it.value }
-            ) { position: Int ->
-                btnRemindMeIn.text = "Remind Me ${SettingRemindMeIn.entries[position]}"
-                lifecycleScope.launch {
-                    val nextSessionDate = when (SettingRemindMeIn.entries[position]) {
-                        SettingRemindMeIn._30_MINUTES -> thirtyMinTimeMillis
-                        SettingRemindMeIn._1_HOUR -> oneHourTimeMillis
-                        SettingRemindMeIn._3_HOURS -> threeHourTimeMillis
-                        SettingRemindMeIn._6_HOURS -> sixHourTimeMillis
-                        SettingRemindMeIn._12_HOURS -> twelveHourTimeMillis
-                        SettingRemindMeIn.TOMORROW -> oneDayTimeMillis
-                        else -> 0
-                    } + currentTimeMillis
-                    topicsViewModel.updateTopic(
-                        topic = topic?.copy(nextSessionDate = nextSessionDate)
-                    )
-                    withContext(Dispatchers.Main) {
-                        NotificationsHelper.clearNotification(this@LockScreenActivity, NotificationsHelper.ALARM_NOTIFICATION_ID)
-                        onBackPressedDispatcher.onBackPressed()
-                            // stopRingtone
-                        // TODO start alarm for next session
-                    }
-                }
-            }
+            doOnRemindMeClicked(it)
         }
 
         btnStartRevision.onSafeClick {
+            doOnStartRevisionClicked()
+        }
+    }
+
+    private fun doOnStartRevisionClicked() {
+        lifecycleScope.launch {
+            // TODO set next alarm
+            val nextSessionDate = when ((topic?.finishedSessions ?: 0) + 1) {
+                2 -> sixDayTimeMillis
+                3 -> nineDayTimeMillis
+                4 -> nineteenDayTimeMillis
+                else -> 0
+            } + (topic?.nextSessionDate ?: 0L)
+            topicsViewModel.updateTopic(
+                topic = topic?.copy(
+                    nextSessionDate = nextSessionDate,
+                    finishedSessions = (topic?.finishedSessions ?: 0) + 1
+                )
+            )
+            withContext(Dispatchers.Main) {
+                // stopRingtone
+                val pendingIntent = PendingIntent.getBroadcast(
+                    /* context = */ this@LockScreenActivity,
+                    /* requestCode = */ 0,
+                    /* intent = */ Intent(IntentKey.REVISION_ALARM),
+                    /* flags = */ PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+                )
+                if (pendingIntent != null && (topic?.finishedSessions ?: 0) >= 5) {
+                    Log.d("myTag", "Alarm is already active")
+                    alarmManager.cancel(pendingIntent)
+                    // TODO cancel alarm
+                } else {
+                    // TODO set next alarm with nextSessionDate
+                }
+                NotificationsHelper.clearNotification(this@LockScreenActivity, NotificationsHelper.ALARM_NOTIFICATION_ID)
+                // If phone locked then navigate to app, else just dismiss activity
+//                onBackPressedDispatcher.onBackPressed()
+                SubTopicBottomSheetFragment.newInstance(
+                    topic = topic,
+                    subject = null
+                ).show(supportFragmentManager, BottomSheetTag.TAG_SUB_TOPICS)
+            }
+        }
+    }
+
+    private fun ActivityLockScreenBinding.doOnRemindMeClicked(it: Pair<View?, Boolean>) {
+        showListPopupMenu2(
+            anchorView = it.first,
+            menuList = SettingRemindMeIn.entries.map { it.value }
+        ) { position: Int ->
+            btnRemindMeIn.text = "Remind Me ${SettingRemindMeIn.entries[position]}"
             lifecycleScope.launch {
-                // TODO set next alarm
-                val nextSessionDate = when ((topic?.finishedSessions ?: 0) + 1) {
-                    2 -> sixDayTimeMillis
-                    3 -> nineDayTimeMillis
-                    4 -> nineteenDayTimeMillis
+                val nextSessionDate = when (SettingRemindMeIn.entries[position]) {
+                    SettingRemindMeIn._5_MINUTES -> fiveMinTimeMillis
+                    SettingRemindMeIn._10_MINUTES -> tenMinTimeMillis
+                    SettingRemindMeIn._15_MINUTES -> fifteenMinTimeMillis
+                    SettingRemindMeIn._30_MINUTES -> thirtyMinTimeMillis
+                    SettingRemindMeIn._1_HOUR -> oneHourTimeMillis
+                    SettingRemindMeIn._3_HOURS -> threeHourTimeMillis
+                    SettingRemindMeIn._6_HOURS -> sixHourTimeMillis
+                    SettingRemindMeIn._12_HOURS -> twelveHourTimeMillis
+                    SettingRemindMeIn.TOMORROW -> oneDayTimeMillis
                     else -> 0
-                } + (topic?.nextSessionDate ?: 0L)
+                } + currentTimeMillis
                 topicsViewModel.updateTopic(
-                    topic = topic?.copy(
-                        nextSessionDate = nextSessionDate,
-                        finishedSessions = (topic?.finishedSessions ?: 0) + 1
-                    )
+                    topic = topic?.copy(nextSessionDate = nextSessionDate)
                 )
                 withContext(Dispatchers.Main) {
-                    // stopRingtone
-                    val pendingIntent = PendingIntent.getBroadcast(
-                        /* context = */ this@LockScreenActivity,
-                        /* requestCode = */ 0,
-                        /* intent = */ Intent(IntentKey.REVISION_ALARM),
-                        /* flags = */ PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
-                    )
-                    if (pendingIntent != null && (topic?.finishedSessions ?: 0) >= 5) {
-                        Log.d("myTag", "Alarm is already active")
-                        alarmManager.cancel(pendingIntent)
-                        // TODO cancel alarm
-                    } else {
-                        // TODO set next alarm with nextSessionDate
-                    }
                     NotificationsHelper.clearNotification(this@LockScreenActivity, NotificationsHelper.ALARM_NOTIFICATION_ID)
-                    // If phone locked then navigate to app, else just dismiss activity
                     onBackPressedDispatcher.onBackPressed()
+                    // stopRingtone
+                    // TODO start alarm for next session
                 }
             }
         }

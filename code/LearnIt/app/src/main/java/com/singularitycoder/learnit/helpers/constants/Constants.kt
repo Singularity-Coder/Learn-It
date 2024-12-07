@@ -196,6 +196,9 @@ enum class Permission(
 
 enum class SettingRemindMeIn(val value: String) {
 //    DO_NOTHING(value = "Do Nothing"),
+    _5_MINUTES(value = "5 Minutes"),
+    _10_MINUTES(value = "10 Minutes"),
+    _15_MINUTES(value = "15 Minutes"),
     _30_MINUTES(value = "30 Minutes"),
     _1_HOUR(value = "1 Hour"),
     _3_HOURS(value = "3 Hours"),

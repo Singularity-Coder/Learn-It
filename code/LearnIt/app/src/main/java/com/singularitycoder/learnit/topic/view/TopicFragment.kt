@@ -459,7 +459,6 @@ class TopicFragment : Fragment() {
             putExtra(IntentExtraKey.TOPIC_ID, topic.id)
             putExtra(IntentKey.ALARM_DETAILS, topic.id) // delete this
         }
-        val flags = PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
         pendingIntent = PendingIntent.getBroadcast(
             /* context = */ context?.applicationContext,
             /* requestCode = */ topic.id.toInt(),
@@ -467,26 +466,11 @@ class TopicFragment : Fragment() {
             /* flags = */ pendingIntentUpdateCurrentFlag()
         )
 
-        /** https://stackoverflow.com/a/34699710/6802949
-         * Tapping on the alarm time in the notification shade will invoke the PendingIntent
-         * that you put into the AlarmClockInfo object. when the user taps on the time in the notification shade,
-         * LockScreenActivity will appear. The idea is that you should supply an activity here that allows
-         * the user to cancel or reschedule this alarm. */
-        val intent2 = Intent(context, LockScreenActivity::class.java).apply {
-            action = IntentKey.ALARM_SETTINGS_BROADCAST
-            putExtra(IntentExtraKey.TOPIC_ID_2, topic.id)
-        }
-        val pendingIntent2 = PendingIntent.getActivity(
-            /* context = */ context,
-            /* requestCode = */ 0,
-            /* intent = */ intent2,
-            /* flags = */ PendingIntent.FLAG_IMMUTABLE
-        )
-
-        /** [pendingIntent2] - an intent that can be used to show or edit details of the alarm clock. */
+        /** [getPendingIntent2] - an intent that can be used to show or edit details of the alarm clock if u pass it in showIntent param in clock info.
+         * This is necessary to show on lockscreen */
         val clockInfo = AlarmManager.AlarmClockInfo(
             /* triggerTime = */ currentTimeMillis + thirtySecondsTimeMillis,
-            /* showIntent = */ pendingIntent2
+            /* showIntent = */ getPendingIntent2(topic)
         )
 
         /** [pendingIntent] - Action to perform when the alarm goes off */
@@ -496,47 +480,26 @@ class TopicFragment : Fragment() {
         )
     }
 
+    private fun getPendingIntent2(topic: Topic): PendingIntent {
+        /** https://stackoverflow.com/a/34699710/6802949
+         * Tapping on the alarm time in the notification shade will invoke the PendingIntent
+         * that you put into the AlarmClockInfo object. when the user taps on the time in the notification shade,
+         * LockScreenActivity will appear. The idea is that you should supply an activity here that allows
+         * the user to cancel or reschedule this alarm. */
+        val intent2 = Intent(context, LockScreenActivity::class.java).apply {
+            action = IntentKey.ALARM_SETTINGS_BROADCAST
+            putExtra(IntentExtraKey.TOPIC_ID_2, topic.id)
+        }
+        return PendingIntent.getActivity(
+            /* context = */ context,
+            /* requestCode = */ 0,
+            /* intent = */ intent2,
+            /* flags = */ PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+
     private fun stopAlarm() {
         alarmManager?.cancel(pendingIntent ?: return)
         context?.showToast("ALARM OFF")
     }
-
-    /**
-     * Check permissions before worker starts
-     *
-     * Activates the alarms that are ON, but inactive because [AlarmManager] has
-     * cancelled them for no reason.
-     */
-//    private fun setAlarm(topic: Topic) {
-//        val intent = Intent(
-//            context?.applicationContext,
-//            ThisBroadcastReceiver::class.java
-//        ).apply {
-//            action = IntentKey.DELIVER_ALARM
-//            flags = Intent.FLAG_RECEIVER_FOREGROUND
-//            putExtra(IntentKey.ALARM_DETAILS, topic.id)
-//        }
-//
-//        val flags = PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
-//        val pendingIntent = PendingIntent.getBroadcast(
-//            /* context = */ context?.applicationContext,
-//            /* requestCode = */ topic.id.toInt(),
-//            /* intent = */ intent,
-//            /* flags = */ flags
-//        )
-//
-//        val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-////        val alarmClockInfo = AlarmClockInfo(
-////            topic.nextSessionDate,
-////            pendingIntent
-////        )
-//        val alarmClockInfo = AlarmClockInfo(
-//            currentTimeMillis + thirtySecondsTimeMillis,
-//            pendingIntent
-//        )
-//        alarmManager.setAlarmClock(
-//            alarmClockInfo,
-//            pendingIntent
-//        )
-//    }
 }

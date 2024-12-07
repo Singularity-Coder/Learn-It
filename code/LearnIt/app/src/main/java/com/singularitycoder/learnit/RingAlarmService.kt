@@ -48,6 +48,8 @@ import kotlin.math.sqrt
 
 class RingAlarmService : Service() {
 
+    // TODO shift all responsibility to [LockScreenActivity]. This service's only responsibility is to launch the [LockScreenActivity]
+
     companion object {
         /**
          * Indicates whether this service is running or not.
@@ -474,7 +476,7 @@ class RingAlarmService : Service() {
     /**
      * Dismisses the current alarm, and sets the next alarm if repeat is enabled.
      */
-    private fun dismissAlarm() {
+    fun dismissAlarm() {
         stopRinging()
         cancelPendingIntent()
 

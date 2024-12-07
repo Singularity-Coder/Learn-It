@@ -147,6 +147,7 @@ fun Activity.turnScreenOn() {
 }
 
 fun pendingIntentUpdateCurrentFlag(): Int {
+//    val flags = PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
     return PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
 }
 
